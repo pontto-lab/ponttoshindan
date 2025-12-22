@@ -1,36 +1,143 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <title>ぽんっと診断</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body {
-      font-family: "Hiragino Maru Gothic ProN", sans-serif;
-      background: #fff0f5;
-      text-align: center;
-      padding: 20px;
-    }
-    h1 {
-      color: #ff69b4;
-    }
-    .box {
-      background: white;
-      border-radius: 20px;
-      padding: 20px;
-      margin-top: 30px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
-  </style>
+<meta charset="UTF-8">
+<title>ぽんっと診断</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+  font-family: "Hiragino Maru Gothic ProN", sans-serif;
+  background: #fff0f5;
+  text-align: center;
+  padding: 20px;
+}
+
+h1 {
+  color: #ff69b4;
+}
+
+.question {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 20px;
+  margin: 20px 0;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+button {
+  width: 100%;
+  padding: 15px;
+  margin: 10px 0;
+  border-radius: 30px;
+  border: none;
+  font-size: 16px;
+  background: #ffb6c1;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #ff69b4;
+  color: white;
+}
+
+#result {
+  display: none;
+  background: white;
+  border-radius: 20px;
+  padding: 30px;
+  margin-top: 30px;
+}
+</style>
 </head>
+
 <body>
 
-  <h1>🌸 ぽんっと診断 🌸</h1>
+<h1>🌸 ぽんっと診断 🌸</h1>
+<p>直感でポンっと選んでね♡</p>
 
-  <div class="box">
-    <p>ここまで来たら大成功！</p>
-    <p>これはテスト表示だよ😊</p>
-  </div>
+<div id="quiz"></div>
+
+<div id="result"></div>
+
+<script>
+const questions = [
+  "休日はどう過ごす？",
+  "初対面の人が多い場所では？",
+  "買い物のしかたは？",
+  "トラブルが起きたら？",
+  "友だちに相談されたら？",
+  "旅行の計画は？",
+  "新しいことへの挑戦は？",
+  "SNS投稿するときは？",
+  "決断するとき重視するのは？",
+  "自分の性格に近いのは？"
+];
+
+const answers = [
+  ["家でのんびり", "気分で外出", "予定を立てる"],
+  ["様子を見る", "すぐ話す", "距離感を考える"],
+  ["なんとなく", "直感買い", "比較する"],
+  ["流れに任せる", "とりあえず動く", "原因を分析"],
+  ["共感する", "励ます", "解決策を出す"],
+  ["ノープラン", "ざっくり", "きっちり"],
+  ["ゆっくり", "すぐやる", "準備してから"],
+  ["雰囲気重視", "勢い", "文章を考える"],
+  ["気持ち", "ひらめき", "理屈"],
+  ["マイペース", "行動派", "慎重派"]
+];
+
+let scores = { calm: 0, instinct: 0, logic: 0 };
+let current = 0;
+
+const quiz = document.getElementById("quiz");
+
+function showQuestion() {
+  quiz.innerHTML = `
+    <div class="question">
+      <h3>Q${current + 1}. ${questions[current]}</h3>
+      <button onclick="answer('calm')">${answers[current][0]}</button>
+      <button onclick="answer('instinct')">${answers[current][1]}</button>
+      <button onclick="answer('logic')">${answers[current][2]}</button>
+    </div>
+  `;
+}
+
+function answer(type) {
+  scores[type]++;
+  current++;
+  if (current < questions.length) {
+    showQuestion();
+  } else {
+    showResult();
+  }
+}
+
+function showResult() {
+  let resultType = Object.keys(scores).reduce((a, b) =>
+    scores[a] > scores[b] ? a : b
+  );
+
+  let message = "";
+  if (resultType === "calm") {
+    message = "🌸 おっとりタイプ 🌸<br>優しくて癒し系。自分のペースを大切にする人♡";
+  } else if (resultType === "instinct") {
+    message = "⚡ 直感型 ⚡<br>ひらめきと勢いで人生を楽しむ天才♡";
+  } else {
+    message = "🧩 論理派 🧩<br>考える力が武器。信頼される頭脳派♡";
+  }
+
+  document.getElementById("result").style.display = "block";
+  document.getElementById("result").innerHTML = `
+    <h2>診断結果</h2>
+    <p>${message}</p>
+    <p>📷 スクショしてシェアしてね♡</p>
+  `;
+  quiz.style.display = "none";
+}
+
+showQuestion();
+</script>
 
 </body>
 </html>
