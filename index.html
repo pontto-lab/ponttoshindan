@@ -14,7 +14,6 @@
     }
     h1 {
       color: #ff69b4;
-      margin-bottom: 10px;
     }
     .card {
       background: white;
@@ -40,20 +39,25 @@
       font-size: 16px;
       cursor: pointer;
     }
-    button:hover {
-      background: #ff69b4;
-    }
     .back {
       background: #f3c1d3;
       font-size: 14px;
-    }
-    img {
-      width: 100%;
-      max-width: 300px;
-      margin: 20px auto;
     }
   </style>
 </head>
 <body>
 
-<h1>🌸 ぽんっと診断 🌸</h1
+<h1>🌸 ぽんっと診断 🌸</h1>
+<div class="card" id="quiz"></div>
+
+<script>
+window.onload = function () {
+
+  const questions = [
+    { q: "朝のあなたは？", a: ["ぼーっと派", "すぐ動く派"] },
+    { q: "買い物は？", a: ["直感で即決", "比較して決める"] },
+    { q: "友達に言われがち？", a: ["マイペース", "しっかり者"] },
+    { q: "旅行の計画は？", a: ["その場の流れ", "事前に計画"] },
+    { q: "トラブル時は？", a: ["なんとかなる", "原因を考える"] },
+    { q: "作業スタイルは？", a: ["気分重視", "効率重視"] },
+    { q: "決断スピードは？"
