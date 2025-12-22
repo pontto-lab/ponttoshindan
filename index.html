@@ -51,13 +51,68 @@
 <div class="card" id="quiz"></div>
 
 <script>
-window.onload = function () {
+const questions = [
+  { q: "朝のあなたは？", a: ["ぼーっと派", "すぐ動く派"] },
+  { q: "買い物は？", a: ["直感で即決", "比較して決める"] },
+  { q: "友達に言われがち？", a: ["マイペース", "しっかり者"] },
+  { q: "旅行の計画は？", a: ["その場の流れ", "事前に計画"] },
+  { q: "トラブル時は？", a: ["なんとかなる", "原因を考える"] },
+  { q: "作業スタイルは？", a: ["気分重視", "効率重視"] },
+  { q: "決断スピードは？", a: ["ゆっくり", "即決"] }
+];
 
-  const questions = [
-    { q: "朝のあなたは？", a: ["ぼーっと派", "すぐ動く派"] },
-    { q: "買い物は？", a: ["直感で即決", "比較して決める"] },
-    { q: "友達に言われがち？", a: ["マイペース", "しっかり者"] },
-    { q: "旅行の計画は？", a: ["その場の流れ", "事前に計画"] },
-    { q: "トラブル時は？", a: ["なんとかなる", "原因を考える"] },
-    { q: "作業スタイルは？", a: ["気分重視", "効率重視"] },
-    { q: "決断スピードは？"
+let current = 0;
+let score = 0;
+const quiz = document.getElementById("quiz");
+
+function showQuestion() {
+  const q = questions[current];
+  quiz.innerHTML = `
+    <h2>${q.q}</h2>
+    ${q.a.map((text, i) =>
+      `<button onclick="answer(${i})">${text}</button>`
+    ).join("")}
+    ${current > 0 ? `<button class="back" onclick="back()">← Back</button>` : ""}
+  `;
+}
+
+function answer(i) {
+  if (i === 1) score++;
+  current++;
+  if (current < questions.length) {
+    showQuestion();
+  } else {
+    showResult();
+  }
+}
+
+function back() {
+  current--;
+  if (score > 0) score--;
+  showQuestion();
+}
+
+function showResult() {
+  let result =
+    score >= 5 ? "✨しっかり現実派✨" :
+    score >= 3 ? "🌸バランス派🌸" :
+    "☁️ほんわか感覚派☁️";
+
+  quiz.innerHTML = `
+    <h2>あなたの結果は…</h2>
+    <p style="font-size:20px">${result}</p>
+    <button onclick="restart()">もう一回診断する</button>
+  `;
+}
+
+function restart() {
+  current = 0;
+  score = 0;
+  showQuestion();
+}
+
+showQuestion();
+</script>
+
+</body>
+</html>
