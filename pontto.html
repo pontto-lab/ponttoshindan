@@ -1,175 +1,153 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ぽんっと性格診断｜ぽんっとラボ</title>
-
-  <style>
-    body {
-      margin: 0;
-      font-family: "Hiragino Maru Gothic ProN", "Noto Sans JP", sans-serif;
-      background: linear-gradient(180deg, #ffe6ef, #fff);
-      color: #444;
-    }
-
-    .wrapper {
-      max-width: 480px;
-      margin: 0 auto;
-      padding: 24px 16px 40px;
-      text-align: center;
-    }
-
-    h1 {
-      font-size: 24px;
-      margin-bottom: 12px;
-    }
-
-    .question {
-      font-size: 18px;
-      margin: 24px 0 16px;
-    }
-
-    .choices button {
-      display: block;
-      width: 100%;
-      padding: 14px;
-      margin-bottom: 10px;
-      border-radius: 16px;
-      border: none;
-      background: #fff;
-      font-size: 15px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.06);
-      cursor: pointer;
-    }
-
-    .choices button:active {
-      transform: scale(0.97);
-    }
-
-    .loading {
-      font-size: 28px;
-      margin-top: 60px;
-      animation: pop 1s infinite;
-    }
-
-    @keyframes pop {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.2); }
-      100% { transform: scale(1); }
-    }
-
-    .result {
-      margin-top: 40px;
-    }
-
-    .type {
-      font-size: 22px;
-      margin-bottom: 12px;
-    }
-
-    .back {
-      margin-top: 32px;
-      display: inline-block;
-      text-decoration: none;
-      font-size: 14px;
-      color: #ff6fa1;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ぽんっと性格診断 | ぽんっとラボ</title>
+<style>
+body {
+  font-family: "Hiragino Kaku Gothic Pro","メイリオ",sans-serif;
+  background:#f9f0ff; color:#333; margin:0; padding:0;
+}
+.wrapper { max-width:480px; margin:0 auto; padding:24px 16px; text-align:center; }
+h1 { font-size:28px; margin-bottom:12px; color:#b08eff; }
+.question { font-size:16px; margin:24px 0 12px; }
+.options { display:flex; flex-direction:column; gap:12px; }
+.options button {
+  padding:14px; border-radius:20px; border:none;
+  background: linear-gradient(135deg, #e0d4ff, #cbbcff);
+  color:#fff; font-size:16px; font-weight:500;
+  box-shadow:0 4px 12px rgba(0,0,0,0.1);
+  cursor:pointer; transition: transform 0.1s, box-shadow 0.1s;
+}
+.options button:hover { transform: translateY(-2px); box-shadow:0 6px 14px rgba(0,0,0,0.15); }
+.options button:active { transform: scale(0.97); }
+#result { font-size:18px; margin-top:32px; color:#b08eff; position:relative; min-height:120px; }
+#pop {
+  font-family: 'Arial Rounded MT Bold','ヒラギノ丸ゴ Pro','メイリオ',sans-serif;
+  font-weight: bold; font-size:36px; color:#b08eff;
+  text-shadow:1px 1px 3px rgba(0,0,0,0.2); display:inline-block;
+}
+.flying { position:absolute; font-size:20px; opacity:1; animation:fly 1s forwards; }
+@keyframes fly {
+  0% { transform: translateY(0) scale(1); opacity:1; }
+  100% { transform: translateY(-80px) scale(1.5); opacity:0; }
+}
+#back { margin-top:20px; display:inline-block; padding:10px 18px; border-radius:16px;
+  background:#f0d4ff; text-decoration:none; color:#b08eff; font-weight:500;
+}
+</style>
 </head>
-
 <body>
-  <div class="wrapper" id="app"></div>
+<div class="wrapper">
+<h1>🧪 ぽんっと性格診断</h1>
+<div id="quiz">
+<p class="question" id="question"></p>
+<div class="options" id="options"></div>
+</div>
+<div id="result"></div>
+<a href="index.html" id="back" style="display:none;">🏠 ぽんっとTOPにもどる</a>
+</div>
 
-  <script>
-    const questions = [
-      "朝起きた瞬間の気分は？",
-      "予定が急にキャンセル！",
-      "友だちからの相談、どうする？",
-      "ひとり時間、何してる？",
-      "ピンチのときの口ぐせは？",
-      "褒められたときの反応は？",
-      "今の気分に一番近いのは？"
-    ];
+<script>
+// ぽんっと性格診断オリジナル設問
+const questions = [
+  { q: "今日の気分は、どんなかんじかな〜？", a:["まったりのんびりしたい","ちょっと冒険したい気分","軽やかに過ごしたい気分","ゆったりほっこりしたい","なんだか個性的なことをしたい"] },
+  { q: "おやつを選ぶならどれが気になる？", a:["ふんわり甘いもの","クセのあるものに惹かれる","さっぱりしたものがいいな","ほっとするもの","珍しいものに挑戦したい"] },
+  { q: "友達から見た自分はどんなイメージ？", a:["癒し系っぽい","元気で刺激的","爽やかで軽やか","優しく落ち着く","個性的でちょっと変わってる"] },
+  { q: "飲み物を選ぶならどれ？", a:["甘くてほっとできる","ピリッと刺激的","さっぱりしてるもの","温かくて落ち着くもの","ちょっと珍しいもの"] },
+  { q: "おやつを誰かに渡すならどんなの？", a:["みんながほっこりするもの","元気をくれるもの","すっきり爽やかなもの","和やかで安心できるもの","個性的で面白いもの"] },
+  { q: "休日の過ごし方は？", a:["家でゆったり過ごす","外で体を動かす","散歩や軽い運動でリフレッシュ","カフェでまったり","新しいことに挑戦する"] },
+  { q: "理想のデザートはどんなイメージ？", a:["かわいくて癒される","刺激的で個性を感じる","さっぱり軽やか","和風で落ち着く","珍しくて目新しい"] }
+];
 
-    const choices = [
-      ["よし、今日もいくぞ！","もうちょっと寝たい…","夢の続きを考えてる","特に何も思わない"],
-      ["ラッキー！自由！","まぁ…これはこれで","ちょっとさみしい","え、聞いてない！"],
-      ["とことん聞く","冷静にアドバイス","そっと寄り添う","笑いに変える"],
-      ["SNS・動画","何か作る","ぼーっと","調べもの"],
-      ["なんとかなる！","まぁいっか","どうしよう…","試練だ"],
-      ["もっと言って！","ありがとう","いやいや…","そう？"],
-      ["ふわっと","やる気","ちょっと疲れた","考え中"]
-    ];
+// オリジナル結果
+const results = [
+  { name:"癒し系さん💛", desc:"のんびり優しい雰囲気で周りを和ませるあなた、いつも誰かを知らずに助けてる💓" },
+  { name:"冒険家タイプ🔥", desc:"刺激的で元気いっぱい！好奇心旺盛なあなたのまわりは友達でいっぱい🥰" },
+  { name:"爽やか軽やかタイプ🌿", desc:"さっぱり爽やかでみんなが「付き合いやすいヤツ～💛」って思ってるよっ" },
+  { name:"和み系さん🍡", desc:"優しく落ち着く雰囲気で「はぁ、和む･･･💞」こっそり頼りにされてる！" },
+  { name:"個性派タイプ✨", desc:"好奇心旺盛で、独特の魅力を持つあなたはミステリアスでほっとけない💞" }
+];
 
-    const results = [
-      {
-        title: "☀️ ぽんぽこ太陽タイプ",
-        text: "明るくてノリがよく、場の空気をぽんっと軽くする存在！"
-      },
-      {
-        title: "☁️ ふわふわ雲タイプ",
-        text: "感受性が高くてやさしい。空想と現実を行き来する人。"
-      },
-      {
-        title: "🔥 こつこつ職人タイプ",
-        text: "静かに努力する縁の下の力持ち。信頼度高め。"
-      },
-      {
-        title: "🍵 ゆるっと達観タイプ",
-        text: "力を抜く天才。無理しないことが最大の武器。"
-      },
-      {
-        title: "🌙 闇深ゆるタイプ",
-        text: "ちょっと斜め、でも本質を突く。共感力おばけ。"
-      }
-    ];
+// シャッフル関数
+function shuffle(array){
+  for(let i=array.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [array[i],array[j]]=[array[j],array[i]];
+  }
+}
+shuffle(questions);
 
-    let index = 0;
-    let score = 0;
-    const app = document.getElementById("app");
+let current = 0;
+let scores = [0,0,0,0,0];
 
-    function showQuestion() {
-      const q = questions[index];
-      const c = choices[index];
+function showQuestion(){
+  const q = questions[current];
+  document.getElementById("question").innerText = q.q;
+  const optionsDiv = document.getElementById("options");
+  optionsDiv.innerHTML = "";
 
-      app.innerHTML = `
-        <h1>🧪 ぽんっと性格診断</h1>
-        <div class="question">${q}</div>
-        <div class="choices">
-          ${c.map((t,i)=>`<button onclick="answer(${i})">${t}</button>`).join("")}
-        </div>
-      `;
-    }
+  const shuffledOptions = [...q.a];
+  shuffle(shuffledOptions);
 
-    function answer(i) {
-      score += i;
-      index++;
-      if (index < questions.length) {
-        showQuestion();
-      } else {
-        loading();
-      }
-    }
+  shuffledOptions.forEach(option => {
+    const indices = [0,1,2,3,4];
+    shuffle(indices);
+    const i = indices[0];
 
-    function loading() {
-      app.innerHTML = `<div class="loading">ぽんっ！</div>`;
-      setTimeout(showResult, 1500);
-    }
+    const emojiPool = ["💖","💓","🌸","⭐","✨","🎵","🍀","🌈"];
+    const emoji = emojiPool[Math.floor(Math.random()*emojiPool.length)];
+    const btn = document.createElement("button");
+    btn.innerText = option + " " + emoji;
 
-    function showResult() {
-      const type = results[score % results.length];
-      app.innerHTML = `
-        <div class="result">
-          <div class="type">${type.title}</div>
-          <p>${type.text}</p>
-          <p>📸 スクショしてシェアしてね♡</p>
-          <a href="index.html" class="back">🏠ぽんっとTOPにもどる？</a>
-        </div>
-      `;
-    }
+    const colors = ["#cbbcff","#b8a0ff","#d1b3ff","#e0ccff","#a890ff"];
+    btn.onclick = () => {
+      scores[i]++;
+      btn.style.background = colors[i];
+      btn.style.color = "#fff";
+      setTimeout(nextQuestion, 200);
+    };
+    optionsDiv.appendChild(btn);
+  });
+}
 
-    showQuestion();
-  </script>
+function nextQuestion(){
+  current++;
+  if(current<questions.length){ showQuestion(); }
+  else{ showResult(); }
+}
+
+function showResult(){
+  document.getElementById("quiz").style.display="none";
+  const resultDiv = document.getElementById("result");
+
+  // ぽんっローディング
+  resultDiv.innerHTML = `<p id="pop">ぽんっ！✨</p>`;
+  const pop = document.getElementById("pop");
+  pop.style.transition = "transform 0.3s";
+  setTimeout(()=>{pop.style.transform="scale(1.5)";},50);
+  setTimeout(()=>{pop.style.transform="scale(1)";},350);
+
+  // ハートや星のふわっと飛ぶ演出
+  const flyingEmojis = ["💖","💓","🌸","⭐","✨","🎵","🍀"];
+  for(let j=0;j<15;j++){
+    const span = document.createElement("span");
+    span.className="flying";
+    span.style.left = Math.random()*80 + "%";
+    span.style.fontSize = (12+Math.random()*16) + "px";
+    span.innerText = flyingEmojis[Math.floor(Math.random()*flyingEmojis.length)];
+    resultDiv.appendChild(span);
+  }
+
+  setTimeout(()=>{
+    const maxIndex = scores.indexOf(Math.max(...scores));
+    resultDiv.innerHTML = `<p>ぽんっ！✨</p><h2>${results[maxIndex].name}</h2><p>${results[maxIndex].desc}</p>`;
+    document.getElementById("back").style.display="inline-block";
+  },1000);
+}
+
+showQuestion();
+</script>
 </body>
 </html>
