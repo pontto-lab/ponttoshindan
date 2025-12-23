@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>ぽんっと性格診断</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="app">
+
+  <h1>ぽんっと性格診断</h1>
+  <p>直感で選んでね</p>
+
+  <!-- 質問 -->
+  <div id="question">
+    <p>休日、急に予定がなくなったら？</p>
+    <button onclick="showResult()">家でのんびり</button>
+    <button onclick="showResult()">とりあえず外へ</button>
+    <button onclick="showResult()">考えてから決める</button>
+  </div>
+
+  <!-- ローディング -->
+  <div id="loading" class="hidden">
+    <p id="loadingText">ぽん…</p>
+  </div>
+
+  <!-- 結果 -->
+  <div id="result" class="hidden">
+    <h2 id="resultTitle"></h2>
+    <p id="resultText"></p>
+    <p class="share">📸 スクショしてシェアしてね♡</p>
+    <button onclick="location.reload()">もう1回やる？</button>
+  </div>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
