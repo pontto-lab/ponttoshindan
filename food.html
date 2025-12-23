@@ -114,7 +114,7 @@ const results = [
   { name:"スパイスショコラさん🍫✨", desc:"個性的でちょっと珍しいあなた！好奇心旺盛です" }
 ];
 
-// 設問シャッフル関数
+// 配列シャッフル関数
 function shuffle(array) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -132,7 +132,13 @@ function showQuestion(){
   document.getElementById("question").innerText = questions[current].q;
   const optionsDiv = document.getElementById("options");
   optionsDiv.innerHTML = "";
-  questions[current].a.forEach((option,i)=>{
+
+  // 選択肢をコピーしてシャッフル
+  const shuffledOptions = [...questions[current].a];
+  shuffle(shuffledOptions);
+
+  shuffledOptions.forEach(option => {
+    const i = questions[current].a.indexOf(option); // 元の配列のインデックス
     const btn = document.createElement("button");
     btn.innerText = option;
     btn.onclick = ()=>{ scores[i]++; nextQuestion(); };
