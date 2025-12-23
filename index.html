@@ -1,141 +1,92 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <title>ぽんっと診断</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ぽんっとラボ｜ゆるかわ性格・心理診断</title>
+
+  <!-- ベースCSS -->
+  <link rel="stylesheet" href="css/style.css" />
+
   <style>
     body {
-      font-family: "Hiragino Maru Gothic ProN", sans-serif;
-      background: #fff0f5;
-      text-align: center;
-      padding: 20px;
       margin: 0;
+      font-family: "Hiragino Maru Gothic ProN", "Noto Sans JP", sans-serif;
+      background: linear-gradient(180deg, #ffe6ef, #fff);
+      color: #444;
     }
+
+    .wrapper {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 24px 16px 40px;
+      text-align: center;
+    }
+
     h1 {
-      color: #ff69b4;
-      font-weight: bold;
-      letter-spacing: 2px;
-      text-shadow: 1px 1px 2px #fff;
+      font-size: 28px;
+      margin-bottom: 8px;
     }
-    .card {
-      background: white;
-      border-radius: 25px;
-      padding: 25px;
-      margin: 20px auto;
-      max-width: 420px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-      transition: transform 0.2s;
+
+    .subtitle {
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 24px;
     }
-    .card:hover {
-      transform: translateY(-3px);
+
+    .menu {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
     }
-    h2 {
-      font-size: 20px;
-      margin-bottom: 20px;
-      color: #ff69b4;
-    }
-    button {
+
+    .menu a {
       display: block;
-      width: 100%;
-      padding: 18px;
-      margin: 10px 0;
-      border: none;
-      border-radius: 35px;
-      background: #ffb6c1;
-      color: white;
-      font-size: 18px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: all 0.2s;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
-    button:hover {
-      background: #ff69b4;
-      transform: scale(1.05);
-    }
-    .back {
-      background: #f3c1d3;
+      padding: 16px;
+      background: #fff;
+      border-radius: 18px;
+      text-decoration: none;
+      color: #333;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.06);
       font-size: 16px;
-      font-weight: bold;
+      transition: transform 0.1s ease;
     }
-    p.result {
-      font-size: 22px;
-      font-weight: bold;
-      color: #ff1493;
-      margin-top: 20px;
+
+    .menu a:active {
+      transform: scale(0.97);
+    }
+
+    footer {
+      margin-top: 32px;
+      font-size: 12px;
+      color: #777;
     }
   </style>
 </head>
+
 <body>
+  <div class="wrapper">
+    <h1>🧪 ぽんっとラボ</h1>
 
-<h1>🌸 ぽんっと診断 🌸</h1>
-<div class="card" id="quiz"></div>
+    <p class="subtitle">
+      ぽんっと答えるだけで、<br>
+      ちょっと楽しくて<br>
+      ちょっと自分がわかる🧠✨
+    </p>
 
-<script>
-const questions = [
-  { q: "朝のあなたは？", a: ["ぼーっと派", "すぐ動く派"] },
-  { q: "買い物は？", a: ["直感で即決", "比較して決める"] },
-  { q: "友達に言われがち？", a: ["マイペース", "しっかり者"] },
-  { q: "旅行の計画は？", a: ["その場の流れ", "事前に計画"] },
-  { q: "トラブル時は？", a: ["なんとかなる", "原因を考える"] },
-  { q: "作業スタイルは？", a: ["気分重視", "効率重視"] },
-  { q: "決断スピードは？", a: ["ゆっくり", "即決"] }
-];
+    <p>気になる診断を選んでね♡</p>
 
-let current = 0;
-let score = 0;
-const quiz = document.getElementById("quiz");
+    <div class="menu">
+      <a href="shindan.html?type=basic">🍀 ぽんっと性格診断（基本）</a>
+      <a href="shindan.html?type=food">🍰 あなたを食べ物に例えたら？</a>
+      <a href="shindan.html?type=cat">🐱 あなたが猫なら何猫？</a>
+      <a href="shindan.html?type=love">💭 恋人にどう思われたい？</a>
+      <a href="shindan.html?type=tired">🌙 今のあなた、お疲れ度診断</a>
+    </div>
 
-function showQuestion() {
-  const q = questions[current];
-  quiz.innerHTML = `
-    <h2>${q.q}</h2>
-    ${q.a.map((text, i) =>
-      `<button onclick="answer(${i})">${text}</button>`
-    ).join("")}
-    ${current > 0 ? `<button class="back" onclick="back()">← Back</button>` : ""}
-  `;
-}
-
-function answer(i) {
-  if (i === 1) score++;
-  current++;
-  if (current < questions.length) {
-    showQuestion();
-  } else {
-    showResult();
-  }
-}
-
-function back() {
-  current--;
-  if (score > 0) score--;
-  showQuestion();
-}
-
-function showResult() {
-  let result =
-    score >= 5 ? "✨しっかり現実派✨" :
-    score >= 3 ? "🌸バランス派🌸" :
-    "☁️ほんわか感覚派☁️";
-
-  quiz.innerHTML = `
-    <h2>あなたの結果は…</h2>
-    <p class="result">${result}</p>
-    <p>📸 スクショしてシェアしてね♡</p>
-    <button onclick="restart()">もう一回診断する</button>
-  `;
-}
-
-function restart() {
-  current = 0;
-  score = 0;
-  showQuestion();
-}
-
-showQuestion();
-</script>
-
+    <footer>
+      📸 結果はスクショしてシェアしてね♡
+    </footer>
+  </div>
 </body>
 </html>
