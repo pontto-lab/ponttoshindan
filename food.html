@@ -4,16 +4,82 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ぽんっと性格診断 | ぽんっとラボ</title>
-<link rel="stylesheet" href="style.css">
 <style>
-.wrapper { max-width:480px; margin:0 auto; padding:24px 16px; text-align:center; }
-h1 { font-size:28px; margin-bottom:12px; }
-.question { font-size:16px; margin:24px 0 12px; }
-.options { display:flex; flex-direction:column; gap:10px; }
-.options button { padding:14px; border-radius:18px; border:none; background:#fff; box-shadow:0 4px 10px rgba(0,0,0,0.06); font-size:16px; cursor:pointer; }
-.options button:active { transform: scale(0.97); }
-#result { font-size:18px; margin-top:32px; }
-#back { margin-top:20px; display:inline-block; padding:10px 18px; border-radius:16px; background:#ffe6ef; text-decoration:none; color:#333; }
+/* 全体ラッパー */
+body {
+  font-family: "Hiragino Kaku Gothic Pro","メイリオ",sans-serif;
+  background:#fff0f6;
+  color:#333;
+  margin:0;
+  padding:0;
+}
+.wrapper { 
+  max-width:480px; 
+  margin:0 auto; 
+  padding:24px 16px; 
+  text-align:center; 
+}
+
+/* タイトル */
+h1 { 
+  font-size:28px; 
+  margin-bottom:12px; 
+  color:#ee6c8d;
+}
+
+/* 質問 */
+.question { 
+  font-size:16px; 
+  margin:24px 0 12px; 
+}
+
+/* 選択肢ボタン */
+.options { 
+  display:flex; 
+  flex-direction:column; 
+  gap:12px; 
+}
+
+.options button {
+  padding:14px;
+  border-radius:20px;       
+  border:none;
+  background: linear-gradient(135deg, #ffdde1, #ee9ca7);
+  color:#fff;               
+  font-size:16px;
+  font-weight:500;
+  box-shadow:0 4px 12px rgba(0,0,0,0.1);
+  cursor:pointer;
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.options button:hover {
+  transform: translateY(-2px);
+  box-shadow:0 6px 14px rgba(0,0,0,0.15);
+}
+
+.options button:active {
+  transform: scale(0.97);
+}
+
+/* 結果 */
+#result { 
+  font-size:18px; 
+  margin-top:32px; 
+  color:#ee6c8d;
+}
+
+/* 戻るボタン */
+#back { 
+  margin-top:20px; 
+  display:inline-block; 
+  padding:10px 18px; 
+  border-radius:16px; 
+  background:#ffe6ef; 
+  text-decoration:none; 
+  color:#ee6c8d;
+  font-weight:500;
+}
 </style>
 </head>
 <body>
