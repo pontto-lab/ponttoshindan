@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ぽんっと性格診断 | ぽんっとラボ</title>
+<link rel="stylesheet" href="style.css">
+<style>
+.wrapper { max-width:480px; margin:0 auto; padding:24px 16px; text-align:center; }
+h1 { font-size:28px; margin-bottom:12px; }
+.question { font-size:16px; margin:24px 0 12px; }
+.options { display:flex; flex-direction:column; gap:10px; }
+.options button { padding:14px; border-radius:18px; border:none; background:#fff; box-shadow:0 4px 10px rgba(0,0,0,0.06); font-size:16px; cursor:pointer; }
+.options button:active { transform: scale(0.97); }
+#result { font-size:18px; margin-top:32px; }
+#back { margin-top:20px; display:inline-block; padding:10px 18px; border-radius:16px; background:#ffe6ef; text-decoration:none; color:#333; }
+</style>
+</head>
+<body>
+<div class="wrapper">
+<h1>🧪 ぽんっと性格診断</h1>
+<div id="quiz">
+<p class="question" id="question"></p>
+<div class="options" id="options"></div>
+</div>
+<div id="result"></div>
+<a href="index.html" id="back" style="display:none;">🏠 ぽんっとTOPにもどる</a>
+</div>
+
+<script>
+const questions = [
+  { q: "今日の気分は、どんなかんじかな〜？", a:["まったりのんびりしたい","ちょっと冒険したい気分","軽やかに過ごしたい気分","ゆったりほっこりしたい","なんだか個性的なことをしたい"] },
+  { q: "おやつを選ぶならどれが気になる？", a:["ふんわり甘いもの","クセのあるものに惹かれる","さっぱりしたものがいいな","ほっとするもの","珍しいものに挑戦したい"] },
+  { q: "友達から見た自分はどんなイメージ？", a:["癒し系っぽい","元気で刺激的","爽やかで軽やか","優しく落ち着く","個性的でちょっと変わってる"] },
+  { q: "飲み物を選ぶならどれ？", a:["甘くてほっとできる","ピリッと刺激的","さっぱりしてるもの","温かくて落ち着くもの","ちょっと珍しいもの"] },
+  { q: "おやつを誰かに渡すならどんなの？", a:["みんながほっこりするもの","元気をくれるもの","すっきり爽やかなもの","和やかで安心できるもの","個性的で面白いもの"] },
+  { q: "休日の過ごし方は？", a:["家でゆったり過ごす","外で体を動かす","散歩や軽い運動でリフレッシュ","カフェでまったり","新しいことに挑戦する"] },
+  { q: "理想のデザートはどんなイメージ？", a:["かわいくて癒される","刺激的で個性を感じる","さっぱり軽やか","和風で落ち着く","珍しくて目新しい"] }
+];
+
+const results = [
+  { name:"いちごケーキさん🍓🎂", desc:"甘くて癒し系のあなた♡のんびり優しい雰囲気です" },
+  { name:"スープカレーさん🍛🔥", desc:"刺激的で冒険好きなあなた！元気で魅力的です" },
+  { name:"レモン冷麺さん🍋🥢", desc:"さっぱり爽やかで軽やかなあなた☆周りも気持ちいい雰囲気" },
+  { name:"みたらし団子さん🍡💛", desc:"ほっこり和み系のあなた☺️優しく落ち着く雰囲気です" },
+  { name:"スパイスショコラさん🍫✨", desc:"個性的でちょっと珍しいあなた！好奇心旺盛です" }
+];
+
+let current = 0;
+let scores = [0,0,0,0,0];
+
+function showQuestion(){
+  document.getElementById("question").innerText = questions[current].q;
+  const optionsDiv = document.getElementById("options");
+  optionsDiv.innerHTML = "";
+  questions[current].a.forEach((option,i)=>{
+    const btn = document.createElement("button");
+    btn.innerText = option;
+    btn.onclick = ()=>{ scores[i]++; nextQuestion(); };
+    optionsDiv.appendChild(btn);
+  });
+}
+
+function nextQuestion(){
+  current++;
+  if(current < questions.length){
+    showQuestion();
+  } else {
+    showResult();
+  }
+}
+
+function showResult(){
+  document.getElementById("quiz").style.display="none";
+  const maxIndex = scores.indexOf(Math.max(...scores));
+  const resultDiv = document.getElementById("result");
+  resultDiv.innerHTML = `<p>ぽんっ！✨</p><h2>${results[maxIndex].name}</h2><p>${results[maxIndex].desc}</p>`;
+  document.getElementById("back").style.display="inline-block";
+}
+
+showQuestion();
+</script>
+</body>
+</html>
