@@ -69,6 +69,16 @@ h1 {
   color:#ee6c8d;
 }
 
+/* ローディング「ぽんっ」用 */
+#pop {
+  font-family: 'Arial Rounded MT Bold', 'ヒラギノ丸ゴ Pro', 'メイリオ', sans-serif;
+  font-weight: bold;
+  font-size: 36px;
+  color: #ee6c8d;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+  display:inline-block;
+}
+
 /* 戻るボタン */
 #back { 
   margin-top:20px; 
@@ -90,11 +100,11 @@ h1 {
 <div class="options" id="options"></div>
 </div>
 <div id="result"></div>
-<a href="index.html" id="back" style="display:none;">🏠 ぽんっとTOPにもどる？</a>
+<a href="index.html" id="back" style="display:none;">🏠 ぽんっとTOPにもどる</a>
 </div>
 
 <script>
-// 質問と選択肢（自然でバレにくい表現に変更）
+// 質問と選択肢（自然でバレにくい表現）
 const questions = [
   { q: "今日の気分は、どんなかんじかな〜？", a:[
       "まったりのんびりしたい",
@@ -108,14 +118,14 @@ const questions = [
       "クセのあるものに惹かれる",
       "さっぱりしたものがいいな",
       "ほっとするもの",
-      "普段は選ばないものにも興味ある"
+      "輸入菓子とかワクワクする"
     ] },
   { q: "友達から見た自分はどんなイメージ？", a:[
       "癒し系っぽい",
       "元気で刺激的",
       "爽やかで軽やか",
       "優しく落ち着く",
-      "ちょっと変わったものにもワクワクする"
+      "個性的だよね"
     ] },
   { q: "飲み物を選ぶならどれ？", a:[
       "甘くてほっとできる",
@@ -129,7 +139,7 @@ const questions = [
       "元気をくれるもの",
       "すっきり爽やかなもの",
       "和やかで安心できるもの",
-      "ちょっと変わったものも楽しめる"
+      "こんなの初めて！"
     ] },
   { q: "休日の過ごし方は？", a:[
       "家でゆったり過ごす",
@@ -143,17 +153,17 @@ const questions = [
       "刺激的で個性を感じる",
       "さっぱり軽やか",
       "和風で落ち着く",
-      "ちょっと変わった見た目のものも試したい"
+      "普段なかなか食べられないようなもの"
     ] }
 ];
 
 // 結果
 const results = [
-  { name:"いちごケーキさん🍓🎂", desc:"甘くて癒し系💓のんびり優しい雰囲気🍓✨" },
-  { name:"スープカレーさん🍛🔥", desc:"刺激的で冒険好きさん⭐元気で魅力的っ🌞" },
-  { name:"レモン冷麺さん🍋🥢", desc:"さっぱり爽やかで軽やかな雰囲気🍋周りも気持ちいい✨" },
-  { name:"みたらし団子さん🍡💛", desc:"ほっこり和み系のあなた☺️優しく落ち着く雰囲気💛" },
-  { name:"スパイスショコラさん🍫✨", desc:"個性的でちょっとミステリアス✨まわりをドキドキさせちゃうっ💓" }
+  { name:"いちごケーキさん🍓🎂", desc:"甘くて癒し系のあなた♡のんびり優しい雰囲気です" },
+  { name:"スープカレーさん🍛🔥", desc:"刺激的で冒険好きなあなた！元気で魅力的です" },
+  { name:"レモン冷麺さん🍋🥢", desc:"さっぱり爽やかで軽やかなあなた☆周りも気持ちいい雰囲気" },
+  { name:"みたらし団子さん🍡💛", desc:"ほっこり和み系のあなた☺️優しく落ち着く雰囲気です" },
+  { name:"スパイスショコラさん🍫✨", desc:"個性的でちょっと珍しいあなた！好奇心旺盛です" }
 ];
 
 // 配列シャッフル関数
@@ -199,10 +209,22 @@ function nextQuestion(){
 
 function showResult(){
   document.getElementById("quiz").style.display="none";
-  const maxIndex = scores.indexOf(Math.max(...scores));
   const resultDiv = document.getElementById("result");
-  resultDiv.innerHTML = `<p>ぽんっ！✨</p><h2>${results[maxIndex].name}</h2><p>${results[maxIndex].desc}</p>`;
-  document.getElementById("back").style.display="inline-block";
+  
+  // ぽんっ！ローディング演出
+  resultDiv.innerHTML = `<p id="pop">ぽんっ！✨</p>`;
+  const pop = document.getElementById("pop");
+  pop.style.transition = "transform 0.3s";
+  
+  setTimeout(() => { pop.style.transform = "scale(1.5)"; }, 50);
+  setTimeout(() => { pop.style.transform = "scale(1)"; }, 350);
+
+  // 1秒後に本来の結果表示
+  setTimeout(() => {
+    const maxIndex = scores.indexOf(Math.max(...scores));
+    resultDiv.innerHTML = `<p>ぽんっ！✨</p><h2>${results[maxIndex].name}</h2><p>${results[maxIndex].desc}</p>`;
+    document.getElementById("back").style.display="inline-block";
+  }, 1000);
 }
 
 showQuestion();
