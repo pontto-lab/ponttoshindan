@@ -1,46 +1,175 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <title>ぽんっと性格診断</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ぽんっと性格診断｜ぽんっとラボ</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: "Hiragino Maru Gothic ProN", "Noto Sans JP", sans-serif;
+      background: linear-gradient(180deg, #ffe6ef, #fff);
+      color: #444;
+    }
+
+    .wrapper {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 24px 16px 40px;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 12px;
+    }
+
+    .question {
+      font-size: 18px;
+      margin: 24px 0 16px;
+    }
+
+    .choices button {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      margin-bottom: 10px;
+      border-radius: 16px;
+      border: none;
+      background: #fff;
+      font-size: 15px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+      cursor: pointer;
+    }
+
+    .choices button:active {
+      transform: scale(0.97);
+    }
+
+    .loading {
+      font-size: 28px;
+      margin-top: 60px;
+      animation: pop 1s infinite;
+    }
+
+    @keyframes pop {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
+
+    .result {
+      margin-top: 40px;
+    }
+
+    .type {
+      font-size: 22px;
+      margin-bottom: 12px;
+    }
+
+    .back {
+      margin-top: 32px;
+      display: inline-block;
+      text-decoration: none;
+      font-size: 14px;
+      color: #ff6fa1;
+    }
+  </style>
 </head>
+
 <body>
+  <div class="wrapper" id="app"></div>
 
-<div id="app">
+  <script>
+    const questions = [
+      "朝起きた瞬間の気分は？",
+      "予定が急にキャンセル！",
+      "友だちからの相談、どうする？",
+      "ひとり時間、何してる？",
+      "ピンチのときの口ぐせは？",
+      "褒められたときの反応は？",
+      "今の気分に一番近いのは？"
+    ];
 
-  <h1>🧪 ぽんっと性格診断</h1>
-  <p>直感で選んでね</p>
+    const choices = [
+      ["よし、今日もいくぞ！","もうちょっと寝たい…","夢の続きを考えてる","特に何も思わない"],
+      ["ラッキー！自由！","まぁ…これはこれで","ちょっとさみしい","え、聞いてない！"],
+      ["とことん聞く","冷静にアドバイス","そっと寄り添う","笑いに変える"],
+      ["SNS・動画","何か作る","ぼーっと","調べもの"],
+      ["なんとかなる！","まぁいっか","どうしよう…","試練だ"],
+      ["もっと言って！","ありがとう","いやいや…","そう？"],
+      ["ふわっと","やる気","ちょっと疲れた","考え中"]
+    ];
 
-  <!-- 質問 -->
-  <div id="question">
-    <p>休日、急に予定がなくなったら？</p>
-    <button onclick="showResult()">家でのんびり</button>
-    <button onclick="showResult()">とりあえず外へ</button>
-    <button onclick="showResult()">考えてから決める</button>
-  </div>
+    const results = [
+      {
+        title: "☀️ ぽんぽこ太陽タイプ",
+        text: "明るくてノリがよく、場の空気をぽんっと軽くする存在！"
+      },
+      {
+        title: "☁️ ふわふわ雲タイプ",
+        text: "感受性が高くてやさしい。空想と現実を行き来する人。"
+      },
+      {
+        title: "🔥 こつこつ職人タイプ",
+        text: "静かに努力する縁の下の力持ち。信頼度高め。"
+      },
+      {
+        title: "🍵 ゆるっと達観タイプ",
+        text: "力を抜く天才。無理しないことが最大の武器。"
+      },
+      {
+        title: "🌙 闇深ゆるタイプ",
+        text: "ちょっと斜め、でも本質を突く。共感力おばけ。"
+      }
+    ];
 
-  <!-- ローディング -->
-  <div id="loading" class="hidden">
-    <p id="loadingText">ぽん…</p>
-  </div>
+    let index = 0;
+    let score = 0;
+    const app = document.getElementById("app");
 
-  <!-- 結果 -->
-  <div id="result" class="hidden">
-    <h2 id="resultTitle"></h2>
-    <p id="resultText"></p>
-    <p class="share">📸 スクショしてシェアしてね♡</p>
-    <button onclick="location.reload()">もう1回やる？</button>
+    function showQuestion() {
+      const q = questions[index];
+      const c = choices[index];
 
-    <!-- 表紙にもどる -->
-    <p class="back">
-      <a href="index.html">🏠ぽんっとTOPへ戻る？</a>
-    </p>
-  </div>
+      app.innerHTML = `
+        <h1>🧪 ぽんっと性格診断</h1>
+        <div class="question">${q}</div>
+        <div class="choices">
+          ${c.map((t,i)=>`<button onclick="answer(${i})">${t}</button>`).join("")}
+        </div>
+      `;
+    }
 
-</div>
+    function answer(i) {
+      score += i;
+      index++;
+      if (index < questions.length) {
+        showQuestion();
+      } else {
+        loading();
+      }
+    }
 
-<script src="script.js"></script>
+    function loading() {
+      app.innerHTML = `<div class="loading">ぽんっ！</div>`;
+      setTimeout(showResult, 1500);
+    }
+
+    function showResult() {
+      const type = results[score % results.length];
+      app.innerHTML = `
+        <div class="result">
+          <div class="type">${type.title}</div>
+          <p>${type.text}</p>
+          <p>📸 スクショしてシェアしてね♡</p>
+          <a href="index.html" class="back">ぽんっとTOPにもどる？</a>
+        </div>
+      `;
+    }
+
+    showQuestion();
+  </script>
 </body>
 </html>
-
