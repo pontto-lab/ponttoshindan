@@ -1,85 +1,82 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ぽんっとラボ｜ゆるかわ性格・心理診断</title>
-
-  <style>
-    body {
-      margin: 0;
-      font-family: "Hiragino Maru Gothic ProN", "Noto Sans JP", sans-serif;
-      background: linear-gradient(180deg, #ffe6ef, #fff);
-      color: #444;
-    }
-
-    .wrapper {
-      max-width: 480px;
-      margin: 0 auto;
-      padding: 24px 16px 40px;
-      text-align: center;
-    }
-
-    h1 {
-      font-size: 28px;
-      margin-bottom: 8px;
-    }
-
-    .subtitle {
-      font-size: 14px;
-      line-height: 1.6;
-      margin-bottom: 24px;
-    }
-
-    .menu {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      margin-top: 20px;
-    }
-
-    .menu a {
-      display: block;
-      padding: 16px;
-      background: #fff;
-      border-radius: 18px;
-      text-decoration: none;
-      color: #333;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.06);
-      font-size: 16px;
-    }
-
-    footer {
-      margin-top: 32px;
-      font-size: 12px;
-      color: #777;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ぽんっと性格診断 | ぽんっとラボ</title>
+<style>
+body { font-family:'ヒラギノ丸ゴ Pro','Arial Rounded MT Bold',sans-serif; background:#fff0f8; margin:0; padding:0; }
+.wrapper { max-width:480px; margin:0 auto; padding:24px 16px; text-align:center; }
+h1 { font-size:28px; margin-bottom:16px; color:#8e44ad; }
+button { padding:14px; border-radius:18px; border:none; background:#d8bfe6; color:#333; font-size:16px; cursor:pointer; box-shadow:0 4px 10px rgba(0,0,0,0.1); margin:6px 0; }
+button:active { transform:scale(0.97); }
+#result { font-size:18px; margin-top:32px; display:none; }
+#loading { font-size:24px; margin-top:32px; display:none; color:#8e44ad; font-weight:bold; }
+#back { margin-top:20px; display:none; padding:10px 18px; border-radius:16px; background:#e0c4f1; text-decoration:none; color:#333; }
+</style>
 </head>
-
 <body>
-  <div class="wrapper">
-    <h1>🧪 ぽんっとラボ</h1>
+<div class="wrapper">
+<h1>🧪 ぽんっと性格診断</h1>
+<div id="quiz">
+  <p id="question"></p>
+  <div id="answers"></div>
+</div>
+<div id="loading">ぽんっ✨</div>
+<div id="result"></div>
+<a href="index.html" id="back">🏠 ぽんっとTOPにもどる</a>
+</div>
 
-    <p class="subtitle">
-      ぽんっと答えるだけで、<br>
-      ちょっと楽しくて<br>
-      ちょっと自分がわかる🧠✨
-    </p>
+<script src="questions.js"></script>
+<script>
+// --- ランダム抽出 & 回答処理 ---
+function shuffle(array){return array.sort(()=>Math.random()-0.5);}
+let quizQuestions = shuffle(questions).slice(0,7);
+let scores = {A:0,B:0,C:0,D:0};
+let current=0;
 
-    <p>気になる診断を選んでね♡</p>
+function showQuestion(){
+  const q = quizQuestions[current];
+  document.getElementById('question').innerText = q.q;
+  const ansDiv = document.getElementById('answers');
+  ansDiv.innerHTML = "";
+  let choices=[];
+  for(let cat in q.a){ choices=choices.concat(q.a[cat]); }
+  choices=shuffle(choices);
+  choices.forEach(text=>{
+    const btn=document.createElement('button');
+    btn.innerText=text;
+    btn.onclick=()=>{ recordAnswer(q,text); };
+    ansDiv.appendChild(btn);
+  });
+}
 
-    <div class="menu">
-      <a href="pontto.html">🧪 ぽんっと性格診断</a>
-      <a href="food.html">🍰 あなたを食べ物に例えたら？</a>
-      <a href="#">🐱 あなたが猫なら何猫？（準備中）</a>
-      <a href="#">💭 恋人にどう思われたい？（準備中）</a>
-      <a href="#">🌙 今のあなた、お疲れ度診断（準備中）</a>
-    </div>
+function recordAnswer(question,text){
+  for(let cat in question.a){ if(question.a[cat].includes(text)){ scores[cat]++; break; } }
+  current++;
+  if(current<quizQuestions.length){ showQuestion(); }
+  else{ showResult(); }
+}
 
-    <footer>
-      📸 結果はスクショしてシェアしてね♡
-    </footer>
-  </div>
+function showResult(){
+  document.getElementById('quiz').style.display="none";
+  document.getElementById('loading').style.display="block";
+  setTimeout(()=>{
+    document.getElementById('loading').style.display="none";
+    const maxCat = Object.keys(scores).reduce((a,b)=>scores[a]>=scores[b]?a:b);
+    let resultText="";
+    if(maxCat=="A") resultText="🐱💖 ふんわり癒し系タイプ！優しく穏やかに過ごすあなた♡";
+    if(maxCat=="B") resultText="🐯🔥 元気で冒険心あるあなた！みんなを引っ張るリーダータイプ✨";
+    if(maxCat=="C") resultText="🦊🌸 爽やか軽やかタイプ！周りも気持ちいい明るい雰囲気☆";
+    if(maxCat=="D") resultText="🐶💛 落ち着き和み系タイプ！安心感ある穏やかなあなた☺️";
+    const resDiv=document.getElementById('result');
+    resDiv.innerHTML=`<h2>${resultText}</h2>`;
+    resDiv.style.display="block";
+    document.getElementById('back').style.display="inline-block";
+  },1200);
+}
+
+showQuestion();
+</script>
 </body>
 </html>
