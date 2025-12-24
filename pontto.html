@@ -2,117 +2,118 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>ぽんっと性格診断</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🧪 ぽんっと性格診断 | ぽんっとラボ</title>
 <style>
-body { font-family: 'Arial Rounded MT Bold', 'Helvetica Rounded', sans-serif; background:#f8f4ff; color:#333; }
+body { font-family:'ヒラギノ丸ゴ Pro','Arial Rounded MT Bold',sans-serif; background:#fff; margin:0; padding:0; text-align:center; }
 .wrapper { max-width:480px; margin:0 auto; padding:24px 16px; text-align:center; }
-h1 { font-size:28px; margin-bottom:12px; }
-#question { font-size:1.2em; margin-bottom:16px; }
-button { font-weight:bold; border-radius:12px; padding:12px 20px; margin:6px 0; border:none; cursor:pointer; background:#cdb8ff; color:#fff; transition:0.2s; }
-button:hover { background:#b49fff; }
-#loading { font-size:2em; text-align:center; display:none; margin-top:30px; }
-#result { display:none; margin-top:24px; }
+h1 { font-size:28px; margin-bottom:12px; color:#8e44ad; }
+.question { font-size:16px; margin:24px 0 12px; }
+.options { display:flex; flex-direction:column; gap:10px; }
+.options button { padding:14px; border-radius:18px; border:none; background:#e3d0f2; box-shadow:0 4px 10px rgba(0,0,0,0.06); font-size:16px; cursor:pointer; transition:0.2s; }
+.options button:hover { transform: scale(1.03); }
+.options button:active { transform: scale(0.97); }
+#result { font-size:18px; margin-top:32px; }
+#back { margin-top:20px; display:inline-block; padding:10px 18px; border-radius:16px; background:#ffe6ef; text-decoration:none; color:#333; }
+#loading { font-size:24px; margin-top:32px; color:#8e44ad; font-weight:bold; display:none; }
 </style>
 </head>
 <body>
 <div class="wrapper">
 <h1>🧪 ぽんっと性格診断</h1>
+
 <div id="quiz">
-  <div id="question"></div>
-  <div id="answers"></div>
+<p class="question" id="question"></p>
+<div class="options" id="options"></div>
 </div>
-<div id="loading">ぽんっ✨</div>
+
+<div id="loading">ぽんっ…✨</div>
 <div id="result"></div>
+<a href="index.html" id="back" style="display:none;">🏠 ぽんっとTOPにもどる</a>
 </div>
 
 <script>
-// --- 設問20問×カテゴリA〜D 各5個サンプル（前半10問） ---
+// 設問20個のサンプル（ランダム7問表示）
 const questions = [
-{q:"友達から見た自分は？", a:{A:["癒し系で優しい雰囲気","ほっこり和ませるタイプ","みんなの癒し","のんびり穏やか","ふんわり優しい印象"], B:["元気で刺激的なタイプ","パワフルでアクティブ","みんなを引っ張る感じ","冒険心ある雰囲気","目立つタイプ"], C:["爽やかで軽やか","明るくさっぱりした印象","軽快で快活","周りも気持ちいいタイプ","気分が軽やかに見える"], D:["落ち着いていて安心感がある","優しく落ち着く雰囲気","和やかで安心できる感じ","しっとり穏やかタイプ","穏やかで落ち着いた印象"]}},
-{q:"今日の気分は？", a:{A:["ほっこりリラックス","ゆったり気分","心落ち着く","まったり幸せ","ふんわり気分"], B:["ワクワク元気","刺激的で楽しい","冒険心満載","アクティブな気分","テンション上がる"], C:["爽やか軽やか","明るく快適","リフレッシュ気分","軽快で気持ちいい","さっぱり楽しい"], D:["落ち着いて安定","和やかでほっとする","穏やかで安心","静かにゆったり","心穏やか"]}},
-{q:"おやつを選ぶなら？", a:{A:["ふんわり甘いもの","優しい味のスイーツ","癒されるおやつ","まったり甘いもの","和む甘さのもの"], B:["クセのあるものに惹かれる","スパイシー系","冒険心あるおやつ","刺激的なおやつ","変わり種スイーツ"], C:["さっぱりしたものがいいな","フルーツ系","軽やかで爽やか","シャキッとする味","すっきり甘いもの"], D:["ほっとするもの","和菓子系","温かみのある味","落ち着く甘さ","しっとり和むおやつ"]}},
-{q:"飲み物を選ぶなら？", a:{A:["甘くてほっとできる","カフェラテ系","やさしい味わい","癒される甘さ","まったり甘い飲み物"], B:["ピリッと刺激的","コーヒー強め","エナジードリンク","冒険気分の飲み物","スパイシー系ドリンク"], C:["さっぱりしてるもの","フルーツジュース","軽やかで爽やか","炭酸系ですっきり","清涼系ドリンク"], D:["温かくて落ち着くもの","お茶系","和の味わい","ほっと一息つける","まったり温かい"]}},
-{q:"おやつを誰かに渡すなら？", a:{A:["みんながほっこりするもの","癒されるお菓子","優しい味のスイーツ","まったり甘いもの","温かみのあるおやつ"], B:["元気をくれるもの","刺激的な味のもの","冒険スイーツ","スパイシー系おやつ","ちょっと変わったもの"], C:["すっきり爽やかなもの","フルーツ系","軽やかで爽快","さっぱり甘いもの","明るい印象のお菓子"], D:["和やかで安心できるもの","和菓子系","落ち着く甘さ","温かみのあるお菓子","しっとり優しい味"]}},
-{q:"休日の過ごし方は？", a:{A:["家でゆったり過ごす","まったり読書","おうちでゴロゴロ","癒しの時間","ほっとリラックス"], B:["外で体を動かす","アクティブに遊ぶ","冒険的な活動","スポーツ系","刺激的な外出"], C:["散歩や軽い運動でリフレッシュ","軽めの運動","爽やかな気分","公園で散策","気分転換に歩く"], D:["カフェでまったり","温かい飲み物とともに","落ち着いた空間で過ごす","読書やのんびり","ゆったり過ごす"]}},
-{q:"理想のデザートは？", a:{A:["かわいくて癒される","ふんわり甘いもの","優しい味わい","まったり甘い","癒し系デザート"], B:["刺激的で個性を感じる","スパイシー系","冒険心ある味","変わり種デザート","刺激的スイーツ"], C:["さっぱり軽やか","フルーツ系","爽快感あるもの","軽い食感","さっぱり甘い"], D:["和風で落ち着く","和菓子系","しっとり優しい","ほっとする味","落ち着く甘さ"]}},
-{q:"朝起きたらまず何する？", a:{A:["ゆっくりベッドでまったり","瞑想や深呼吸","温かい飲み物を楽しむ","軽くストレッチ","ふんわり目覚める"], B:["運動やランニング","冒険的に外出","テンション上げる音楽","積極的行動","元気にスタート"], C:["爽やかに水分補給","朝の散歩","軽く体を動かす","フルーツでさっぱり","気分軽やか"], D:["静かにニュースや本を読む","落ち着いた朝食","和の習慣","ゆったり支度","安心感ある朝"]}},
-{q:"週末はどんな服装？", a:{A:["ふんわり可愛いコーデ","リラックス重視","優しい色合い","柔らかい雰囲気","癒されカラー"], B:["派手め・刺激的","アクティブ重視","冒険的コーデ","目立つ色","元気カラー"], C:["爽やか・軽やか","清潔感ある","軽快な服装","明るい雰囲気","すっきりカラー"], D:["落ち着いた色合い","和風テイスト","優雅で安心感ある服","ゆったりコーデ","しっとりカラー"]}}
+  { q: "今日の気分は、どんなかんじ？", a:["まったりのんびり","ちょっと冒険したい","軽やかに過ごしたい","ゆったりほっこり"] },
+  { q: "おやつを選ぶなら？", a:["ふんわり甘いもの","クセのあるものに惹かれる","さっぱりしたもの","ほっとするもの"] },
+  { q: "友達から見た自分は？", a:["癒し系っぽい","元気で刺激的","爽やかで軽やか","優しく落ち着く"] },
+  { q: "飲み物を選ぶなら？", a:["甘くてほっとできる","ピリッと刺激的","さっぱりしてるもの","温かくて落ち着くもの"] },
+  { q: "おやつを誰かに渡すなら？", a:["みんながほっこりするもの","元気をくれるもの","すっきり爽やかなもの","個性的で面白いもの"] },
+  { q: "休日の過ごし方は？", a:["家でゆったり過ごす","外で体を動かす","散歩や軽い運動でリフレッシュ","カフェでまったり"] },
+  { q: "理想のデザートは？", a:["かわいくて癒される","刺激的で個性を感じる","さっぱり軽やか","和風で落ち着く"] },
+  { q: "最近気になることは？", a:["ゆったりと楽しむ","ちょっと冒険心","軽やかにチャレンジ","和やかに落ち着く"] }
 ];
 
-// --- ここまで前半10問 ---
-<script>
-// --- 後半10問（設問11〜20） ---
-questions.push(
-{q:"友達と会うときの自分は？", a:{A:["のんびり和む感じ","癒し系でふんわり","穏やかに接する","優しい印象","まったり穏やか"], B:["元気いっぱい","テンション高め","冒険心ある行動","目立つタイプ","盛り上げる"], C:["軽やかに爽やか","明るく快活","周りも楽しい雰囲気","爽快感ある","さっぱり"], D:["落ち着いて話す","安心感ある雰囲気","穏やかに聞く","優しく接する","しっとり落ち着く"]}},
-{q:"週末の過ごし方は？", a:{A:["おうちでゆったり","まったり読書","癒しの時間","ふんわり過ごす","ほっこり"], B:["外でアクティブ","冒険的に遊ぶ","刺激的な体験","元気に外出","活発"], C:["散歩や軽い運動","爽快感あるリフレッシュ","気分軽やか","さっぱり気分","軽め"], D:["カフェでまったり","和やかで落ち着く","ゆったりした時間","読書や休息","安心感"]}},
-{q:"好きな色は？", a:{A:["パステル系","優しい色","ふんわりカラー","癒し色","まったり色"], B:["ビビッド系","刺激的な色","冒険的カラー","目立つ色","元気色"], C:["爽やか系","明るめカラー","軽やか色","さっぱり色","清涼感ある"], D:["落ち着いた色","和風カラー","安心感ある色","しっとり色","穏やか色"]}},
-{q:"好きな音楽は？", a:{A:["癒し系","ゆったり系","穏やかメロディ","まったり音楽","ほっとする"], B:["アップテンポ","刺激的","冒険心ある曲","元気になる","ノリノリ"], C:["軽快で爽やか","明るく快適","爽快感ある曲","さっぱり楽しい","気分軽やか"], D:["落ち着いた曲","和の雰囲気","ゆったりした音楽","穏やかメロディ","安心感"]}},
-{q:"お風呂上がりにすることは？", a:{A:["ゆっくりタオルで包まれる","癒される時間","リラックスする","まったり過ごす","ふんわり"], B:["元気にストレッチ","冒険的に動く","テンション上げる","活発に体を動かす","楽しい"], C:["爽やかにケア","軽く体をほぐす","さっぱり感を楽しむ","軽快に行動","爽快感"], D:["落ち着いて整える","和やかに過ごす","安心感ある時間","穏やかに過ごす","まったり"]}},
-{q:"好きな映画は？", a:{A:["癒し系","心温まるストーリー","ふんわり優しい","まったりほっこり","穏やか系"], B:["刺激的なアクション","冒険系","元気が出る","テンション上がる","楽しい"], C:["爽やか青春系","明るく軽やか","軽快で気持ちいい","さっぱり楽しい","快活"], D:["落ち着いたドラマ","和風ストーリー","穏やかで安心","しっとり心落ち着く","優しい"]}},
-{q:"行きたい旅行先は？", a:{A:["癒しの温泉地","まったりリゾート","ふんわり自然","のんびり過ごす","ほっこり"], B:["アクティブスポット","冒険系旅行","刺激的な場所","元気に活動","楽しい体験"], C:["爽快な海辺や山","軽快に楽しめる","明るく快適","さっぱり観光","リフレッシュ"], D:["落ち着いた街並み","和の風情","穏やかに楽しむ","安心できる場所","ゆったり"]}},
-{q:"朝ごはんは？", a:{A:["ゆったり和風","まったり味わう","癒されるメニュー","優しい味","ふんわり"], B:["冒険的メニュー","元気が出るもの","刺激的な味","活力満点","楽しい"], C:["さっぱり軽め","フルーツやサラダ","爽快感ある","軽快に食べる","快適"], D:["落ち着く定番メニュー","和風で安心","穏やかでしっとり","安心感","ゆったり"]}},
-{q:"夜寝る前にすることは？", a:{A:["読書やまったりタイム","癒し系","ふんわり穏やか","心落ち着く","ほっこり"], B:["軽い運動や計画立て","元気が出る","刺激的","冒険心ある","テンション上げる"], C:["軽くストレッチやリラックス","爽快感ある","軽快に体をほぐす","さっぱり","快適"], D:["瞑想や温かい飲み物","落ち着く時間","安心感ある","穏やかに眠る","まったり"]}},
-{q:"友達と遊ぶなら？", a:{A:["まったりカフェ","ふんわり癒し","穏やかに過ごす","優しい雰囲気","ほっこり"], B:["アクティブスポーツ","刺激的","元気いっぱい","冒険的","楽しい"], C:["散歩や軽いアクティビティ","爽快感ある","さっぱり楽しい","快適","軽快"], D:["ゆったり映画鑑賞","落ち着いた時間","和やかに楽しむ","安心感ある","穏やか"]}}
-);
+// 結果サンプル（性格向き）
+const results = [
+  { name:"のんびり癒し系💛", desc:"落ち着いていて優しい雰囲気。周りもつい和むあなたです" },
+  { name:"元気で冒険好き🔥", desc:"好奇心旺盛で行動力あり！みんなを引っ張る魅力があります" },
+  { name:"爽やか軽やか🌿", desc:"周りも心地よくなる、明るく軽やかな性格です" },
+  { name:"穏やか安心タイプ🍀", desc:"優しく落ち着いた雰囲気。みんなから信頼される存在です" },
+  { name:"社交的スマイル😊", desc:"人と関わるのが得意で、笑顔が周りを明るくします" },
+  { name:"思慮深いタイプ🧠", desc:"じっくり考える慎重派。頼れる雰囲気があります" }
+];
 
-// --- 設問ランダム7問選択 ---
-function shuffle(array){return array.sort(()=>Math.random()-0.5);}
-let quizQuestions = shuffle(questions).slice(0,7);
-
-// --- 回答集計用 ---
-let scores = {A:0,B:0,C:0,D:0};
 let current = 0;
+let scores = Array(results.length).fill(0);
 
-// --- 回答表示 ---
-function showQuestion(){
-  const q = quizQuestions[current];
-  document.getElementById('question').innerText = q.q;
-  const ansDiv = document.getElementById('answers');
-  ansDiv.innerHTML = "";
-  // 選択肢をカテゴリごとにまとめてランダム
-  let choices = [];
-  for(let cat in q.a){
-    choices = choices.concat(q.a[cat]);
+// ランダムで設問を7問選ぶ
+let quizOrder = [];
+while(quizOrder.length < 7){
+  let r = Math.floor(Math.random()*questions.length);
+  if(!quizOrder.includes(r)) quizOrder.push(r);
+}
+
+// 配列シャッフル関数
+function shuffleArray(arr){
+  for(let i=arr.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]] = [arr[j],arr[i]];
   }
-  choices = shuffle(choices);
-  choices.forEach(text=>{
-    const btn = document.createElement('button');
-    btn.innerText = text;
-    btn.onclick = ()=>{ recordAnswer(q,text); };
-    ansDiv.appendChild(btn);
+  return arr;
+}
+
+function showQuestion(){
+  const q = questions[quizOrder[current]];
+  document.getElementById("question").innerText = q.q;
+
+  const optionsDiv = document.getElementById("options");
+  optionsDiv.innerHTML = "";
+
+  let shuffledOptions = shuffleArray([...q.a]);
+  shuffledOptions.forEach((option,i)=>{
+    const btn = document.createElement("button");
+    btn.innerText = option;
+    btn.onclick = ()=>{ scores[i % results.length]++; nextQuestion(); }; // 結果に紐付け
+    optionsDiv.appendChild(btn);
   });
 }
 
-// --- 回答記録 ---
-function recordAnswer(question,text){
-  // カテゴリ判定
-  for(let cat in question.a){
-    if(question.a[cat].includes(text)){ scores[cat]++; break; }
-  }
+function nextQuestion(){
   current++;
-  if(current<quizQuestions.length){ showQuestion(); }
-  else{ showResult(); }
+  if(current < quizOrder.length){
+    showQuestion();
+  } else {
+    showLoading();
+  }
 }
 
-// --- 結果表示 ---
+function showLoading(){
+  document.getElementById("quiz").style.display="none";
+  const loading = document.getElementById("loading");
+  loading.style.display="block";
+  setTimeout(showResult,1000);
+}
+
 function showResult(){
-  document.getElementById('quiz').style.display="none";
-  document.getElementById('loading').style.display="block";
-  setTimeout(()=>{
-    document.getElementById('loading').style.display="none";
-    const maxCat = Object.keys(scores).reduce((a,b)=>scores[a]>=scores[b]?a:b);
-    let resultText = "";
-    if(maxCat=="A") resultText="🐱💖 ふんわり癒し系タイプ！優しく穏やかに過ごすあなた♡";
-    if(maxCat=="B") resultText="🐯🔥 元気で冒険心あるあなた！みんなを引っ張るリーダータイプ✨";
-    if(maxCat=="C") resultText="🦊🌸 爽やか軽やかタイプ！周りも気持ちいい明るい雰囲気☆";
-    if(maxCat=="D") resultText="🐶💛 落ち着き和み系タイプ！安心感ある穏やかなあなた☺️";
-    const resDiv=document.getElementById('result');
-    resDiv.innerHTML=`<h2>${resultText}</h2>`;
-    resDiv.style.display="block";
-  },1200);
+  document.getElementById("loading").style.display="none";
+  const maxIndex = scores.indexOf(Math.max(...scores));
+  const resultDiv = document.getElementById("result");
+  resultDiv.innerHTML = `<p>ぽんっ！✨</p><h2>${results[maxIndex].name}</h2><p>${results[maxIndex].desc}</p>`;
+  document.getElementById("back").style.display="inline-block";
 }
 
-// --- 初回表示 ---
 showQuestion();
 </script>
 </body>
