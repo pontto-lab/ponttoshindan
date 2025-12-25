@@ -5,64 +5,64 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ぽんっとIQ診断 - ぽんっとラボ</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        .ad-box { background: #eee; padding: 20px; border: 2px dashed #999; margin: 20px 0; border-radius: 10px; }
+    </style>
 </head>
 <body>
     <div class="container">
         <h1>🧠 ぽんっとIQ診断</h1>
         
-        <p id="question-number">第 1 問</p>
-
-        <div id="quiz-area">
+        <div id="game-screen">
+            <p id="question-number">第 1 問</p>
+            <div id="quiz-area"></div>
+            <h2 id="result-message" style="margin-top: 20px; color: #ff69b2; min-height: 1.5em;"></h2>
+            <div id="next-area" style="display: none;">
+                <button onclick="nextQuestion()" class="button">つぎの問題へ 👉</button>
             </div>
-
-        <h2 id="result-message" style="margin-top: 20px; color: #ff69b2; min-height: 1.5em;"></h2>
-        
-        <div id="next-area" style="display: none;">
-            <button onclick="nextQuestion()" class="button">つぎの問題へ 👉</button>
         </div>
 
-        <br>
-        <a href="index.html" class="button">ホームへ戻る</a>
+        <div id="ad-screen" style="display: none;">
+            <h2>採点完了！✨</h2>
+            <p>結果を見る準備はいいかな？</p>
+            <div class="ad-box">
+                <p>【PR】おすすめゲームアプリ！</p>
+                <button class="button" onclick="showFinalResult()">CMを見て結果を確認する</button>
+            </div>
+        </div>
+
+        <div id="result-screen" style="display: none;">
+            <h2 style="color: #ff1493;">診断結果発表！</h2>
+            <div id="iq-display" style="font-size: 32px; font-weight: bold; margin: 20px 0; background: white; padding: 20px; border-radius: 20px;"></div>
+            <p id="iq-comment" style="font-size: 20px; color: #555;"></p>
+            <br>
+            <a href="index.html" class="button">ホームへ戻る</a>
+        </div>
     </div>
 
     <script>
-        let currentStep = 1; // 今何問目か
-        let score = 0;      // 正解数
+        let currentStep = 1;
+        let score = 0;
+        const totalQuestions = 10; // 最終的に10問にする
 
-        // 問題のデータ
         const questions = {
-            1: {
-                img: "question1.png",
-                choices: [
-                    { img: "choice-a.png", isCorrect: false },
-                    { img: "choice-b.png", isCorrect: true },
-                    { img: "choice-c.png", isCorrect: false }
-                ]
-            },
-            2: {
-                img: "question2.png",
-                choices: [
-                    { img: "choice-d.png", isCorrect: false },
-                    { img: "choice-f.png", isCorrect: true }, // 黄色+青=緑だからFが正解かな？
-                    { img: "choice-e.png", isCorrect: false }
-                ]
-            }
+            1: { img: "question1.png", choices: [{img:"choice-a.png", ok:false}, {img:"choice-b.png", ok:true}, {img:"choice-c.png", ok:false}] },
+            2: { img: "question2.png", choices: [{img:"choice-d.png", ok:false}, {img:"choice-f.png", ok:true}, {img:"choice-e.png", ok:false}] },
+            // ここに3〜10問目をどんどん足していけるよ！
         };
 
         function showQuestion() {
             const q = questions[currentStep];
-            document.getElementById('question-number').innerText = "第 " + currentStep + " 問";
+            if (!q) { showAd(); return; } // 問題がなければCM画面へ
+
+            document.getElementById('question-number').innerText = "第 " + currentStep + " 問 / " + totalQuestions;
             document.getElementById('result-message').innerText = "";
             document.getElementById('next-area').style.display = "none";
 
             let html = `<img src="${q.img}" style="width: 100%; max-width: 400px; border-radius: 15px; margin-bottom: 20px;">`;
             html += `<div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">`;
-            
-            q.choices.forEach(choice => {
-                html += `
-                    <button onclick="check(${choice.isCorrect})" class="button">
-                        <img src="${choice.img}" width="80">
-                    </button>`;
+            q.choices.forEach(c => {
+                html += `<button onclick="check(${c.ok})" class="button"><img src="${c.img}" width="80"></button>`;
             });
             html += `</div>`;
             document.getElementById('quiz-area').innerHTML = html;
@@ -70,28 +70,44 @@
 
         function check(isCorrect) {
             const msg = document.getElementById('result-message');
-            if (isCorrect) {
-                msg.innerText = "せいかい！天才✨";
-                score++;
-            } else {
-                msg.innerText = "おしい！次いってみよう💓";
-            }
+            if (isCorrect) { msg.innerText = "せいかい！天才✨"; score++; }
+            else { msg.innerText = "おしい！次いってみよう💓"; }
             document.getElementById('next-area').style.display = "block";
         }
 
         function nextQuestion() {
             currentStep++;
-            if (questions[currentStep]) {
-                showQuestion();
+            showQuestion();
+        }
+
+        function showAd() {
+            document.getElementById('game-screen').style.display = "none";
+            document.getElementById('ad-screen').style.display = "block";
+        }
+
+        function showFinalResult() {
+            document.getElementById('ad-screen').style.display = "none";
+            document.getElementById('result-screen').style.display = "block";
+            
+            const iqDisp = document.getElementById('iq-display');
+            const iqComm = document.getElementById('iq-comment');
+            
+            // トモちゃん考案のランク判定！
+            if (score === totalQuestions) {
+                iqDisp.innerText = "IQ 140";
+                iqComm.innerText = "超天才！現代のアインシュタイン！✨";
+            } else if (score >= 8) {
+                iqDisp.innerText = "IQ 120";
+                iqComm.innerText = "天才！さては神童と呼ばれてた？👀";
+            } else if (score >= 5) {
+                iqDisp.innerText = "IQ 100";
+                iqComm.innerText = "やるな～！できる子って言われるでしょ？💪";
             } else {
-                // 10問終わった時の処理（今は仮）
-                document.getElementById('quiz-area').innerHTML = "<h2>全問終了！お疲れ様✨</h2>";
-                document.getElementById('result-message').innerText = "あなたの正解数は " + score + "問 でした！";
-                document.getElementById('next-area').style.display = "none";
+                iqDisp.innerText = "IQ 80";
+                iqComm.innerText = "君のペースが心地いいって言われない？💓";
             }
         }
 
-        // 最初に1問目を出す
         showQuestion();
     </script>
 </body>
