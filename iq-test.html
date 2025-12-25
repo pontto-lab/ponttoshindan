@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>ぽんっとIQ診断</title>
+  <style>
+    /* ここで見た目を可愛くしてるよ */
+    body { background-color: #fff0f5; text-align: center; font-family: sans-serif; }
+    .box { background: white; margin: 20px auto; padding: 20px; border-radius: 20px; max-width: 500px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    .answer-btn { background: none; border: 2px solid #ffb6c1; border-radius: 10px; cursor: pointer; margin: 5px; transition: 0.3s; }
+    .answer-btn:hover { background: #ffe4e1; }
+    img { max-width: 100%; height: auto; }
+  </style>
+</head>
+<body>
+
+  <h1>🧪 ぽんっとIQ診断</h1>
+
+  <div class="box">
+    <p>Q1. 「？」に入るのはどれかな？</p>
+    
+    <img src="mondai.png" alt="問題の図形">
+
+    <div style="margin-top: 20px;">
+      <button class="answer-btn" onclick="kotae('正解！トモちゃん天才✨')">
+        <img src="seikai.png" width="80" alt="答え1">
+      </button>
+
+      <button class="answer-btn" onclick="kotae('おしい！もう一度見てみて💓')">
+        <img src="hazure.png" width="80" alt="答え2">
+      </button>
+    </div>
+
+    <h2 id="kekka" style="color: #ff69b2; margin-top: 20px;"></h2>
+  </div>
+
+  <script>
+    // ボタンを押した時に動く魔法だよ
+    function kotae(message) {
+      document.getElementById('kekka').innerText = message;
+    }
+  </script>
+
+</body>
+</html>
