@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ぽんっとIQ診断 - ぽんっとラボ</title>
-    <link rel="stylesheet" href="style.css"> </head>
+    <link rel="stylesheet" href="style.css">
+</head>
 <body>
     <div class="container">
         <h1>🧠 ぽんっとIQ診断</h1>
@@ -14,17 +15,24 @@
             
             <img src="question1.png" alt="問題" style="width: 100%; max-width: 400px; border-radius: 15px; margin-bottom: 20px;">
 
-            <div class="choices" style="display: flex; justify-content: center; gap: 15px;">
+            <div class="choices" style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+                
+                <button onclick="check(false)" class="button">
+                    <img src="choice-a.png" alt="ハズレ候補A" width="80">
+                </button>
+
                 <button onclick="check(true)" class="button">
-                    <img src="choice-b.png" alt="正解候補" width="80">
+                    <img src="choice-b.png" alt="正解候補B" width="80">
                 </button>
 
                 <button onclick="check(false)" class="button">
-                    ❓ </button>
+                    <img src="choice-c.png" alt="ハズレ候補C" width="80">
+                </button>
+
             </div>
         </div>
 
-        <h2 id="result-message" style="margin-top: 30px; color: #ff69b2;"></h2>
+        <h2 id="result-message" style="margin-top: 30px; color: #ff69b2; min-height: 1.5em;"></h2>
         
         <br>
         <a href="index.html" class="button">ホームへ戻る</a>
