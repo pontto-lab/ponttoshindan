@@ -50,7 +50,15 @@
         const questions = {
             1: { img: "question1.png", choices: [{img:"choice-a.png", ok:false}, {img:"choice-b.png", ok:true}, {img:"choice-c.png", ok:false}] },
             2: { img: "question2.png", choices: [{img:"choice-d.png", ok:false}, {img:"choice-f.png", ok:true}, {img:"choice-e.png", ok:false}] },
-            // ここに3問目以降を追加してね！
+            3: { 
+                img: "question3.png", 
+                choices: [
+                    {img:"choice-g.png", ok:true},  // これが正解！
+                    {img:"choice-h.png", ok:false}, 
+                    {img:"choice-i.png", ok:false}
+                ] 
+            },
+            // 4問目以降も同じように足せるよ！
         };
 
         function showQuestion() {
