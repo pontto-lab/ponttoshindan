@@ -1,45 +1,44 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <title>ぽんっとIQ診断</title>
-  <style>
-    /* ここで見た目を可愛くしてるよ */
-    body { background-color: #fff0f5; text-align: center; font-family: sans-serif; }
-    .box { background: white; margin: 20px auto; padding: 20px; border-radius: 20px; max-width: 500px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-    .answer-btn { background: none; border: 2px solid #ffb6c1; border-radius: 10px; cursor: pointer; margin: 5px; transition: 0.3s; }
-    .answer-btn:hover { background: #ffe4e1; }
-    img { max-width: 100%; height: auto; }
-  </style>
-</head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ぽんっとIQ診断 - ぽんっとラボ</title>
+    <link rel="stylesheet" href="style.css"> </head>
 <body>
+    <div class="container">
+        <h1>🧠 ぽんっとIQ診断</h1>
+        
+        <div id="quiz-area">
+            <p>Q1. 「？」に入る図形はどれかな？</p>
+            
+            <img src="question1.png" alt="問題" style="width: 100%; max-width: 400px; border-radius: 15px; margin-bottom: 20px;">
 
-  <h1>🧪 ぽんっとIQ診断</h1>
+            <div class="choices" style="display: flex; justify-content: center; gap: 15px;">
+                <button onclick="check(true)" class="button">
+                    <img src="choice-b.png" alt="正解候補" width="80">
+                </button>
 
-  <div class="box">
-    <p>Q1. 「？」に入るのはどれかな？</p>
-    
-    <img src="mondai.png" alt="問題の図形">
+                <button onclick="check(false)" class="button">
+                    ❓ </button>
+            </div>
+        </div>
 
-    <div style="margin-top: 20px;">
-      <button class="answer-btn" onclick="kotae('正解！トモちゃん天才✨')">
-        <img src="seikai.png" width="80" alt="答え1">
-      </button>
-
-      <button class="answer-btn" onclick="kotae('おしい！もう一度見てみて💓')">
-        <img src="hazure.png" width="80" alt="答え2">
-      </button>
+        <h2 id="result-message" style="margin-top: 30px; color: #ff69b2;"></h2>
+        
+        <br>
+        <a href="index.html" class="button">ホームへ戻る</a>
     </div>
 
-    <h2 id="kekka" style="color: #ff69b2; margin-top: 20px;"></h2>
-  </div>
-
-  <script>
-    // ボタンを押した時に動く魔法だよ
-    function kotae(message) {
-      document.getElementById('kekka').innerText = message;
-    }
-  </script>
-
+    <script>
+        function check(isCorrect) {
+            const msg = document.getElementById('result-message');
+            if (isCorrect) {
+                msg.innerText = "せいかい！すっごいぞ、天才だね！✨";
+            } else {
+                msg.innerText = "おしい！もういっかい見てみて💓";
+            }
+        }
+    </script>
 </body>
 </html>
