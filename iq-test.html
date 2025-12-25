@@ -7,8 +7,6 @@
     <link rel="stylesheet" href="style.css">
     <style>
         .ad-box { background: #fff0f5; padding: 30px; border: 3px dashed #ffb6c1; margin: 20px 0; border-radius: 20px; }
-        /* アニメーションでパッと切り替わる感じを出すよ */
-        #quiz-area { transition: 0.3s; }
     </style>
 </head>
 <body>
@@ -18,15 +16,12 @@
         <div id="game-screen">
             <p id="question-number" style="font-weight: bold; color: #ff69b2;">第 1 問 / 10</p>
             <div id="quiz-area"></div>
-            </div>
+        </div>
 
         <div id="ad-screen" style="display: none;">
             <h2 style="color: #ff1493;">採点が終わったよ！✨</h2>
-            <p>トモちゃんのIQ、どれくらいかな？</p>
             <div class="ad-box">
-                <p style="font-size: 14px; color: #999;">【PR】おすすめの診断アプリ</p>
-                <p>面白いゲームを見つけよう！</p>
-                <br>
+                <p style="font-size: 14px; color: #999;">【PR】結果を見る準備はいい？</p>
                 <button class="button" onclick="showFinalResult()" style="font-size: 20px; padding: 15px 30px;">
                     💓 結果を見る 💓
                 </button>
@@ -50,33 +45,31 @@
         const questions = {
             1: { img: "question1.png", choices: [{img:"choice-a.png", ok:false}, {img:"choice-b.png", ok:true}, {img:"choice-c.png", ok:false}] },
             2: { img: "question2.png", choices: [{img:"choice-d.png", ok:false}, {img:"choice-f.png", ok:true}, {img:"choice-e.png", ok:false}] },
-            3: { 
-                img: "question3.png", 
-                choices: [
-                    {img:"choice-g.png", ok:true},  // これが正解！
-                    {img:"choice-h.png", ok:false}, 
-                    {img:"choice-i.png", ok:false}
-                ] 
-            },
-            // 4問目以降も同じように足せるよ！
+            3: { img: "question3.png", choices: [{img:"choice-g.png", ok:true}, {img:"choice-h.png", ok:false}, {img:"choice-i.png", ok:false}] },
         };
+
+        // シャッフル機能
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const r = Math.floor(Math.random() * (i + 1));
+                [array[i], array[r]] = [array[r], array[i]];
+            }
+            return array;
+        }
 
         function showQuestion() {
             const q = questions[currentStep];
-            
-            // 問題がもうない（または10問終わった）場合は採点画面へ
-            if (!q || currentStep > totalQuestions) { 
-                showAd(); 
-                return; 
-            }
+            if (!q || currentStep > totalQuestions) { showAd(); return; }
 
             document.getElementById('question-number').innerText = `第 ${currentStep} 問 / ${totalQuestions}`;
+
+            // ここでシャッフル！
+            const shuffledChoices = shuffle([...q.choices]);
 
             let html = `<img src="${q.img}" style="width: 100%; max-width: 400px; border-radius: 15px; margin-bottom: 25px; border: 3px solid #eee;">`;
             html += `<div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">`;
             
-            q.choices.forEach(c => {
-                // ボタンを押したらすぐ nextQuestion(判定) を呼ぶようにしたよ！
+            shuffledChoices.forEach(c => {
                 html += `
                     <button onclick="nextQuestion(${c.ok})" class="button" style="padding: 10px;">
                         <img src="${c.img}" width="90">
@@ -87,16 +80,9 @@
         }
 
         function nextQuestion(isCorrect) {
-            // スコアを加算
             if (isCorrect) { score++; }
-
-            // 次のステップへ
             currentStep++;
-
-            // 0.2秒だけ待ってから次の問題へ（押した感覚を出すため）
-            setTimeout(() => {
-                showQuestion();
-            }, 200);
+            setTimeout(() => { showQuestion(); }, 200);
         }
 
         function showAd() {
@@ -107,23 +93,13 @@
         function showFinalResult() {
             document.getElementById('ad-screen').style.display = "none";
             document.getElementById('result-screen').style.display = "block";
-            
             const iqDisp = document.getElementById('iq-display');
             const iqComm = document.getElementById('iq-comment');
             
-            if (score === totalQuestions) {
-                iqDisp.innerText = "IQ 140";
-                iqComm.innerText = "超天才！\n現代のアインシュタイン！✨";
-            } else if (score >= 8) {
-                iqDisp.innerText = "IQ 120";
-                iqComm.innerText = "天才！\nさては神童と呼ばれてた？👀";
-            } else if (score >= 5) {
-                iqDisp.innerText = "IQ 100";
-                iqComm.innerText = "やるな～！\nできる子って言われるでしょ？💪";
-            } else {
-                iqDisp.innerText = "IQ 80";
-                iqComm.innerText = "君のペースが心地いいって言われない？💓";
-            }
+            if (score === totalQuestions) { iqDisp.innerText = "IQ 140"; iqComm.innerText = "超天才！\n現代のアインシュタイン！✨"; }
+            else if (score >= 8) { iqDisp.innerText = "IQ 120"; iqComm.innerText = "天才！\nさては神童と呼ばれてた？👀"; }
+            else if (score >= 5) { iqDisp.innerText = "IQ 100"; iqComm.innerText = "やるな～！\nできる子って言われるでしょ？💪"; }
+            else { iqDisp.innerText = "IQ 80"; iqComm.innerText = "君のペースが心地いいって言われない？💓"; }
         }
 
         showQuestion();
