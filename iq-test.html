@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ぽんっとIQ診断 - ぽんっとラボ</title>
     <style>
-        /* 簡単なスタイルもここに入れておくね */
         body { font-family: 'ヒラギノ丸ゴ Pro','Arial Rounded MT Bold',sans-serif; background: #fff; text-align: center; margin: 0; padding: 20px; }
         .container { max-width: 480px; margin: 0 auto; }
         .button { display: inline-block; margin: 10px; padding: 15px; border-radius: 20px; background: #d8bfe6; color: #333; text-decoration: none; font-size: 18px; border: none; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         .button:active { transform: scale(0.95); }
         .ad-box { background: #fff0f5; padding: 30px; border: 3px dashed #ffb6c1; margin: 20px 0; border-radius: 20px; }
         img { max-width: 100%; height: auto; }
+        #question-number { font-weight: bold; color: #ff69b2; font-size: 1.2rem; }
     </style>
 </head>
 <body>
@@ -19,7 +19,7 @@
         <h1>🧠 ぽんっとIQ診断</h1>
         
         <div id="game-screen">
-            <p id="question-number" style="font-weight: bold; color: #ff69b2;">第 1 問 / 5</p>
+            <p id="question-number">第 1 問 / 5</p>
             <div id="quiz-area"></div>
         </div>
 
@@ -61,91 +61,14 @@
                 ]
             },
             5: {
-                img: "image_1cece6.png", 
+                // トモちゃん指定のファイル名に修正したよ！
+                img: "question5.png", 
                 choices: [
-                    { img: "choice-59.png", ok: true },
-                    { img: "choice-wrong1.png", ok: false },
-                    { img: "choice-wrong2.png", ok: false }
+                    { img: "choice-m.png", ok: true },  // 正解
+                    { img: "choice-n.png", ok: false }, // 不正解
+                    { img: "choice-o.png", ok: false }  // 不正解
                 ]
             }
         };
 
-        // 配列をシャッフルする関数
-        function shuffle(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const r = Math.floor(Math.random() * (i + 1));
-                [array[i], array[r]] = [array[r], array[i]];
-            }
-            return array;
-        }
-
-        // 問題を表示する関数
-        function showQuestion() {
-            const q = questions[currentStep];
-            if (!q || currentStep > totalQuestions) { showAd(); return; }
-
-            document.getElementById('question-number').innerText = `第 ${currentStep} 問 / ${totalQuestions}`;
-
-            // 選択肢をコピーしてシャッフル
-            const shuffledChoices = shuffle([...q.choices]);
-
-            let html = `<img src="${q.img}" style="width: 100%; max-width: 400px; border-radius: 15px; margin-bottom: 25px; border: 3px solid #eee;">`;
-            html += `<div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">`;
-            
-            shuffledChoices.forEach(c => {
-                html += `
-                    <button onclick="nextQuestion(${c.ok})" class="button" style="padding: 10px; background: white; border: 2px solid #ffb6c1;">
-                        <img src="${c.img}" width="90" style="display: block;">
-                    </button>`;
-            });
-            html += `</div>`;
-            document.getElementById('quiz-area').innerHTML = html;
-        }
-
-        // 次の問題へ（少し時間を置いてクリック感を出す）
-        function nextQuestion(isCorrect) {
-            if (isCorrect) { score++; }
-            currentStep++;
-            setTimeout(() => { showQuestion(); }, 300);
-        }
-
-        // 広告風画面を表示
-        function showAd() {
-            document.getElementById('game-screen').style.display = "none";
-            document.getElementById('ad-screen').style.display = "block";
-        }
-
-        // 最終結果を表示
-        function showFinalResult() {
-            document.getElementById('ad-screen').style.display = "none";
-            document.getElementById('result-screen').style.display = "block";
-            const iqDisp = document.getElementById('iq-display');
-            const iqComm = document.getElementById('iq-comment');
-            
-            if (score === 5) { 
-                iqDisp.innerText = "IQ 140"; 
-                iqComm.innerText = "超天才！✨\n全問正解おめでとう！\n現代のアインシュタインは君だね💓"; 
-            }
-            else if (score === 4) { 
-                iqDisp.innerText = "IQ 125"; 
-                iqComm.innerText = "天才級！👀\nあと一歩で完璧！\n高い観察力を持ってるね！"; 
-            }
-            else if (score === 3) { 
-                iqDisp.innerText = "IQ 110"; 
-                iqComm.innerText = "優秀！💪\nひらめき力が鋭いね！\n自信を持っていいよ✨"; 
-            }
-            else if (score === 2) { 
-                iqDisp.innerText = "IQ 95"; 
-                iqComm.innerText = "標準レベル！😊\n直感で解くタイプかな？\n君のペース、嫌いじゃないよ💓"; 
-            }
-            else { 
-                iqDisp.innerText = "IQ 80"; 
-                iqComm.innerText = "伸びしろたっぷり！🌱\n今日は脳がお疲れかも？\nゆっくり休んでまた挑戦してね！"; 
-            }
-        }
-
-        // 最初の問題を表示
-        showQuestion();
-    </script>
-</body>
-</html>
+        //
