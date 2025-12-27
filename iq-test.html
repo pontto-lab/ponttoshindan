@@ -11,7 +11,7 @@
         .button:active { transform: scale(0.95); }
         .ad-box { background: #fff0f5; padding: 30px; border: 3px dashed #ffb6c1; margin: 20px 0; border-radius: 20px; }
         img { max-width: 100%; height: auto; }
-        #question-number { font-weight: bold; color: #ff69b2; font-size: 1.2rem; }
+        #question-number { font-weight: bold; color: #ff69b2; font-size: 1.2rem; margin-bottom: 10px; }
     </style>
 </head>
 <body>
@@ -47,7 +47,6 @@
         let score = 0;
         const totalQuestions = 5; 
 
-        // 問題データ
         const questions = {
             1: { img: "question1.png", choices: [{img:"choice-a.png", ok:false}, {img:"choice-b.png", ok:true}, {img:"choice-c.png", ok:false}] },
             2: { img: "question2.png", choices: [{img:"choice-d.png", ok:false}, {img:"choice-f.png", ok:true}, {img:"choice-e.png", ok:false}] },
@@ -61,14 +60,73 @@
                 ]
             },
             5: {
-                // トモちゃん指定のファイル名に修正したよ！
                 img: "question5.png", 
                 choices: [
-                    { img: "choice-m.png", ok: true },  // 正解
-                    { img: "choice-n.png", ok: false }, // 不正解
-                    { img: "choice-o.png", ok: false }  // 不正解
+                    { img: "choice-m.png", ok: true },
+                    { img: "choice-n.png", ok: false },
+                    { img: "choice-o.png", ok: false }
                 ]
             }
         };
 
-        //
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const r = Math.floor(Math.random() * (i + 1));
+                [array[i], array[r]] = [array[r], array[i]];
+            }
+            return array;
+        }
+
+        function showQuestion() {
+            const q = questions[currentStep];
+            if (!q || currentStep > totalQuestions) { showAd(); return; }
+
+            document.getElementById('question-number').innerText = `第 ${currentStep} 問 / ${totalQuestions}`;
+
+            const shuffledChoices = shuffle([...q.choices]);
+
+            let html = `<img src="${q.img}" style="width: 100%; max-width: 400px; border-radius: 15px; margin-bottom: 25px; border: 3px solid #eee;">`;
+            html += `<div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">`;
+            
+            shuffledChoices.forEach(c => {
+                html += `
+                    <button onclick="nextQuestion(${c.ok})" class="button" style="padding: 10px; background: white; border: 2px solid #ffb6c1;">
+                        <img src="${c.img}" width="90" style="display: block;">
+                    </button>`;
+            });
+            html += `</div>`;
+            document.getElementById('quiz-area').innerHTML = html;
+        }
+
+        function nextQuestion(isCorrect) {
+            if (isCorrect) { score++; }
+            currentStep++;
+            setTimeout(() => { showQuestion(); }, 300);
+        }
+
+        function showAd() {
+            document.getElementById('game-screen').style.display = "none";
+            document.getElementById('ad-screen').style.display = "block";
+        }
+
+        function showFinalResult() {
+            document.getElementById('ad-screen').style.display = "none";
+            document.getElementById('result-screen').style.display = "block";
+            const iqDisp = document.getElementById('iq-display');
+            const iqComm = document.getElementById('iq-comment');
+            
+            if (score === 5) { 
+                iqDisp.innerText = "IQ 140"; 
+                iqComm.innerText = "超天才！✨\n全問正解おめでとう！\n現代のアインシュタインは君だね💓"; 
+            }
+            else if (score === 4) { 
+                iqDisp.innerText = "IQ 125"; 
+                iqComm.innerText = "天才級！👀\nあと一歩で完璧！\n高い観察力を持ってるね！"; 
+            }
+            else if (score === 3) { 
+                iqDisp.innerText = "IQ 110"; 
+                iqComm.innerText = "優秀！💪\nひらめき力が鋭いね！\n自信を持っていいよ✨"; 
+            }
+            else if (score === 2) { 
+                iqDisp.innerText = "IQ 95"; 
+                iqComm.innerText = "標準レベル！😊\n直感で解く
