@@ -45,6 +45,8 @@
     <script>
         let currentStep = 1;
         let score = 0;
+        let speedBonus = 0; // スピードボーナス用
+        let startTime; // 時間計測用
         const totalQuestions = 5; 
 
         const questions = {
@@ -96,10 +98,20 @@
             });
             html += `</div>`;
             document.getElementById('quiz-area').innerHTML = html;
+            
+            // 問題が表示された時間を記録
+            startTime = Date.now();
         }
 
         function nextQuestion(isCorrect) {
-            if (isCorrect) { score++; }
+            if (isCorrect) { 
+                score++; 
+                // 正解かつ5秒以内ならボーナス加点
+                const timeTaken = (Date.now() - startTime) / 1000;
+                if (timeTaken <= 5) {
+                    speedBonus += 2; // 1問につき最大2点プラス
+                }
+            }
             currentStep++;
             setTimeout(() => { showQuestion(); }, 300);
         }
@@ -115,24 +127,29 @@
             const iqDisp = document.getElementById('iq-display');
             const iqComm = document.getElementById('iq-comment');
             
-            if (score === 5) { 
-                iqDisp.innerText = "IQ 140"; 
-                iqComm.innerText = "超天才！✨\n全問正解おめでとう！\n現代のアインシュタインは君だね💓"; 
+            // 基本IQ ＋ スピードボーナス
+            let finalIQ = 70 + (score * 12) + speedBonus;
+            
+            // 全問正解かつ超速い場合のみ140に届くように調整
+            if (score === 5 && speedBonus >= 8) finalIQ = 140;
+            if (finalIQ > 140) finalIQ = 140; // 上限140
+
+            iqDisp.innerText = "IQ " + finalIQ;
+
+            if (finalIQ >= 130) { 
+                iqComm.innerText = "超天才！✨\n判断スピードも神レベル！\n現代のアインシュタインは君だね💓"; 
             }
-            else if (score === 4) { 
-                iqDisp.innerText = "IQ 125"; 
-                iqComm.innerText = "天才級！👀\nあと一歩で完璧！\n高い観察力を持ってるね！"; 
+            else if (finalIQ >= 115) { 
+                iqComm.innerText = "天才級！👀\n回転の速さがハンパない！\n高い観察力と決断力を持ってるね！"; 
             }
-            else if (score === 3) { 
-                iqDisp.innerText = "IQ 110"; 
+            else if (finalIQ >= 100) { 
                 iqComm.innerText = "優秀！💪\nひらめき力が鋭いね！\n自信を持っていいよ✨"; 
             }
-            else if (score === 2) { 
-                iqDisp.innerText = "IQ 95"; 
-                iqComm.innerText = "標準レベル！😊\n直感で解くタイプかな？\n君のペース、嫌いじゃないよ💓"; 
+            else if (finalIQ >= 85) { 
+                iqComm.innerText = "標準レベル！😊\nじっくり考えるタイプかな？\n君の丁寧なところ、素敵だよ💓"; 
             }
             else { 
-                iqDisp.innerText = "IQ 80"; 
+                iqDisp.innerText = "IQ 80"; // 最低保証
                 iqComm.innerText = "伸びしろたっぷり！🌱\n今日は脳がお疲れかも？\nゆっくり休んでまた挑戦してね！"; 
             }
         }
