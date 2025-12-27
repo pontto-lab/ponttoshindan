@@ -45,8 +45,8 @@
     <script>
         let currentStep = 1;
         let score = 0;
-        let speedBonus = 0; // スピードボーナス用
-        let startTime; // 時間計測用
+        let perfectSpeedBonus = true; // 5問連続スピードボーナスの旗
+        let startTime; 
         const totalQuestions = 5; 
 
         const questions = {
@@ -99,19 +99,23 @@
             html += `</div>`;
             document.getElementById('quiz-area').innerHTML = html;
             
-            // 問題が表示された時間を記録
             startTime = Date.now();
         }
 
         function nextQuestion(isCorrect) {
+            const timeTaken = (Date.now() - startTime) / 1000;
+            
             if (isCorrect) { 
                 score++; 
-                // 正解かつ5秒以内ならボーナス加点
-                const timeTaken = (Date.now() - startTime) / 1000;
-                if (timeTaken <= 5) {
-                    speedBonus += 2; // 1問につき最大2点プラス
+                // 一回でも5秒を超えたらフラグを下ろす
+                if (timeTaken > 5) {
+                    perfectSpeedBonus = false;
                 }
+            } else {
+                // 間違えた時点でスピードボーナスは無効
+                perfectSpeedBonus = false;
             }
+            
             currentStep++;
             setTimeout(() => { showQuestion(); }, 300);
         }
@@ -127,29 +131,33 @@
             const iqDisp = document.getElementById('iq-display');
             const iqComm = document.getElementById('iq-comment');
             
-            // 基本IQ ＋ スピードボーナス
-            let finalIQ = 70 + (score * 12) + speedBonus;
-            
-            // 全問正解かつ超速い場合のみ140に届くように調整
-            if (score === 5 && speedBonus >= 8) finalIQ = 140;
-            if (finalIQ > 140) finalIQ = 140; // 上限140
+            let finalIQ;
+
+            if (score === 5) {
+                // 全問正解かつ、全問5秒以内の場合のみ140
+                finalIQ = perfectSpeedBonus ? 140 : 130;
+            } else if (score === 4) {
+                finalIQ = 115;
+            } else if (score === 3) {
+                finalIQ = 100;
+            } else if (score === 2) {
+                finalIQ = 85;
+            } else {
+                finalIQ = 70;
+            }
 
             iqDisp.innerText = "IQ " + finalIQ;
 
-            if (finalIQ >= 130) { 
-                iqComm.innerText = "超天才！✨\n判断スピードも神レベル！\n現代のアインシュタインは君だね💓"; 
+            if (finalIQ === 140) { 
+                iqComm.innerText = "超天才！✨\n全問正解＆神速の判断力！\n現代のアインシュタインは君だね💓"; 
             }
-            else if (finalIQ >= 115) { 
-                iqComm.innerText = "天才級！👀\n回転の速さがハンパない！\n高い観察力と決断力を持ってるね！"; 
+            else if (finalIQ === 130) { 
+                iqComm.innerText = "天才！👀\n全問正解おめでとう！\nじっくり考えて確実に正解する、\n高い論理思考の持ち主だね！"; 
             }
             else if (finalIQ >= 100) { 
                 iqComm.innerText = "優秀！💪\nひらめき力が鋭いね！\n自信を持っていいよ✨"; 
             }
-            else if (finalIQ >= 85) { 
-                iqComm.innerText = "標準レベル！😊\nじっくり考えるタイプかな？\n君の丁寧なところ、素敵だよ💓"; 
-            }
             else { 
-                iqDisp.innerText = "IQ 80"; // 最低保証
                 iqComm.innerText = "伸びしろたっぷり！🌱\n今日は脳がお疲れかも？\nゆっくり休んでまた挑戦してね！"; 
             }
         }
