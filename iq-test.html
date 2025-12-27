@@ -42,7 +42,7 @@
         let score = 0;
         const totalQuestions = 10; 
 
-       const questions = {
+        const questions = {
             1: { img: "question1.png", choices: [{img:"choice-a.png", ok:false}, {img:"choice-b.png", ok:true}, {img:"choice-c.png", ok:false}] },
             2: { img: "question2.png", choices: [{img:"choice-d.png", ok:false}, {img:"choice-f.png", ok:true}, {img:"choice-e.png", ok:false}] },
             3: { img: "question3.png", choices: [{img:"choice-g.png", ok:true}, {img:"choice-h.png", ok:false}, {img:"choice-i.png", ok:false}] },
@@ -53,8 +53,17 @@
                     { img: "choice-l.png", ok: false }, // 「み」
                     { img: "choice-j.png", ok: true }   // 「い」（正解！）
                 ]
-            },
-        };
+            }, // ここを「},」にするのがポイント！
+            5: {
+                // 問題：顔の計算パズル（答えは59）
+                img: "image_1cece6.png", 
+                choices: [
+                    { img: "choice-59.png", ok: true },  // 正解！
+                    { img: "choice-wrong1.png", ok: false }, // ひっかけ1
+                    { img: "choice-wrong2.png", ok: false }  // ひっかけ2
+                ]
+            } // 最後の問題の後は「}」で閉じるよ
+        }; // ここで全体を閉じる！
 
         // シャッフル機能
         function shuffle(array) {
@@ -71,7 +80,6 @@
 
             document.getElementById('question-number').innerText = `第 ${currentStep} 問 / ${totalQuestions}`;
 
-            // ここでシャッフル！
             const shuffledChoices = shuffle([...q.choices]);
 
             let html = `<img src="${q.img}" style="width: 100%; max-width: 400px; border-radius: 15px; margin-bottom: 25px; border: 3px solid #eee;">`;
