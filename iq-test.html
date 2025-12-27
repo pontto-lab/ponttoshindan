@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="style.css">
     <style>
         .ad-box { background: #fff0f5; padding: 30px; border: 3px dashed #ffb6c1; margin: 20px 0; border-radius: 20px; }
+        .button:active { transform: scale(0.95); }
     </style>
 </head>
 <body>
@@ -14,7 +15,7 @@
         <h1>🧠 ぽんっとIQ診断</h1>
         
         <div id="game-screen">
-            <p id="question-number" style="font-weight: bold; color: #ff69b2;">第 1 問 / 10</p>
+            <p id="question-number" style="font-weight: bold; color: #ff69b2;">第 1 問 / 5</p>
             <div id="quiz-area"></div>
         </div>
 
@@ -31,7 +32,7 @@
         <div id="result-screen" style="display: none;">
             <h2 style="color: #ff1493;">診断結果発表！</h2>
             <div id="iq-display" style="font-size: 36px; font-weight: bold; margin: 20px 0; background: white; padding: 30px; border-radius: 20px; border: 5px solid #ffb6c1;"></div>
-            <p id="iq-comment" style="font-size: 22px; color: #555; line-height: 1.6;"></p>
+            <p id="iq-comment" style="font-size: 22px; color: #555; line-height: 1.6; white-space: pre-wrap;"></p>
             <br>
             <a href="index.html" class="button">ホームへ戻る</a>
         </div>
@@ -40,7 +41,7 @@
     <script>
         let currentStep = 1;
         let score = 0;
-        const totalQuestions = 10; 
+        const totalQuestions = 5; // 5問に変更！
 
         const questions = {
             1: { img: "question1.png", choices: [{img:"choice-a.png", ok:false}, {img:"choice-b.png", ok:true}, {img:"choice-c.png", ok:false}] },
@@ -49,23 +50,21 @@
             4: {
                 img: "question4.png", 
                 choices: [
-                    { img: "choice-k.png", ok: false }, // 「き」
-                    { img: "choice-l.png", ok: false }, // 「み」
-                    { img: "choice-j.png", ok: true }   // 「い」（正解！）
+                    { img: "choice-k.png", ok: false }, 
+                    { img: "choice-l.png", ok: false }, 
+                    { img: "choice-j.png", ok: true }
                 ]
-            }, // ここを「},」にするのがポイント！
+            },
             5: {
-                // 問題：顔の計算パズル（答えは59）
                 img: "image_1cece6.png", 
                 choices: [
-                    { img: "choice-59.png", ok: true },  // 正解！
-                    { img: "choice-wrong1.png", ok: false }, // ひっかけ1
-                    { img: "choice-wrong2.png", ok: false }  // ひっかけ2
+                    { img: "choice-59.png", ok: true },
+                    { img: "choice-wrong1.png", ok: false },
+                    { img: "choice-wrong2.png", ok: false }
                 ]
-            } // 最後の問題の後は「}」で閉じるよ
-        }; // ここで全体を閉じる！
+            }
+        };
 
-        // シャッフル機能
         function shuffle(array) {
             for (let i = array.length - 1; i > 0; i--) {
                 const r = Math.floor(Math.random() * (i + 1));
@@ -87,7 +86,7 @@
             
             shuffledChoices.forEach(c => {
                 html += `
-                    <button onclick="nextQuestion(${c.ok})" class="button" style="padding: 10px;">
+                    <button onclick="nextQuestion(${c.ok})" class="button" style="padding: 10px; background: white; border: 2px solid #ffb6c1;">
                         <img src="${c.img}" width="90">
                     </button>`;
             });
@@ -112,10 +111,27 @@
             const iqDisp = document.getElementById('iq-display');
             const iqComm = document.getElementById('iq-comment');
             
-            if (score === totalQuestions) { iqDisp.innerText = "IQ 140"; iqComm.innerText = "超天才！\n現代のアインシュタイン！✨"; }
-            else if (score >= 8) { iqDisp.innerText = "IQ 120"; iqComm.innerText = "天才！\nさては神童と呼ばれてた？👀"; }
-            else if (score >= 5) { iqDisp.innerText = "IQ 100"; iqComm.innerText = "やるな～！\nできる子って言われるでしょ？💪"; }
-            else { iqDisp.innerText = "IQ 80"; iqComm.innerText = "君のペースが心地いいって言われない？💓"; }
+            // 5問用の配分に修正！
+            if (score === 5) { 
+                iqDisp.innerText = "IQ 140"; 
+                iqComm.innerText = "超天才！✨\n全問正解おめでとう！現代のアインシュタインは君だね💓"; 
+            }
+            else if (score === 4) { 
+                iqDisp.innerText = "IQ 125"; 
+                iqComm.innerText = "天才級！👀\nあと一歩で完璧！ものすごく高い観察力を持ってるね！"; 
+            }
+            else if (score === 3) { 
+                iqDisp.innerText = "IQ 110"; 
+                iqComm.innerText = "平均より高め！💪\nひらめき力が鋭いね！もっと自信持っていいよ✨"; 
+            }
+            else if (score === 2) { 
+                iqDisp.innerText = "IQ 95"; 
+                iqComm.innerText = "標準レベル！😊\n直感で解くタイプかな？君のペースが心地いいよ💓"; 
+            }
+            else { 
+                iqDisp.innerText = "IQ 80"; 
+                iqComm.innerText = "伸びしろたっぷり！🌱\n今日は脳がお疲れかも？ゆっくり休んでまた挑戦してね！"; 
+            }
         }
 
         showQuestion();
