@@ -42,10 +42,18 @@
         let score = 0;
         const totalQuestions = 10; 
 
-        const questions = {
+       const questions = {
             1: { img: "question1.png", choices: [{img:"choice-a.png", ok:false}, {img:"choice-b.png", ok:true}, {img:"choice-c.png", ok:false}] },
             2: { img: "question2.png", choices: [{img:"choice-d.png", ok:false}, {img:"choice-f.png", ok:true}, {img:"choice-e.png", ok:false}] },
             3: { img: "question3.png", choices: [{img:"choice-g.png", ok:true}, {img:"choice-h.png", ok:false}, {img:"choice-i.png", ok:false}] },
+            4: {
+                img: "image_e93148.png", 
+                choices: [
+                    { img: "image_e93183.png", ok: false }, // 「き」
+                    { img: "image_e98324.png", ok: false }, // 「み」
+                    { img: "image_e98305.png", ok: true }   // 「い」（正解！）
+                ]
+            },
         };
 
         // シャッフル機能
