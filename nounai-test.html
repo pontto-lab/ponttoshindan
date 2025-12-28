@@ -5,82 +5,79 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>🧠 あなたの脳内メーカー</title>
 <style>
-body { font-family:'ヒラギノ丸ゴ Pro','Arial Rounded MT Bold',sans-serif; background:#fff; margin:0; padding:0; text-align:center; }
+body { font-family:'ヒラギノ丸ゴ Pro','Arial Rounded MT Bold',sans-serif; background:#fff; margin:0; padding:0; text-align:center; overflow-x: hidden; }
 .wrapper { max-width:480px; margin:0 auto; padding:24px 16px; }
 
-#brain-display {
-    position: relative;
-    width: 350px; 
-    height: 350px;
-    margin: 20px auto;
-    background-image: url('nounai_bg.png'); 
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    display: none;
+/* ★くるくる回転して登場するアニメーション★ */
+@keyframes resultAppear {
+    0% { transform: scale(0) rotate(0deg); opacity: 0; }
+    50% { transform: scale(1.2) rotate(360deg); opacity: 1; }
+    100% { transform: scale(1) rotate(720deg); opacity: 1; }
 }
 
-/* ★結果画像：中心から右に2mm(約8px)、上に2mm(約8px)移動★ */
-#result-bg-image {
-    position: absolute;
-    top: 103px; 
-    left: 183px; 
-    transform: translate(-50%, -50%);
-    width: 65px;
-    z-index: 1; 
-    mix-blend-mode: multiply; 
-    opacity: 0.8;
+.result-animation {
+    animation: resultAppear 1.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
-/* ★フォントの描画エリア：白いステージ★ */
-#brain-inner {
-    position: absolute;
-    top: 45px;    
-    left: 100px;  
-    width: 160px; 
-    height: 130px; 
-    z-index: 10;
-    pointer-events: none;
-    /* 子要素を自由配置するために相対位置に */
-}
-
-.brain-label {
-    position: absolute; /* ★ここが重要！★ */
-    font-weight: bold;
-    color: #ff69b4;
-    line-height: 1;
-    white-space: nowrap;
-    text-shadow: 0px 0px 2px rgba(255,255,255,0.8);
-}
-
-.options { display:flex; flex-direction:column; gap:10px; }
-.options button { padding:14px; border-radius:18px; border:none; background:#e0ffff; cursor:pointer; font-weight: bold; }
-#loading { font-size:24px; margin-top:32px; font-weight:bold; display:none; }
 #result-area { display:none; margin-top:20px; }
+
+/* 結果画像の表示設定（トモちゃんのファイルをそのまま出す） */
+#result-file-display {
+    max-width: 100%;
+    height: auto;
+    margin: 0 auto;
+    display: block;
+}
+
+.options { display:flex; flex-direction:column; gap:10px; margin-top: 20px; }
+.options button { padding:14px; border-radius:18px; border:none; background:#e0ffff; cursor:pointer; font-weight: bold; font-size: 16px; transition: 0.2s; }
+.options button:hover { background:#afeeee; }
+
+#loading { 
+    font-size:26px; 
+    margin-top:50px; 
+    font-weight:bold; 
+    display:none; 
+    color: #ff69b4;
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
 </style>
 </head>
 <body>
 <div class="wrapper">
     <h1>🧠 あなたの脳内メーカー</h1>
+
     <div id="quiz">
-        <p id="q-number" style="color:#888; font-size:12px;"></p>
-        <p id="question" style="font-weight:bold; min-height:4em; display:flex; align-items:center; justify-content:center;"></p>
+        <p id="q-number" style="color:#888;"></p>
+        <p id="question" style="font-weight:bold; min-height:4em; font-size:18px; display:flex; align-items:center; justify-content:center;"></p>
         <div id="options" class="options"></div>
     </div>
-    <div id="loading">のーみそを解析中...🔎</div>
+
+    <div id="loading">あなたの脳内は・・・・！！！！🧠✨</div>
+
     <div id="result-area">
-        <div id="brain-display">
-            <img id="result-bg-image" src="" alt="">
-            <div id="brain-inner"></div>
-        </div>
-        <div id="result-desc"></div>
-        <br><a href="index.html" style="text-decoration:none; color:#999;">🏠 TOPへもどる</a>
+        <img id="result-file-display" src="" alt="結果" class="">
+        <br>
+        <a href="index.html" style="display:inline-block; margin-top:30px; color:#999; text-decoration:none; font-weight:bold;">🏠 もう一度診断する</a>
     </div>
 </div>
 
 <script>
-const fileNameMap = { love: "kekka-love.png", money: "kekka-kane.png", sleep: "kekka-sleep.png", sex: "kekka-h.png", work: "kekka-shigoto.png", none: "kekka-mu.png" };
-const wordMap = { love: "愛", money: "金", sleep: "眠", sex: "Ｈ", work: "仕事", none: "無" };
+// トモちゃん指定のファイル名
+const fileNameMap = {
+    work: "kekka-shigoto.png",
+    love: "kekka-love.png",
+    sleep: "kekka-sleep.png",
+    sex: "kekka-h.png",
+    money: "kekka-kane.png",
+    none: "kekka-mu.png"
+};
 
 const questions = ["休日、気づいたら何を考えてる？", "魔法のランプにお願いするなら？", "今の自分に一番足りないものは？", "自分への最高のご褒美は？", "明日、地球が滅びるとしたら？", "宝くじで3億円当たったらどうする？", "無人島に一つだけ持っていくなら？", "一番リラックスできる瞬間は？", "最近、検索したワードの傾向は？", "今のあなたの「欲」を漢字一文字で言うと？"];
 const answerData = [
@@ -108,7 +105,7 @@ function shuffle(array) {
 }
 
 function showQuestion() {
-    document.getElementById("q-number").innerText = `第 ${current + 1} 問 / 10`;
+    document.getElementById("q-number").innerText = `Q ${current + 1} / 10`;
     document.getElementById("question").innerText = questions[current];
     const optsDiv = document.getElementById("options");
     optsDiv.innerHTML = "";
@@ -124,51 +121,24 @@ function showQuestion() {
 function showLoading() {
     document.getElementById("quiz").style.display = "none";
     document.getElementById("loading").style.display = "block";
-    setTimeout(showResult, 800);
+    // 1.5秒待ってから結果を表示
+    setTimeout(showResult, 1500);
 }
 
 function showResult() {
     document.getElementById("loading").style.display = "none";
     document.getElementById("result-area").style.display = "block";
-    document.getElementById("brain-display").style.display = "block";
     
     const sorted = Object.keys(scores).sort((a,b) => scores[b] - scores[a]);
-    const main = sorted[0];
-    document.getElementById("result-bg-image").src = fileNameMap[main];
+    const mainType = sorted[0];
 
-    const inner = document.getElementById("brain-inner");
-    inner.innerHTML = "";
+    const resultImg = document.getElementById("result-file-display");
+    resultImg.src = fileNameMap[mainType];
     
-    // ステージ（白い部分）のサイズ
-    const areaW = 160;
-    const areaH = 130;
-
-    // 文字をランダムな場所に散りばめる
-    Object.keys(scores).forEach(type => {
-        // スコアが多いほどたくさん表示（合計100個くらいに調整）
-        const count = Math.floor((scores[type] / 10) * 80); 
-        for(let i=0; i < count; i++) {
-            const span = document.createElement("span");
-            span.className = "brain-label";
-            span.innerText = wordMap[type];
-            
-            // ★ランダムな位置を計算★
-            const x = Math.random() * (areaW - 20); // 20は文字幅の余裕
-            const y = Math.random() * (areaH - 15); // 15は文字高さの余裕
-            span.style.left = x + "px";
-            span.style.top = y + "px";
-            
-            // サイズと透明度も少しランダムにして自然に
-            const baseSize = (type === main) ? 16 : 12;
-            span.style.fontSize = (Math.random() * 4 + baseSize) + "px";
-            span.style.opacity = Math.random() * 0.5 + 0.5;
-            
-            inner.appendChild(span);
-        }
-    });
-
-    document.getElementById("result-desc").innerHTML = `<h2 style="color:#ff69b4;">あなたの脳内は「${wordMap[main]}」がいっぱい！</h2>`;
+    // ★ここで回転アニメーションのクラスを追加！★
+    resultImg.classList.add("result-animation");
 }
+
 showQuestion();
 </script>
 </body>
