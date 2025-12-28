@@ -5,155 +5,134 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>👁️ あなたの【裏の顔】診断 | ぽんっとラボ</title>
 <style>
-body { font-family:'ヒラギノ丸ゴ Pro','Arial Rounded MT Bold',sans-serif; background:#fff; margin:0; padding:0; text-align:center; }
-.wrapper { max-width:480px; margin:0 auto; padding:24px 16px; text-align:center; }
-h1 { font-size:26px; margin-bottom:12px; color:#5e35b1; }
-.question { font-size:16px; margin:24px 0 12px; font-weight: bold; min-height: 3em; display: flex; align-items: center; justify-content: center; }
-.options { display:flex; flex-direction:column; gap:10px; }
-.options button { padding:14px; border-radius:18px; border:none; background:#ede7f6; box-shadow:0 4px 10px rgba(0,0,0,0.06); font-size:15px; cursor:pointer; transition:0.2s; color: #333; }
-.options button:hover { transform: scale(1.03); background: #d1c4e9; }
-.options button:active { transform: scale(0.97); }
-#result { font-size:18px; margin-top:32px; }
-#back { margin-top:20px; display:inline-block; padding:12px 24px; border-radius:16px; background:#fce4ec; text-decoration:none; color:#333; font-weight: bold; border: 2px solid #ffc1e3; }
-#loading { font-size:24px; margin-top:32px; color:#5e35b1; font-weight:bold; display:none; }
-.result-name { font-size: 24px; color: #ff1493; margin: 10px 0; font-weight: bold; }
+body { font-family:'ヒラギノ丸ゴ Pro','Arial Rounded MT Bold',sans-serif; background:#f5f0ff; margin:0; padding:0; text-align:center; color: #4a4a4a; }
+.wrapper { max-width:480px; margin:0 auto; padding:24px 16px; }
+
+h1 { font-size:24px; color:#7e57c2; margin-bottom:20px; text-shadow: 2px 2px 0px #fff; }
+
+/* 診断中カード */
+#quiz { background: #fff; padding: 20px; border-radius: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.05); }
+.question { font-size:18px; font-weight:bold; min-height:4em; display:flex; align-items:center; justify-content:center; color: #5e35b1; }
+
+.options { display:flex; flex-direction:column; gap:12px; margin-top: 10px; }
+.options button { padding:16px; border-radius:15px; border:2px solid #e1bee7; background:#fff; cursor:pointer; font-weight: bold; font-size: 15px; transition: 0.3s; color: #5e35b1; }
+.options button:hover { background:#f3e5f5; border-color: #ba68c8; transform: translateY(-2px); }
+
+/* ローディング */
+#loading { font-size:22px; margin-top:50px; font-weight:bold; display:none; color: #ba68c8; }
+
+/* 結果表示エリア */
+#result-area { display:none; background: #fff; padding: 30px 20px; border-radius: 30px; border: 3px double #d1c4e9; box-shadow: 0 10px 30px rgba(126, 87, 194, 0.1); }
+
+/* 下からフワッとコメントが出る演出 */
+@keyframes commentFadeIn {
+    0% { opacity: 0; transform: translateY(30px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+.result-header { font-size: 16px; color: #9575cd; margin-bottom: 10px; }
+.result-type { font-size: 26px; font-weight: bold; color: #ff69b4; margin-bottom: 20px; }
+.result-comment { font-size: 17px; line-height: 1.8; color: #555; text-align: left; opacity: 0; animation: commentFadeIn 1s ease-out forwards; }
+.result-comment b { color: #ba68c8; }
+
+#back-btn { margin-top:30px; display:inline-block; padding:12px 24px; border-radius:12px; background:#fce4ec; text-decoration:none; color:#ba68c8; font-weight: bold; font-size: 14px; }
 </style>
 </head>
 <body>
 <div class="wrapper">
-<h1>👁️ あなたの【裏の顔】診断</h1>
+    <h1>👁️ あなたの【裏の顔】診断</h1>
 
-<div id="quiz">
-<p class="question" id="question"></p>
-<div id="options" class="options"></div>
-</div>
+    <div id="quiz">
+        <p id="q-number" style="color:#ba68c8; font-size:12px; margin:0;"></p>
+        <p id="question" class="question"></p>
+        <div id="options" class="options"></div>
+    </div>
 
-<div id="loading">心の裏側をスキャン中…👁️</div>
-<div id="result"></div>
-<a href="index.html" id="back" style="display:none;">🏠 ぽんっとTOPにもどる</a>
+    <div id="loading">本性を暴いています…👁️🕸️</div>
+
+    <div id="result-area">
+        <div class="result-header">スキャン完了。あなたの正体は…</div>
+        <div id="result-type" class="result-type"></div>
+        <div id="result-comment" class="result-comment"></div>
+        <a href="javascript:location.reload();" id="back-btn">🏠 もう一度スキャンする</a>
+    </div>
 </div>
 
 <script>
-// 質問と、その質問に合った回答のセット（裏の顔Ver.）
-const quizData = [
-  {
-    q: "友達が自分より高いプレゼントをもらっていたら？",
-    a: [
-      { t: "angel", text: "「いいなー！」と純粋に喜ぶ" },
-      { t: "devil", text: "内心「私の方が似合うのに」と思う" },
-      { t: "black", text: "値段をこっそりネットで調べる" },
-      { t: "king",  text: "「よかったね」と言いつつ自分も買う" }
-    ]
-  },
-  {
-    q: "行列で前の人が割り込んできたら、どうする？",
-    a: [
-      { t: "angel", text: "「並んでますよ」と優しく注意する" },
-      { t: "devil", text: "ムスッとしてSNSに愚痴を書く" },
-      { t: "black", text: "聞こえない程度の音量で舌打ちする" },
-      { t: "king",  text: "無言で背後に立って圧をかける" }
-    ]
-  },
-  {
-    q: "「秘密だよ」と言われた話。あなたならどうする？",
-    a: [
-      { t: "angel", text: "絶対に誰にも言わず墓場まで持っていく" },
-      { t: "devil", text: "信頼できる親友一人にだけ話す" },
-      { t: "black", text: "「誰にも言わないでね」と前置きして話す" },
-      { t: "king",  text: "こっそり自分のためのネタとしてキープ" }
-    ]
-  },
-  {
-    q: "苦手な人が大きなミスをして困っているよ。",
-    a: [
-      { t: "angel", text: "過去は忘れて、迷わず助ける" },
-      { t: "devil", text: "「自業自得かな」と遠くから見守る" },
-      { t: "black", text: "助けるふりをして優越感に浸る" },
-      { t: "king",  text: "忙しいふりをしてそのまま通り過ぎる" }
-    ]
-  },
-  {
-    q: "SNSでキラキラしてる知り合いを見ると？",
-    a: [
-      { t: "angel", text: "「すごいな！」と素直に憧れる" },
-      { t: "devil", text: "「加工かな？」と画像を拡大して確認する" },
-      { t: "black", text: "とりあえず「いいね」して心の中ではスルー" },
-      { t: "king",  text: "見たくないのでそっとミュートする" }
-    ]
-  }
-];
+// ★じぇみたん渾身の「闇かわ」カテゴリ別コメント★
+const resultData = {
+    work: { 
+        name: "【冷徹な完璧主義・毒蜘蛛】", 
+        msg: "表向きは真面目な努力家。でも裏の顔は、<b>他人のミスを心のノートにメモする毒蜘蛛</b>タイプ。周囲がバタバタと倒れていくのを眺めながら、自分だけが最上階に昇り詰める瞬間に最高の快感を覚えるはず。情けなんて無用、最後に笑うのは自分だけでしょ？" 
+    },
+    love: { 
+        name: "【愛という名の依存・ヤンデレ】", 
+        msg: "一見、尽くすタイプ。でもその裏側は、<b>相手の全てを監禁したい執着の塊</b>。優しさの皮を被った重い愛で、相手の自由を少しずつ奪うのが得意。嫌いな相手には、一生消えない呪いの言葉を心の中で吐き続ける…そんなドロドロの純愛こそがあなたの本質。" 
+    },
+    sleep: { 
+        name: "【現実拒絶・夢の中の迷子】", 
+        msg: "「疲れちゃった」が口癖のあなた。裏の顔は、<b>この汚い世界を1ミリも信じていない絶望の住人</b>。人間関係のしがらみも、将来への不安も、全部布団の中に持ち込んでシャットアウト。寝ている時だけが、誰にも傷つけられない唯一の聖域。現実はもう、いらないよね？" 
+    },
+    sex: { 
+        name: "【本能全開・深夜のモンスター】", 
+        msg: "昼間は常識人のフリ。でも裏の顔は、<b>道徳なんてゴミ箱に捨てた本能の怪物</b>。抑えられない欲望や、人には言えないマニアックな妄想で脳内を汚染されているはず。綺麗事はもう聞き飽きた。もっと刺激を、もっと快楽を。深夜のあなたは、もう誰にも止められない。" 
+    },
+    money: { 
+        name: "【強欲な守銭奴・銭ゲバブラック】", 
+        msg: "「お金より大事なものがある」なんて、心の中で鼻で笑ってるでしょ？裏の顔は、<b>全ての人間関係を『損か得か』で測る計算機</b>。友情も愛情も、結局は数字。誰かの不幸でさえ、お財布が潤うチャンスなら喜んで受け入れる。だって、最後に守ってくれるのはお金だけでしょ？" 
+    },
+    none: { 
+        name: "【虚無に潜む・冷ややかな傍観者】", 
+        msg: "一番ヤバいのはこのタイプ。裏の顔は、<b>人間という生き物を完全に見限った『無』の境地</b>。誰が泣こうが喚こうが、心の底では1ミリも動じない。世界の終わりをポップコーン食べながら眺めていられるような、圧倒的な冷たさ。あなたにとって、他人は全員ただの風景なの。" 
+    }
+};
 
-const results = [
-  { name:"純白のエンジェル度100%👼", desc:"裏も表もない、本当に心の綺麗なあなた。眩しすぎて周りが直視できないかも！" },
-  { name:"ちゃっかり小悪魔度40%😈", desc:"少しだけ自分に正直なタイプ。可愛げのあるワガママで世渡り上手なあなたです。" },
-  { name:"隠れ腹黒策士度70%🐍", desc:"表向きはニコニコ、心の中では冷静に分析。実は一番の切れ者かもしれません。" },
-  { name:"漆黒の闇の帝王度100%🖤", desc:"裏の顔がもはやメイン。誰にも支配されない、圧倒的な自分軸を持っているカリスマです。" }
+// 闇の10問（さっきの10問を継続！）
+const quizData = [
+    { q: "親友の不幸な話を聞いた時、一瞬よぎる本音は？", a: [{ t: "none", text: "「自分じゃなくて良かった」と安堵" },{ t: "money", text: "「お見舞い代、高くつくかな？」" },{ t: "love", text: "「これで私に依存してくれる」" },{ t: "work", text: "「仕事に影響出ないならいいや」" }]},
+    { q: "誰も見ていない場所で、100万円拾ったら？", a: [{ t: "money", text: "光の速さでポッケに入れる" },{ t: "none", text: "面倒だから放置" },{ t: "sex", text: "その金で今夜遊び明かす" },{ t: "sleep", text: "一旦寝てから考える" }]},
+    { q: "嫌いな人がSNSで大失敗して叩かれている！", a: [{ t: "sex", text: "サブ垢で追い打ちをかける" },{ t: "none", text: "スクショして酒の肴にする" },{ t: "work", text: "「無能はこれだから」と笑う" },{ t: "love", text: "「可哀想にｗ」と嘲笑" }]},
+    { q: "「あなたのためを思って言ってるの」という言葉。", a: [{ t: "work", text: "「自己満足乙」と即断" },{ t: "love", text: "「重いんだよ」と吐き捨てる" },{ t: "none", text: "何一つ耳に入れない" },{ t: "money", text: "「で、いくら得するの？」" }]},
+    { q: "恋人が自分以外の誰かと楽しそうに電話中。", a: [{ t: "love", text: "スマホを奪って履歴を消したい" },{ t: "sex", text: "浮気の証拠を探しに部屋を漁る" },{ t: "none", text: "「どうぞ勝手に」と急に冷める" },{ t: "sleep", text: "考えるのも疲れるから寝る" }]},
+    { q: "上司の自慢話が1時間を超えました。", a: [{ t: "work", text: "残業代が出るかだけ計算する" },{ t: "none", text: "死んだ魚の目で別のことを考える" },{ t: "money", text: "「奢ってくれるなら我慢する」" },{ t: "sex", text: "こいつの弱みを握る方法を練る" }]},
+    { q: "「バレなければ浮気はOK」という考え方。", a: [{ t: "sex", text: "「バレない自信があるならどうぞ」" },{ t: "love", text: "「裏切った時点でもう許さない」" },{ t: "none", text: "「人間なんてそんなもんでしょ」" },{ t: "money", text: "「慰謝料取れるならしてもいい」" }]},
+    { q: "もらったプレゼントが全然欲しくなかったら？", a: [{ t: "money", text: "速攻でフリマアプリに出品" },{ t: "work", text: "「センスのなさに失望した」" },{ t: "love", text: "「これを私に選ぶなんて呪い？」" },{ t: "none", text: "ゴミ箱へ直行" }]},
+    { q: "もし自分に絶対バレない暗殺能力があったら？", a: [{ t: "work", text: "仕事で邪魔な奴を全員消す" },{ t: "money", text: "金持ちを消して遺産を奪う" },{ t: "sex", text: "権力者を消して世界を壊す" },{ t: "love", text: "恋人の周りの異性を全員消す" }]},
+    { q: "最後に。あなたの人生で一番「信じられる」のは？", a: [{ t: "money", text: "結局は「お金」" },{ t: "love", text: "「自分の愛」" },{ t: "work", text: "「自分の実力」" },{ t: "none", text: "「誰も信じない」" }]}
 ];
 
 let current = 0;
-let scores = { angel:0, devil:0, black:0, king:0 };
-let quizOrder = [];
-
-function initQuiz() {
-  quizOrder = [...Array(quizData.length).keys()].sort(() => Math.random() - 0.5);
-  showQuestion();
-}
+let scores = { love:0, money:0, sleep:0, sex:0, work:0, none:0 };
 
 function showQuestion() {
-  const data = quizData[quizOrder[current]];
-  document.getElementById("question").innerText = data.q;
-
-  const optionsDiv = document.getElementById("options");
-  optionsDiv.innerHTML = "";
-
-  const shuffledA = [...data.a].sort(() => Math.random() - 0.5);
-
-  shuffledA.forEach(choice => {
-    const btn = document.createElement("button");
-    btn.innerText = choice.text;
-    btn.onclick = () => {
-      scores[choice.t]++;
-      nextQuestion();
-    };
-    optionsDiv.appendChild(btn);
-  });
-}
-
-function nextQuestion() {
-  current++;
-  if (current < quizData.length) {
-    showQuestion();
-  } else {
-    showLoading();
-  }
+    document.getElementById("q-number").innerText = `Step ${current + 1} / 10`;
+    const data = quizData[current];
+    document.getElementById("question").innerText = data.q;
+    const optsDiv = document.getElementById("options");
+    optsDiv.innerHTML = "";
+    [...data.a].sort(() => Math.random() - 0.5).forEach(choice => {
+        const btn = document.createElement("button");
+        btn.innerText = choice.text;
+        btn.onclick = () => { scores[choice.t]++; current++; if(current < 10) showQuestion(); else showLoading(); };
+        optsDiv.appendChild(btn);
+    });
 }
 
 function showLoading() {
-  document.getElementById("quiz").style.display = "none";
-  document.getElementById("loading").style.display = "block";
-  setTimeout(showResult, 1500);
+    document.getElementById("quiz").style.display = "none";
+    document.getElementById("loading").style.display = "block";
+    setTimeout(showResult, 2000);
 }
 
 function showResult() {
-  document.getElementById("loading").style.display = "none";
-  let maxType = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
-  
-  let resultData;
-  if (maxType === 'angel') resultData = results[0];
-  else if (maxType === 'devil') resultData = results[1];
-  else if (maxType === 'black') resultData = results[2];
-  else resultData = results[3];
-
-  const resultDiv = document.getElementById("result");
-  resultDiv.innerHTML = `
-    <p style="font-size: 20px;">あなたの正体は…✨</p>
-    <div class="result-name">${resultData.name}</div>
-    <p style="line-height: 1.6;">${resultData.desc}</p>
-  `;
-  document.getElementById("back").style.display = "inline-block";
+    document.getElementById("loading").style.display = "none";
+    document.getElementById("result-area").style.display = "block";
+    const mainType = Object.keys(scores).sort((a,b) => scores[b] - scores[a])[0];
+    const final = resultData[mainType];
+    document.getElementById("result-type").innerText = final.name;
+    document.getElementById("result-comment").innerHTML = final.msg;
 }
-
-initQuiz();
+showQuestion();
 </script>
 </body>
 </html>
