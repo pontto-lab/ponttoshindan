@@ -26,17 +26,17 @@ h1 { font-size:26px; margin-bottom:12px; color:#2c3e50; }
     display: none;
 }
 
-/* ★のうみそエリア：重なりを防ぐために flex を使用★ */
+/* ★5mm上に調整＆レイアウトの修正★ */
 #brain-inner {
     position: absolute;
-    top: 52px;    
+    top: 32px;    /* 前より上に引き上げたよ！ */
     left: 108px;  
     width: 185px; 
     height: 135px; 
     overflow: hidden;
     border-radius: 50%;
     display: flex;
-    flex-wrap: wrap;       /* 文字を詰め込む */
+    flex-wrap: wrap;       
     justify-content: center;
     align-content: center;  
     pointer-events: none;
@@ -48,15 +48,16 @@ h1 { font-size:26px; margin-bottom:12px; color:#2c3e50; }
     color: #ff69b4;
     padding: 1px; 
     line-height: 1;
-    transition: 0.3s;
 }
 
-/* ★主役級にデカい文字用のスタイル★ */
+/* ★主役のデカ文字：真ん中にドーン！★ */
 .big-label {
-    font-size: 42px !important; /* ドーンと大きく！ */
-    color: #ff1493 !important;  /* 色も少し濃くして目立たせる */
-    text-shadow: 2px 2px 0px #fff; /* 重なっても見えるように縁取り */
-    z-index: 10;
+    font-size: 55px !important; /* さらに大きく！ */
+    color: #ff1493 !important;  
+    display: block;             /* 改行させて目立たせる */
+    width: 100%;               /* 真ん中を占領 */
+    text-shadow: 2px 2px 4px rgba(255,255,255,0.8);
+    margin: -5px 0;            /* 隙間を詰める */
 }
 
 #result-area { margin-top:20px; }
@@ -149,26 +150,38 @@ function showResult() {
   const sorted = Object.keys(scores).sort((a, b) => scores[b] - scores[a]);
   const mainType = sorted[0];
 
-  // ★10文字目に1回だけ、デカい文字を混ぜる演出！
-  for (let i = 0; i < 75; i++) {
-    const label = document.createElement("span");
-    label.className = "brain-label";
-    const type = Math.random() < 0.6 ? mainType : sorted[Math.floor(Math.random() * 4)];
-    label.innerText = wordMap[type];
-    
-    if (i === 10) { 
-      label.classList.add("big-label"); // 10番目の文字をデカくする！
-    } else {
-      label.style.fontSize = (Math.random() * 8 + 14) + "px";
-      label.style.opacity = Math.random() * 0.7 + 0.3;
-    }
-    inner.appendChild(label);
+  // ★演出ロジック★
+  // まず周りの小さな文字を表示（半分）
+  for (let i = 0; i < 40; i++) {
+    addLabel(inner, sorted, mainType, false);
+  }
+
+  // 次にドーンとデカ文字を表示
+  const bigLabel = document.createElement("span");
+  bigLabel.className = "brain-label big-label";
+  bigLabel.innerText = wordMap[mainType];
+  inner.appendChild(bigLabel);
+
+  // 最後に残りの小さな文字を表示（隙間埋め）
+  for (let i = 0; i < 40; i++) {
+    addLabel(inner, sorted, mainType, false);
   }
 
   document.getElementById("result-desc").innerHTML = `
     <h2 style="color:#ff69b4;">${wordMap[mainType]}タイプ</h2>
     <p>${descMap[mainType]}</p>
   `;
+}
+
+// 文字を追加する共通関数
+function addLabel(container, sorted, mainType) {
+    const label = document.createElement("span");
+    label.className = "brain-label";
+    const type = Math.random() < 0.6 ? mainType : sorted[Math.floor(Math.random() * 4)];
+    label.innerText = wordMap[type];
+    label.style.fontSize = (Math.random() * 8 + 12) + "px";
+    label.style.opacity = Math.random() * 0.7 + 0.3;
+    container.appendChild(label);
 }
 
 showQuestion();
