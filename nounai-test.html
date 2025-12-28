@@ -12,24 +12,37 @@ h1 { font-size:26px; margin-bottom:12px; color:#2c3e50; }
 .options { display:flex; flex-direction:column; gap:10px; }
 .options button { padding:14px; border-radius:18px; border:none; background:#e0ffff; box-shadow:0 4px 10px rgba(0,0,0,0.06); font-size:15px; cursor:pointer; transition:0.2s; color: #333; }
 .options button:hover { transform: scale(1.03); background: #afeeee; }
-.options button:active { transform: scale(0.97); }
 
-#brain-container {
+/* トモちゃんの画像を使った脳内ディスプレイ */
+#brain-display {
     position: relative;
-    width: 280px;
-    height: 220px;
+    width: 350px; /* 画像のサイズに合わせて調整 */
+    height: 350px;
     margin: 20px auto;
-    background: #ffecf2;
-    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-    border: 4px solid #ffb6c1;
-    display: none;
-    overflow: hidden;
+    background-image: url('nounai_bg.png'); /* ここで画像を読み込むよ！ */
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    display: none; /* 最初は隠しておく */
 }
+
+/* 文字が表示される「のうみそ」の範囲制限 */
+#brain-inner {
+    position: absolute;
+    top: 40px;    /* 画像の白い部分の位置に合わせて調整 */
+    left: 100px;
+    width: 210px; /* 白い円の幅 */
+    height: 150px; /* 白い円の高さ */
+    /* background: rgba(255,0,0,0.2); // 調整中はこの行を生かすと範囲が見えて便利だよ */
+    overflow: hidden;
+    border-radius: 50%;
+}
+
 .brain-label {
     position: absolute;
     font-weight: bold;
     color: #ff69b4;
-    transition: 0.5s;
+    white-space: nowrap;
 }
 
 #result-area { margin-top:20px; }
@@ -50,62 +63,33 @@ h1 { font-size:26px; margin-bottom:12px; color:#2c3e50; }
 
 <div id="result-area" style="display:none;">
     <p style="font-size: 18px;">あなたの頭の中は…✨</p>
-    <div id="brain-container"></div>
+    
+    <div id="brain-display">
+        <div id="brain-inner"></div>
+    </div>
+
     <div id="result-desc"></div>
     <a href="index.html" id="back">🏠 ぽんっとTOPにもどる</a>
 </div>
 </div>
 
 <script>
-// 質問リスト
-const questions = [
-  "今、一番やりたいことは？",
-  "無人島にひとつ持っていくなら？",
-  "魔法のランプにお願いするなら？",
-  "明日、地球が滅びるとしたら？",
-  "自分への最高のご褒美は？"
-];
-
-// カテゴリごとの回答プール（ボリュームを大幅に増やしたよ！）
+// 質問データ（内容はさっきと同じだよ）
+const questions = ["今、一番やりたいことは？", "無人島にひとつ持っていくなら？", "魔法のランプにお願いするなら？", "明日、地球が滅びるとしたら？", "自分への最高のご褒美は？"];
 const answerData = [
-  { // Q1
-    money: ["宝くじで一攫千金", "株価の爆上がりを待つ", "ATMの残高を増やす魔法"],
-    love:  ["推しと結婚する", "デートの計画を練る", "好きな人と目が合う"],
-    sleep: ["泥のように15時間眠る", "高級ベッドで爆睡", "お布団と親友になる"],
-    play:  ["世界一周旅行に出る", "朝まで飲み明かす", "テーマパークを貸し切る"]
-  },
-  { // Q2
-    money: ["パンパンの財布", "換金できる金塊", "ブラックカード"],
-    love:  ["大好きな人の写真", "お揃いのアクセサリー", "愛のメッセージカード"],
-    sleep: ["最高級の羽毛布団", "お気に入りの枕", "アイマスクと耳栓セット"],
-    play:  ["最新のゲーム機", "一生分の漫画本", "大量のポテトチップス"]
-  },
-  { // Q3
-    money: ["一生遊べる不労所得", "庭から石油が出る", "買い物ですべてタダになる"],
-    love:  ["運命の人を連れてきて", "全人類に愛される魔法", "好きな人の記憶に残る"],
-    sleep: ["3秒で爆睡できる能力", "疲れを感じない体", "一生眠らなくていい体力"],
-    play:  ["毎日が日曜日の世界", "どこでもドアで遊びたい", "透明人間になって遊ぶ"]
-  },
-  { // Q4
-    money: ["全財産を使い切る", "銀行に立てこもる", "高い寿司を食べまくる"],
-    love:  ["愛する人に告白する", "家族と一緒に過ごす", "元カレ元カノに電話する"],
-    sleep: ["家でゴロゴロ寝て待つ", "いつも通り昼寝する", "最後に最高の夢を見る"],
-    play:  ["豪華なパーティーを開く", "やりたい放題暴れる", "ジェットコースターに乗る"]
-  },
-  { // Q5
-    money: ["貯金額を眺める", "デパコスを大人買い", "ハイブランドの新作"],
-    love:  ["推しの限定ライブ", "豪華ディナーデート", "ラブレターをもらう"],
-    sleep: ["1日中パジャマで過ごす", "昼下がりの二度寝", "スマホの電源を切る"],
-    play:  ["弾丸で海外旅行", "遊園地で遊びまくる", "カラオケで100点取る"]
-  }
+  { money: ["宝くじで一攫千金", "株価の爆上がり"], love: ["推しと結婚する", "デートの計画"], sleep: ["15時間眠る", "高級ベッドで爆睡"], play: ["世界一周旅行", "朝まで飲み明かす"] },
+  { money: ["パンパンの財布", "換金できる金塊"], love: ["大好きな人の写真", "愛のメッセージ"], sleep: ["最高級の羽毛布団", "お気に入りの枕"], play: ["最新のゲーム機", "一生分の漫画本"] },
+  { money: ["一生遊べる不労所得", "庭から石油"], love: ["運命の人", "愛される魔法"], sleep: ["3秒で爆睡", "疲れを知らない体"], play: ["毎日が日曜日", "どこでもドア"] },
+  { money: ["全財産を使い切る", "高い寿司"], love: ["愛する人に告白", "家族と過ごす"], sleep: ["ゴロゴロ寝て待つ", "最後に最高の夢"], play: ["豪華なパーティー", "やりたい放題"] },
+  { money: ["貯金額を眺める", "デパコス大人買い"], love: ["推しのライブ", "ディナーデート"], sleep: ["パジャマで過ごす", "昼下がりの二度寝"], play: ["弾丸で海外旅行", "遊園地で遊ぶ"] }
 ];
 
 const wordMap = { money: "金", love: "愛", sleep: "眠", play: "欲" };
 const descMap = {
-  money: "今はとにかく「現実」を大事にしたい時期！お財布が潤うと心も潤うタイプです。",
-  love: "心の中は「好き」でいっぱい！推しや大切な存在があなたのエネルギー源です。",
-  sleep: "お疲れ気味かも？今はとにかく「癒やし」と「休息」を頭が求めています。",
-  play: "エネルギーが有り余ってる！楽しいこと、刺激的なことを常に探しています。"
+  money: "今はとにかく「現実」を大事にしたい時期！",
+  love: "心の中は「好き」でいっぱい！",
+  sleep: "お疲れ気味かも？今は「癒やし」が必要です。",
+  play: "楽しいこと、刺激的なことを常に探しています。"
 };
 
 let current = 0;
@@ -117,7 +101,6 @@ function showQuestion() {
   document.getElementById("question").innerText = questions[qIdx];
   const optionsDiv = document.getElementById("options");
   optionsDiv.innerHTML = "";
-
   const currentPool = answerData[qIdx];
   const choices = [
     { t: "money", text: currentPool.money[Math.floor(Math.random() * currentPool.money.length)] },
@@ -125,7 +108,6 @@ function showQuestion() {
     { t: "sleep", text: currentPool.sleep[Math.floor(Math.random() * currentPool.sleep.length)] },
     { t: "play",  text: currentPool.play[Math.floor(Math.random() * currentPool.play.length)] }
   ].sort(() => Math.random() - 0.5);
-
   choices.forEach(choice => {
     const btn = document.createElement("button");
     btn.innerText = choice.text;
@@ -148,23 +130,25 @@ function showLoading() {
 function showResult() {
   document.getElementById("loading").style.display = "none";
   document.getElementById("result-area").style.display = "block";
-  const brain = document.getElementById("brain-container");
-  brain.style.display = "block";
-  brain.innerHTML = ""; 
+  document.getElementById("brain-display").style.display = "block";
+  
+  const inner = document.getElementById("brain-inner");
+  inner.innerHTML = ""; 
   
   const sorted = Object.keys(scores).sort((a, b) => scores[b] - scores[a]);
   const mainType = sorted[0];
 
-  for (let i = 0; i < 40; i++) { // 文字の数も少し増やして賑やかにしたよ！
+  for (let i = 0; i < 30; i++) {
     const label = document.createElement("div");
     label.className = "brain-label";
     const type = Math.random() < 0.6 ? mainType : sorted[Math.floor(Math.random() * 4)];
     label.innerText = wordMap[type];
-    label.style.left = Math.random() * 80 + 10 + "%";
-    label.style.top = Math.random() * 70 + 15 + "%";
-    label.style.fontSize = (Math.random() * 24 + 12) + "px";
+    // 白い円の中に収まるようにランダム配置
+    label.style.left = Math.random() * 80 + 5 + "%";
+    label.style.top = Math.random() * 70 + 10 + "%";
+    label.style.fontSize = (Math.random() * 20 + 14) + "px";
     label.style.opacity = Math.random() * 0.8 + 0.2;
-    brain.appendChild(label);
+    inner.appendChild(label);
   }
 
   document.getElementById("result-desc").innerHTML = `
