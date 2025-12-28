@@ -20,27 +20,26 @@ body { font-family:'ヒラギノ丸ゴ Pro','Arial Rounded MT Bold',sans-serif; 
     display: none;
 }
 
-/* ★修正ポイント：診断画像の白枠を消して馴染ませる★ */
+/* ★結果画像：右に2mm(8px)・上に2mm(8px)移動★ */
 #result-bg-image {
     position: absolute;
-    top: 105px;    /* のーみそステージの真ん中 */
-    left: 178px;   
+    top: 103px;    /* 111pxから8px引き上げ */
+    left: 183px;   /* 175pxから8px右へ */
     transform: translate(-50%, -50%);
-    width: 60px;   /* サイズを少し控えめに */
+    width: 60px;
     height: auto;
     z-index: 1; 
-    /* 白い背景を透明化して馴染ませる魔法 */
     mix-blend-mode: multiply; 
     opacity: 0.9;
 }
 
-/* ★文字の表示範囲を白いステージに限定★ */
+/* ★フォントの集合範囲：白いステージに最適化★ */
 #brain-inner {
     position: absolute;
-    top: 45px;    
-    left: 105px;  
-    width: 155px; /* ステージの幅に合わせる */
-    height: 120px; /* ステージの高さに合わせる */
+    top: 48px;    
+    left: 102px;  
+    width: 155px; 
+    height: 125px; 
     display: flex;
     flex-wrap: wrap;       
     justify-content: center;
@@ -57,12 +56,12 @@ body { font-family:'ヒラギノ丸ゴ Pro','Arial Rounded MT Bold',sans-serif; 
     line-height: 0.8;
     letter-spacing: -1.5px;
     margin: 1px;
-    /* 文字を馴染ませる */
     text-shadow: 0px 0px 1px rgba(255,255,255,0.5);
 }
 
 .options { display:flex; flex-direction:column; gap:10px; }
-.options button { padding:14px; border-radius:18px; border:none; background:#e0ffff; cursor:pointer; }
+.options button { padding:14px; border-radius:18px; border:none; background:#e0ffff; cursor:pointer; font-weight: bold; color: #333; transition: 0.2s; }
+.options button:hover { background:#afeeee; transform: scale(1.02); }
 #loading { font-size:24px; margin-top:32px; font-weight:bold; display:none; }
 #result-area { display:none; margin-top:20px; }
 </style>
@@ -72,17 +71,17 @@ body { font-family:'ヒラギノ丸ゴ Pro','Arial Rounded MT Bold',sans-serif; 
     <h1>🧠 あなたの脳内メーカー</h1>
     <div id="quiz">
         <p id="q-number" style="color:#888; font-size:12px;"></p>
-        <p id="question" style="font-weight:bold; min-height:3em;"></p>
+        <p id="question" style="font-weight:bold; min-height:3em; display:flex; align-items:center; justify-content:center;"></p>
         <div id="options" class="options"></div>
     </div>
-    <div id="loading">解析中...ぽぽーーんっ！✨</div>
+    <div id="loading">診断中...ぽぽーん！🚀</div>
     <div id="result-area">
         <div id="brain-display">
             <img id="result-bg-image" src="" alt="">
             <div id="brain-inner"></div>
         </div>
         <div id="result-desc"></div>
-        <br><a href="index.html" style="text-decoration:none; color:#999;">🏠 TOPへもどる</a>
+        <br><a href="index.html" style="text-decoration:none; color:#999; font-weight:bold;">🏠 TOPへもどる</a>
     </div>
 </div>
 
@@ -90,11 +89,10 @@ body { font-family:'ヒラギノ丸ゴ Pro','Arial Rounded MT Bold',sans-serif; 
 const fileNameMap = { love: "kekka-love.png", money: "kekka-kane.png", sleep: "kekka-sleep.png", sex: "kekka-h.png", work: "kekka-shigoto.png", none: "kekka-mu.png" };
 const wordMap = { love: "愛", money: "金", sleep: "眠", sex: "Ｈ", work: "仕事", none: "無" };
 
-// クイズデータ
-const questions = ["休日、何を考えてる？", "欲しいものは？", "今の自分に足りないのは？", "最高のご褒美は？", "明日地球が滅びるなら？", "3億円当たったら？", "無人島に持っていくなら？", "リラックスする瞬間は？", "検索ワードの傾向は？", "今の欲を漢字一文字で？"];
+const questions = ["休日、気づいたら何を考えてる？", "魔法のランプにお願いするなら？", "今の自分に一番足りないものは？", "自分への最高のご褒美は？", "明日、地球が滅びるとしたら？", "宝くじで3億円当たったらどうする？", "無人島に一つだけ持っていくなら？", "一番リラックスできる瞬間は？", "最近、検索したワードの傾向は？", "今のあなたの「欲」を漢字一文字で言うと？"];
 const answerData = [
     {love:"好きな人", money:"貯金", sleep:"睡眠", sex:"妄想", work:"仕事", none:"無"},
-    {love:"恋人", money:"大金", sleep:"安眠", sex:"刺激", work:"地位", none:"無欲"},
+    {love:"運命の人", money:"大金", sleep:"安眠", sex:"刺激", work:"地位", none:"無欲"},
     {love:"愛", money:"金", sleep:"眠り", sex:"エロ", work:"やる気", none:"悟り"},
     {love:"デート", money:"買い物", sleep:"爆睡", sex:"夜の遊び", work:"出世", none:"静寂"},
     {love:"告白", money:"豪遊", sleep:"寝る", sex:"合体", work:"完遂", none:"散歩"},
@@ -109,15 +107,21 @@ let current = 0;
 let scores = { love:0, money:0, sleep:0, sex:0, work:0, none:0 };
 
 function showQuestion() {
-    document.getElementById("q-number").innerText = `Step ${current + 1}/10`;
+    document.getElementById("q-number").innerText = `第 ${current + 1} 問 / 10`;
     document.getElementById("question").innerText = questions[current];
-    const opts = document.getElementById("options");
-    opts.innerHTML = "";
-    Object.keys(answerData[current]).forEach(key => {
-        const b = document.createElement("button");
-        b.innerText = answerData[current][key];
-        b.onclick = () => { scores[key]++; current++; if(current < 10) showQuestion(); else showLoading(); };
-        opts.appendChild(b);
+    const optsDiv = document.getElementById("options");
+    optsDiv.innerHTML = "";
+    
+    // ★回答をランダムに並び替えるロジック★
+    const currentAns = answerData[current];
+    const keys = Object.keys(currentAns);
+    keys.sort(() => Math.random() - 0.5); // ここでシャッフル！
+
+    keys.forEach(key => {
+        const btn = document.createElement("button");
+        btn.innerText = currentAns[key];
+        btn.onclick = () => { scores[key]++; current++; if(current < 10) showQuestion(); else showLoading(); };
+        optsDiv.appendChild(btn);
     });
 }
 
@@ -134,17 +138,14 @@ function showResult() {
     
     const sorted = Object.keys(scores).sort((a,b) => scores[b] - scores[a]);
     const main = sorted[0];
-    
-    // 背景画像のセット
-    const bgImg = document.getElementById("result-bg-image");
-    bgImg.src = fileNameMap[main];
+    document.getElementById("result-bg-image").src = fileNameMap[main];
 
     const inner = document.getElementById("brain-inner");
     inner.innerHTML = "";
     
-    // 文字の流し込み（合計約120個に抑えて、のーみその中に収める）
+    // 文字の流し込み（分類ごとに固める）
     sorted.forEach(type => {
-        const count = Math.floor((scores[type] / 10) * 120); 
+        const count = Math.floor((scores[type] / 10) * 125); 
         for(let i=0; i < count; i++) {
             const span = document.createElement("span");
             span.className = "brain-label";
