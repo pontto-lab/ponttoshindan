@@ -9,8 +9,10 @@ body { font-family:'ヒラギノ丸ゴ Pro','Arial Rounded MT Bold',sans-serif; 
 .wrapper { max-width:480px; margin:0 auto; padding:24px 16px; }
 h1 { font-size:32px; margin-bottom:16px; color:#8e44ad; }
 .message { font-size:16px; margin:16px 0 24px; line-height:1.5; color:#333; }
-.button { display:block; margin:12px auto; padding:14px 20px; border-radius:20px; background:#d8bfe6; color:#333; text-decoration:none; font-size:18px; box-shadow:0 4px 10px rgba(0,0,0,0.1); }
+.button { display:block; margin:12px auto; padding:14px 20px; border-radius:20px; background:#d8bfe6; color:#333; text-decoration:none; font-size:18px; box-shadow:0 4px 10px rgba(0,0,0,0.1); transition: 0.2s; }
 .button:active { transform:scale(0.97); }
+/* 準備中のボタンを少し薄くするスタイル */
+.button-waiting { background:#f2f2f2; color:#aaa; cursor: default; }
 p { font-size:16px; margin-top:24px; }
 </style>
 </head>
@@ -18,7 +20,6 @@ p { font-size:16px; margin-top:24px; }
 <div class="wrapper">
   <h1>ぽんっとラボ</h1>
 
-  <!-- メッセージ -->
   <div class="message">
     ぽぽぽぽーんっ<br>
     ようこそ「ぽんっとラボ」へ💓<br>
@@ -26,12 +27,15 @@ p { font-size:16px; margin-top:24px; }
     あなたのことを教えてね🥰
   </div>
 
-  <!-- 診断メニュー -->
   <a href="pontto.html" class="button">🧪 ぽんっと性格診断</a>
-  <a href="#" class="button">🍰 あなたを食べ物に例えたら？（準備中）</a>
+
+  <a href="ura-test.html" class="button" style="background: #e6e6fa;">👁️ あなたの【裏の顔】診断</a>
+
   <a href="iq-test.html" class="button">🧠 ぽんっとIQ診断</a>
-  <a href="#" class="button">😈 XXX診断（準備中）</a>
-  <a href="#" class="button">🎉 XXX診断（準備中）</a>
+
+  <a href="#" class="button button-waiting">👼 前世のあなたは何だった？（準備中）</a>
+
+  <a href="#" class="button button-waiting">🧠 あなたの脳内メーカー（準備中）</a>
 
   <p>スクショしてシェアしてね💓</p>
 </div>
