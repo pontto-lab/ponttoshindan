@@ -5,10 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>👁️ あなたの【裏の顔】診断 | ぽんっとラボ</title>
 <style>
-/* トモちゃんのこだわり配色を「裏の顔」っぽく少しミステリアスに調整したよ */
 body { font-family:'ヒラギノ丸ゴ Pro','Arial Rounded MT Bold',sans-serif; background:#fff; margin:0; padding:0; text-align:center; }
 .wrapper { max-width:480px; margin:0 auto; padding:24px 16px; text-align:center; }
-h1 { font-size:26px; margin-bottom:12px; color:#5e35b1; } /* 少し濃いめの紫 */
+h1 { font-size:26px; margin-bottom:12px; color:#5e35b1; }
 .question { font-size:16px; margin:24px 0 12px; font-weight: bold; }
 .options { display:flex; flex-direction:column; gap:10px; }
 .options button { padding:14px; border-radius:18px; border:none; background:#ede7f6; box-shadow:0 4px 10px rgba(0,0,0,0.06); font-size:15px; cursor:pointer; transition:0.2s; color: #333; }
@@ -26,7 +25,7 @@ h1 { font-size:26px; margin-bottom:12px; color:#5e35b1; } /* 少し濃いめの�
 
 <div id="quiz">
 <p class="question" id="question"></p>
-<div class="options" id="options"></div>
+<div id="options" class="options"></div>
 </div>
 
 <div id="loading">心の裏側をスキャン中…👁️</div>
@@ -35,95 +34,107 @@ h1 { font-size:26px; margin-bottom:12px; color:#5e35b1; } /* 少し濃いめの�
 </div>
 
 <script>
-// 「裏の顔」専用の設問データ
+// 質問リスト
 const questions = [
-  { q: "友達が自分より高いプレゼントをもらっていたら？", a:["「いいなー！」と純粋に喜ぶ","内心「私の方が似合うのに」と思う","値段をこっそり予想する","「よかったね」と言いつつ自分も買う"] },
-  { q: "行列で前の人が割り込んできたら？", a:["「あ、並んでますよ」と優しく言う","ムスッとしてSNSに書き込む","舌打ちが聞こえない程度に出る","無言で背後に圧をかける"] },
-  { q: "「秘密だよ」と言われた話、どうする？", a:["墓場まで持っていく","一番信頼できる人にだけ話す","「誰にも言わない」と前置きして話す","こっそりネタとしてメモしておく"] },
-  { q: "苦手な人が困っているのを見かけたら？", a:["迷わず声をかけて助ける","「自業自得かな」と遠くから見る","助けるふりをして優越感に浸る","忙しいふりをして通り過ぎる"] },
-  { q: "SNSでキラキラしてる知り合いを見ると？", a:["「すごいな」と憧れる","「加工かな？」とアップで確認する","とりあえず「いいね」してスルー","そっとミュートする"] },
-  { q: "もし透明人間になれたら、まず何をする？", a:["好きな人のそばにずっといる","お店のものをこっそりつまみ食いする","嫌いな人の家にイタズラしに行く","銀行の金庫をのぞきに行く"] },
-  { q: "自分より不幸な人の話を聞くと？", a:["心から同情して力になりたい","「自分じゃなくてよかった」と安堵する","もっと大変な人がいるよと教えたくなる","特に何も感じず、ふーんと思う"] }
+  "友達が自分より高いプレゼントをもらっていたら？",
+  "行列で前の人が割り込んできたら？",
+  "「秘密だよ」と言われた話、どうする？",
+  "苦手な人が困っているのを見かけたら？",
+  "SNSでキラキラしてる知り合いを見ると？",
+  "自分より不幸な人の話を聞くと？",
+  "もし透明人間になれたら、まず何をする？"
 ];
 
-// 裏の顔タイプ
+// 答えの「カテゴリ別」リスト（ここからランダムに選ばれる！）
+const answerPool = {
+  angel: ["「いいなー！」と純粋に喜ぶ", "迷わず声をかけて助ける", "心から同情して力になりたい", "「すごいな」と憧れる", "墓場まで持っていく"],
+  devil: ["内心「私の方が似合うのに」と思う", "ムスッとしてSNSに書き込む", "とりあえず「いいね」してスルー", "忙しいふりをして通り過ぎる", "「秘密だよ」と前置きして話す"],
+  black: ["値段をこっそり予想する", "舌打ちが聞こえない程度に出る", "「自業自得かな」と遠くから見る", "「加工かな？」とアップで確認する", "こっそりネタとしてメモしておく"],
+  king: ["無言で背後に圧をかける", "助けるふりをして優越感に浸る", "そっとミュートする", "「自分じゃなくてよかった」と安堵する", "特に何も感じず、ふーんと思う"]
+};
+
+// 結果タイプ
 const results = [
   { name:"純白のエンジェル度100%👼", desc:"裏も表もない、本当に心の綺麗なあなた。眩しすぎて周りが直視できないかも！" },
   { name:"ちゃっかり小悪魔度40%😈", desc:"少しだけ自分に正直なタイプ。可愛げのあるワガママで世渡り上手なあなたです。" },
   { name:"隠れ腹黒策士度70%🐍", desc:"表向きはニコニコ、心の中では冷静に分析。実は一番の切れ者かもしれません。" },
-  { name:"漆黒の闇の帝王度100%🖤", desc:"裏の顔がもはやメイン。誰にも支配されない、圧倒的な自分軸を持っているカリスマです。" },
-  { name:"ドライな現実主義者度50%👁️", desc:"感情よりも効率重視。裏表があるというより、ただただ賢く生きたいだけかも。" },
-  { name:"寂しがりやの執着タイプ度80%🕸️", desc:"好き嫌いが激しくはっきりしているタイプ。愛が深すぎて時々「闇」が出ることも…" }
+  { name:"漆黒の闇の帝王度100%🖤", desc:"裏の顔がもはやメイン。誰にも支配されない、圧倒的な自分軸を持っているカリスマです。" }
 ];
 
 let current = 0;
-let scores = Array(results.length).fill(0);
-
-// ランダムで7問選ぶ
+let scores = { angel:0, devil:0, black:0, king:0 };
 let quizOrder = [];
-while(quizOrder.length < 7){
-  let r = Math.floor(Math.random()*questions.length);
-  if(!quizOrder.includes(r)) quizOrder.push(r);
+
+// 質問をランダムに並び替え
+function initQuiz() {
+  quizOrder = [...Array(questions.length).keys()].sort(() => Math.random() - 0.5);
+  showQuestion();
 }
 
-// シャッフル関数
-function shuffleArray(arr){
-  for(let i=arr.length-1;i>0;i--){
-    const j = Math.floor(Math.random()*(i+1));
-    [arr[i],arr[j]] = [arr[j],arr[i]];
-  }
-  return arr;
-}
-
-function showQuestion(){
-  const q = questions[quizOrder[current]];
-  document.getElementById("question").innerText = q.q;
+function showQuestion() {
+  const qText = questions[quizOrder[current]];
+  document.getElementById("question").innerText = qText;
 
   const optionsDiv = document.getElementById("options");
   optionsDiv.innerHTML = "";
 
-  let shuffledOptions = shuffleArray([...q.a]);
-  shuffledOptions.forEach((option,i)=>{
+  // 各カテゴリから1つずつランダムに回答を抽出
+  const choices = [
+    { type: 'angel', text: answerPool.angel[Math.floor(Math.random() * answerPool.angel.length)] },
+    { type: 'devil', text: answerPool.devil[Math.floor(Math.random() * answerPool.devil.length)] },
+    { type: 'black', text: answerPool.black[Math.floor(Math.random() * answerPool.black.length)] },
+    { type: 'king',  text: answerPool.king[Math.floor(Math.random() * answerPool.king.length)] }
+  ].sort(() => Math.random() - 0.5); // ボタンの並び順もシャッフル
+
+  choices.forEach(choice => {
     const btn = document.createElement("button");
-    btn.innerText = option;
-    btn.onclick = ()=>{ 
-      // 選択肢のインデックスによって加算先を変える
-      scores[i % results.length]++; 
-      nextQuestion(); 
+    btn.innerText = choice.text;
+    btn.onclick = () => {
+      scores[choice.type]++;
+      nextQuestion();
     };
     optionsDiv.appendChild(btn);
   });
 }
 
-function nextQuestion(){
+function nextQuestion() {
   current++;
-  if(current < quizOrder.length){
+  if (current < 5) { // 5問答えたら終了
     showQuestion();
   } else {
     showLoading();
   }
 }
 
-function showLoading(){
-  document.getElementById("quiz").style.display="none";
-  const loading = document.getElementById("loading");
-  loading.style.display="block";
-  setTimeout(showResult,1500); // ちょっと長めにスキャン！
+function showLoading() {
+  document.getElementById("quiz").style.display = "none";
+  document.getElementById("loading").style.display = "block";
+  setTimeout(showResult, 1500);
 }
 
-function showResult(){
-  document.getElementById("loading").style.display="none";
-  const maxIndex = scores.indexOf(Math.max(...scores));
+function showResult() {
+  document.getElementById("loading").style.display = "none";
+  
+  // スコアが一番高いタイプを判定
+  let maxType = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
+  
+  let resultData;
+  if (maxType === 'angel') resultData = results[0];
+  else if (maxType === 'devil') resultData = results[1];
+  else if (maxType === 'black') resultData = results[2];
+  else resultData = results[3];
+
   const resultDiv = document.getElementById("result");
   resultDiv.innerHTML = `
     <p style="font-size: 20px;">あなたの正体は…✨</p>
-    <div class="result-name">${results[maxIndex].name}</div>
-    <p style="line-height: 1.6;">${results[maxIndex].desc}</p>
+    <div class="result-name">${resultData.name}</div>
+    <p style="line-height: 1.6;">${resultData.desc}</p>
   `;
-  document.getElementById("back").style.display="inline-block";
+  document.getElementById("back").style.display = "inline-block";
 }
 
-showQuestion();
+initQuiz();
 </script>
 </body>
+</html>
 </html>
