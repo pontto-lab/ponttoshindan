@@ -13,29 +13,29 @@ h1 { font-size:26px; margin-bottom:12px; color:#2c3e50; }
 .options button { padding:14px; border-radius:18px; border:none; background:#e0ffff; box-shadow:0 4px 10px rgba(0,0,0,0.06); font-size:15px; cursor:pointer; transition:0.2s; color: #333; }
 .options button:hover { transform: scale(1.03); background: #afeeee; }
 
-/* トモちゃんの画像を使った脳内ディスプレイ */
+/* 脳内ディスプレイ */
 #brain-display {
     position: relative;
-    width: 350px; /* 画像のサイズに合わせて調整 */
+    width: 350px; 
     height: 350px;
     margin: 20px auto;
-    background-image: url('nounai_bg.png'); /* ここで画像を読み込むよ！ */
+    background-image: url('nounai_bg.png'); 
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
-    display: none; /* 最初は隠しておく */
+    display: none;
 }
 
-/* 文字が表示される「のうみそ」の範囲制限 */
+/* ★ここが重要！白い部分からはみ出さないガード★ */
 #brain-inner {
     position: absolute;
-    top: 40px;    /* 画像の白い部分の位置に合わせて調整 */
-    left: 100px;
-    width: 210px; /* 白い円の幅 */
-    height: 150px; /* 白い円の高さ */
-    /* background: rgba(255,0,0,0.2); // 調整中はこの行を生かすと範囲が見えて便利だよ */
-    overflow: hidden;
-    border-radius: 50%;
+    top: 35px;    /* 画像の白い部分に合わせて微調整 */
+    left: 95px;   /* 画像の白い部分に合わせて微調整 */
+    width: 220px; /* 白いエリアの横幅 */
+    height: 160px; /* 白いエリアの縦幅 */
+    overflow: hidden; /* ★これではみ出しをカット！ */
+    border-radius: 50% 50% 45% 45%; /* 円形にガードを張る */
+    pointer-events: none; /* 文字を触れないようにする（バグ防止） */
 }
 
 .brain-label {
@@ -43,6 +43,7 @@ h1 { font-size:26px; margin-bottom:12px; color:#2c3e50; }
     font-weight: bold;
     color: #ff69b4;
     white-space: nowrap;
+    line-height: 1;
 }
 
 #result-area { margin-top:20px; }
@@ -74,7 +75,6 @@ h1 { font-size:26px; margin-bottom:12px; color:#2c3e50; }
 </div>
 
 <script>
-// 質問データ（内容はさっきと同じだよ）
 const questions = ["今、一番やりたいことは？", "無人島にひとつ持っていくなら？", "魔法のランプにお願いするなら？", "明日、地球が滅びるとしたら？", "自分への最高のご褒美は？"];
 const answerData = [
   { money: ["宝くじで一攫千金", "株価の爆上がり"], love: ["推しと結婚する", "デートの計画"], sleep: ["15時間眠る", "高級ベッドで爆睡"], play: ["世界一周旅行", "朝まで飲み明かす"] },
@@ -138,16 +138,18 @@ function showResult() {
   const sorted = Object.keys(scores).sort((a, b) => scores[b] - scores[a]);
   const mainType = sorted[0];
 
-  for (let i = 0; i < 30; i++) {
+  // ★文字数を50個に増やして「みっちり」させたよ！
+  for (let i = 0; i < 50; i++) {
     const label = document.createElement("div");
     label.className = "brain-label";
     const type = Math.random() < 0.6 ? mainType : sorted[Math.floor(Math.random() * 4)];
     label.innerText = wordMap[type];
-    // 白い円の中に収まるようにランダム配置
-    label.style.left = Math.random() * 80 + 5 + "%";
-    label.style.top = Math.random() * 70 + 10 + "%";
-    label.style.fontSize = (Math.random() * 20 + 14) + "px";
-    label.style.opacity = Math.random() * 0.8 + 0.2;
+    
+    // ★配置を少し内側に寄せて、はみ出しにくくしたよ
+    label.style.left = Math.random() * 85 + 5 + "%";
+    label.style.top = Math.random() * 80 + 5 + "%";
+    label.style.fontSize = (Math.random() * 18 + 14) + "px";
+    label.style.opacity = Math.random() * 0.9 + 0.1;
     inner.appendChild(label);
   }
 
