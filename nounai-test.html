@@ -13,7 +13,6 @@ h1 { font-size:26px; margin-bottom:12px; color:#2c3e50; }
 .options button { padding:14px; border-radius:18px; border:none; background:#e0ffff; box-shadow:0 4px 10px rgba(0,0,0,0.06); font-size:15px; cursor:pointer; transition:0.2s; color: #333; }
 .options button:hover { transform: scale(1.03); background: #afeeee; }
 
-/* 脳内ディスプレイ（トモちゃんの画像） */
 #brain-display {
     position: relative;
     width: 350px; 
@@ -26,7 +25,6 @@ h1 { font-size:26px; margin-bottom:12px; color:#2c3e50; }
     display: none;
 }
 
-/* ★5mm上に調整★ */
 #brain-inner {
     position: absolute;
     top: 32px;    
@@ -37,26 +35,32 @@ h1 { font-size:26px; margin-bottom:12px; color:#2c3e50; }
     border-radius: 50%;
     display: flex;
     flex-wrap: wrap;       
-    justify-content: center;
+    /* ★隙間を埋めるための調整★ */
+    justify-content: space-around; 
     align-content: center;  
     pointer-events: none;
+    padding: 5px;
+    box-sizing: border-box;
 }
 
 .brain-label {
     display: inline-block;
     font-weight: bold;
     color: #ff69b4;
-    padding: 1px; 
-    line-height: 1;
+    padding: 0px; 
+    line-height: 1.1;
+    letter-spacing: -1px;
 }
 
 .big-label {
-    font-size: 55px !important; 
+    font-size: 60px !important; 
     color: #ff1493 !important;  
     display: block;             
     width: 100%;               
-    text-shadow: 2px 2px 4px rgba(255,255,255,0.8);
-    margin: -5px 0;            
+    text-shadow: 2px 2px 4px rgba(255,255,255,0.9);
+    margin: -8px 0;   
+    text-align: center;
+    z-index: 5;
 }
 
 #result-area { margin-top:20px; }
@@ -86,25 +90,34 @@ h1 { font-size:26px; margin-bottom:12px; color:#2c3e50; }
 </div>
 
 <script>
-const questions = ["今、一番やりたいことは？", "無人島にひとつ持っていくなら？", "魔法のランプにお願いするなら？", "明日、地球が滅びるとしたら？", "自分への最高のご褒美は？"];
-const answerData = [
-  { money: ["宝くじ", "株価"], love: ["結婚", "デート"], sleep: ["15時間寝る", "爆睡"], play: ["世界旅行", "飲み明かす"] },
-  { money: ["財布", "金塊"], love: ["写真", "指輪"], sleep: ["羽毛布団", "枕"], play: ["ゲーム", "漫画本"] },
-  { money: ["不労所得", "石油"], love: ["運命の人", "愛される"], sleep: ["爆睡能力", "疲れ知らず"], play: ["毎日休日", "どこでもドア"] },
-  { money: ["爆買い", "高い寿司"], love: ["告白", "家族"], sleep: ["昼寝", "夢を見る"], play: ["パーティー", "暴れる"] },
-  { money: ["貯金額", "デパコス"], love: ["ライブ", "ディナー"], sleep: ["パジャマ", "二度寝"], play: ["海外旅行", "遊園地"] }
+const questions = [
+    "休日、気づいたら何を考えてる？",
+    "魔法のランプにお願いするなら？",
+    "今の自分に一番足りないものは？",
+    "自分への最高のご褒美は？",
+    "明日、地球が滅びるとしたら？"
 ];
 
-const wordMap = { money: "金", love: "愛", sleep: "眠", play: "欲" };
+const answerData = [
+  { love: "推しのこと", money: "銀行の残高", sleep: "昼寝のタイミング", sex: "ムフフな妄想", work: "明日のタスク", none: "無心で壁を見る" },
+  { love: "一生愛されたい", money: "油田のオーナーになる", sleep: "3秒で爆睡する能力", sex: "究極のモテ期", work: "出世街道まっしぐら", none: "煩悩を捨てたい" },
+  { love: "トキメキ", money: "圧倒的な資金力", sleep: "深い眠り", sex: "刺激的な夜", work: "やる気スイッチ", none: "悟りの境地" },
+  { love: "恋人と豪華ディナー", money: "宝くじで一攫千金！", sleep: "高級羽毛布団で15時間", sex: "魅惑のボディケア", work: "最新のPC", none: "デジタルデトックス" },
+  { love: "家族と過ごす", money: "全財産使い切る", sleep: "そのまま永眠", sex: "本能のままに振る舞う", work: "仕事を終わらせる", none: "いつも通り過ごす" }
+];
+
+const wordMap = { love: "愛", money: "金", sleep: "眠", sex: "Ｈ", work: "仕事", none: "無" };
 const descMap = {
-  money: "今はとにかく「現実」を大事にしたい時期！お財布が潤うと心も潤うタイプです。",
-  love: "心の中は「好き」でいっぱい！推しや大切な存在があなたのエネルギー源です。",
-  sleep: "お疲れ気味かも？今はとにかく「癒やし」と「休息」を頭が求めています。",
-  play: "エネルギーが有り余ってる！楽しいこと、刺激的なことを常に探しています。"
+  love: "心の中は「好き」でいっぱい！愛し愛されたいロマンチストさんです。",
+  money: "今はとにかく「現実」が大事！お財布の潤いが心の平和に直結します。",
+  sleep: "お疲れ気味かも？頭の中はふかふかの布団のことで埋め尽くされています。",
+  sex: "本能が爆発中！刺激的な何かを求めて頭がのぼせているようです。",
+  work: "責任感が強すぎ！休みの日もどこかで仕事のことを考えていませんか？",
+  none: "悟りを開いています。何事にも動じない、静かな精神状態にあるようです。"
 };
 
 let current = 0;
-let scores = { money:0, love:0, sleep:0, play:0 };
+let scores = { love:0, money:0, sleep:0, sex:0, work:0, none:0 };
 let quizOrder = [...Array(questions.length).keys()].sort(() => Math.random() - 0.5);
 
 function showQuestion() {
@@ -114,18 +127,13 @@ function showQuestion() {
   optionsDiv.innerHTML = "";
   
   const currentPool = answerData[qIdx];
-  // ★ここで選択肢を毎回シャッフルするよ★
-  const choices = [
-    { t: "money", text: currentPool.money[Math.floor(Math.random() * currentPool.money.length)] },
-    { t: "love",  text: currentPool.love[Math.floor(Math.random() * currentPool.love.length)] },
-    { t: "sleep", text: currentPool.sleep[Math.floor(Math.random() * currentPool.sleep.length)] },
-    { t: "play",  text: currentPool.play[Math.floor(Math.random() * currentPool.play.length)] }
-  ].sort(() => Math.random() - 0.5); // ここで並び順をランダムに入れ替え！
-
-  choices.forEach(choice => {
+  const keys = Object.keys(currentPool);
+  
+  // 選択肢をシャッフルして表示
+  keys.sort(() => Math.random() - 0.5).forEach(key => {
     const btn = document.createElement("button");
-    btn.innerText = choice.text;
-    btn.onclick = () => { scores[choice.t]++; nextQuestion(); };
+    btn.innerText = currentPool[key];
+    btn.onclick = () => { scores[key]++; nextQuestion(); };
     optionsDiv.appendChild(btn);
   });
 }
@@ -152,19 +160,19 @@ function showResult() {
   const sorted = Object.keys(scores).sort((a, b) => scores[b] - scores[a]);
   const mainType = sorted[0];
 
-  // 小さな文字（前半）
-  for (let i = 0; i < 40; i++) {
+  // 前半の小文字（数を増やして隙間を埋める）
+  for (let i = 0; i < 60; i++) {
     addLabel(inner, sorted, mainType);
   }
 
-  // ★主役のデカ文字★
+  // デカ文字
   const bigLabel = document.createElement("span");
   bigLabel.className = "brain-label big-label";
   bigLabel.innerText = wordMap[mainType];
   inner.appendChild(bigLabel);
 
-  // 小さな文字（後半：隙間埋め）
-  for (let i = 0; i < 40; i++) {
+  // 後半の小文字（さらに隙間を埋める）
+  for (let i = 0; i < 60; i++) {
     addLabel(inner, sorted, mainType);
   }
 
@@ -177,10 +185,11 @@ function showResult() {
 function addLabel(container, sorted, mainType) {
     const label = document.createElement("span");
     label.className = "brain-label";
-    const type = Math.random() < 0.6 ? mainType : sorted[Math.floor(Math.random() * 4)];
+    // メインタイプが出やすいように調整
+    const type = Math.random() < 0.5 ? mainType : sorted[Math.floor(Math.random() * sorted.length)];
     label.innerText = wordMap[type];
-    label.style.fontSize = (Math.random() * 8 + 12) + "px";
-    label.style.opacity = Math.random() * 0.7 + 0.3;
+    label.style.fontSize = (Math.random() * 6 + 10) + "px"; // 少し小さめにして密度を上げる
+    label.style.opacity = Math.random() * 0.6 + 0.3;
     container.appendChild(label);
 }
 
