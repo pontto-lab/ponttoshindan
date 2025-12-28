@@ -71,7 +71,7 @@ h1 { font-size:26px; margin-bottom:12px; color:#2c3e50; }
 <h1>🧠 あなたの脳内メーカー</h1>
 
 <div id="quiz">
-<p id="q-number" style="font-size:14px; color:#888; margin:0;">第 1 問</p>
+<p id="q-number" style="font-size:14px; color:#888; margin:0;"></p>
 <p class="question" id="question"></p>
 <div id="options" class="options"></div>
 </div>
@@ -89,7 +89,7 @@ h1 { font-size:26px; margin-bottom:12px; color:#2c3e50; }
 </div>
 
 <script>
-// ★10問に増やしたよ！★
+// 全10問のリスト
 const questions = [
     "休日、気づいたら何を考えてる？",
     "魔法のランプにお願いするなら？",
@@ -113,7 +113,7 @@ const answerData = [
   { love: "恋人", money: "ゴールドカード", sleep: "最高級の枕", sex: "媚薬", work: "パソコン", none: "何も持っていかない" },
   { love: "ハグしている時", money: "通帳記帳した時", sleep: "二度寝する瞬間", sex: "お風呂でリラックス", work: "タスクが完了した時", none: "ぼーっとしている時" },
   { love: "婚活・恋愛テクニック", money: "投資・節税・副業", sleep: "快眠グッズ・マットレス", sex: "深夜の秘密のワード", work: "スキルアップ・効率化", none: "検索なんてしない" },
-  { love: "愛", money: "金", sleep: "休", sex: "欲", work: "職", none: "空" }
+  { love: "愛", money: "金", sleep: "眠", sex: "Ｈ", work: "仕事", none: "無" }
 ];
 
 const wordMap = { love: "愛", money: "金", sleep: "眠", sex: "Ｈ", work: "仕事", none: "無" };
@@ -128,67 +128,9 @@ const descMap = {
 
 let current = 0;
 let scores = { love:0, money:0, sleep:0, sex:0, work:0, none:0 };
+// questions.length を使うことで、リストにある分だけ自動でカウントするよ
 let quizOrder = [...Array(questions.length).keys()].sort(() => Math.random() - 0.5);
 
 function showQuestion() {
   const qIdx = quizOrder[current];
-  document.getElementById("q-number").innerText = `第 ${current + 1} 問 / 10`;
-  document.getElementById("question").innerText = questions[qIdx];
-  const optionsDiv = document.getElementById("options");
-  optionsDiv.innerHTML = "";
-  const currentPool = answerData[qIdx];
-  const keys = Object.keys(currentPool);
-  keys.sort(() => Math.random() - 0.5).forEach(key => {
-    const btn = document.createElement("button");
-    btn.innerText = currentPool[key];
-    btn.onclick = () => { scores[key]++; nextQuestion(); };
-    optionsDiv.appendChild(btn);
-  });
-}
-
-function nextQuestion() {
-  current++;
-  if (current < questions.length) showQuestion(); else showLoading();
-}
-
-function showLoading() {
-  document.getElementById("quiz").style.display = "none";
-  document.getElementById("loading").style.display = "block";
-  setTimeout(showResult, 2000);
-}
-
-function showResult() {
-  document.getElementById("loading").style.display = "none";
-  document.getElementById("result-area").style.display = "block";
-  document.getElementById("brain-display").style.display = "block";
-  
-  const inner = document.getElementById("brain-inner");
-  inner.innerHTML = ""; 
-  
-  const sorted = Object.keys(scores).sort((a, b) => scores[b] - scores[a]);
-  const mainType = sorted[0];
-
-  for (let i = 0; i < 160; i++) { // さらに密度を上げたよ
-    if (i === 45) {
-        const bigLabel = document.createElement("span");
-        bigLabel.className = "brain-label big-label";
-        bigLabel.innerText = wordMap[mainType];
-        inner.appendChild(bigLabel);
-    }
-    const label = document.createElement("span");
-    label.className = "brain-label";
-    const type = Math.random() < 0.5 ? mainType : sorted[Math.floor(Math.random() * sorted.length)];
-    label.innerText = wordMap[type];
-    label.style.fontSize = (Math.random() * 8 + 10) + "px";
-    label.style.opacity = Math.random() * 0.7 + 0.3;
-    inner.appendChild(label);
-  }
-
-  document.getElementById("result-desc").innerHTML = `
-    <h2 style="color:#ff69b4;">${wordMap[mainType]}タイプ</h2>
-    <p>${descMap[mainType]}</p>
-  `;
-}
-
-showQuestion();
-</script>
+  document.getElementById("q-
