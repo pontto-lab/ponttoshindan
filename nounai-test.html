@@ -5,25 +5,33 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>🧠 あなたの脳内メーカー</title>
 <style>
-body { font-family:'ヒラギノ丸ゴ Pro','Arial Rounded MT Bold',sans-serif; background:#fff; margin:0; padding:0; text-align:center; }
+/* 全体のスタイル設定 */
+body { font-family:'ヒラギノ丸ゴ Pro','Arial Rounded MT Bold',sans-serif; background:#fff; margin:0; padding:0; text-align:center; overflow-x: hidden; }
 .wrapper { max-width:480px; margin:0 auto; padding:24px 16px; }
 
-/* くるくる回転して登場するアニメーション */
+/* 🧠 くるくる回転して登場するアニメーション */
 @keyframes resultAppear {
     0% { transform: scale(0) rotate(0deg); opacity: 0; }
     50% { transform: scale(1.1) rotate(360deg); opacity: 1; }
     100% { transform: scale(1) rotate(720deg); opacity: 1; }
 }
 
-/* 下からフワッとコメントが出る演出 */
+/* 💬 下からフワッとコメントが出る演出 */
 @keyframes commentFadeIn {
     0% { opacity: 0; transform: translateY(20px); }
     100% { opacity: 1; transform: translateY(0); }
 }
 
+/* ローディングのドキドキ演出 */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
 #result-area { display:none; margin-top:20px; }
 
-/* トモちゃんの画像を表示するエリア */
+/* 結果画像の表示設定 */
 #result-file-display {
     max-width: 100%;
     height: auto;
@@ -35,7 +43,7 @@ body { font-family:'ヒラギノ丸ゴ Pro','Arial Rounded MT Bold',sans-serif; 
     animation: resultAppear 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
-/* ★コメントのスタイル★ */
+/* 一言コメントのスタイル */
 .result-comment {
     margin-top: 25px;
     font-size: 20px;
@@ -49,9 +57,19 @@ body { font-family:'ヒラギノ丸ゴ Pro','Arial Rounded MT Bold',sans-serif; 
     animation: commentFadeIn 0.8s ease-out 1.2s forwards;
 }
 
+/* 診断中のボタンなど */
 .options { display:flex; flex-direction:column; gap:10px; margin-top: 20px; }
-.options button { padding:14px; border-radius:18px; border:none; background:#e0ffff; cursor:pointer; font-weight: bold; font-size: 16px; }
-#loading { font-size:24px; margin-top:50px; font-weight:bold; display:none; color: #ff69b4; }
+.options button { padding:14px; border-radius:18px; border:none; background:#e0ffff; cursor:pointer; font-weight: bold; font-size: 16px; transition: 0.2s; }
+.options button:hover { background:#afeeee; }
+
+#loading { 
+    font-size:24px; 
+    margin-top:50px; 
+    font-weight:bold; 
+    display:none; 
+    color: #ff69b4; 
+    animation: pulse 1s infinite;
+}
 </style>
 </head>
 <body>
@@ -59,43 +77,53 @@ body { font-family:'ヒラギノ丸ゴ Pro','Arial Rounded MT Bold',sans-serif; 
     <h1>🧠 あなたの脳内メーカー</h1>
 
     <div id="quiz">
-        <p id="q-number" style="color:#888;"></p>
-        <p id="question" style="font-weight:bold; min-height:4em; font-size:18px; display:flex; align-items:center; justify-content:center;"></p>
+        <p id="q-number" style="color:#888; font-size:12px;"></p>
+        <p id="question" style="font-weight:bold; min-height:4em; font-size:18px; display:flex; align-items:center; justify-content:center; padding: 0 10px;"></p>
         <div id="options" class="options"></div>
     </div>
 
     <div id="loading">あなたの脳内は・・・・！！！！🧠✨</div>
 
     <div id="result-area">
-        <img id="result-file-display" src="" alt="結果">
-        
+        <img id="result-file-display" src="" alt="結果画像">
         <div id="result-comment" class="result-comment"></div>
-        
         <br>
-        <a href="index.html" style="display:inline-block; margin-top:30px; color:#999; text-decoration:none; font-weight:bold;">🏠 TOPへもどる</a>
+        <a href="javascript:location.reload();" style="display:inline-block; margin-top:30px; color:#999; text-decoration:none; font-weight:bold; border-bottom:1px solid #ccc;">🏠 もう一度診断する</a>
     </div>
 </div>
 
 <script>
-// ★画像とコメントをカテゴリごとにバッチリ紐付けたよ！★
+/* ★画像ファイル名（.png）とコメントの紐付け★ */
 const resultData = {
-    work: { img: "kekka-shigoto.jpg", msg: "君の脳内はこれ一色！<br>「THE！仕事！！」" },
-    love: { img: "kekka-love.jpg", msg: "溢れ出す想いが止まらない！<br>「愛・愛・愛の嵐！！」" },
-    sleep: { img: "kekka-sleep.jpg", msg: "もはや立って寝てるかも！？<br>「おやすみ3秒前！！」" },
-    sex: { img: "kekka-h.jpg", msg: "本能の赴くままに突き進め！<br>「Ｈな妄想フルスロットル！！」" },
-    money: { img: "kekka-kane.jpg", msg: "頭の中はそろばんの音だけ！<br>「金・金・金！強欲モード！！」" },
-    none: { img: "kekka-mu.jpg", msg: "もはや悟りの境地・・・<br>「完全なる無！！！」" }
+    work:  { img: "kekka-shigoto.png", msg: "君の脳内はこれ一色！<br>「THE！仕事！！」" },
+    love:  { img: "kekka-love.png",    msg: "溢れ出す想いが止まらない！<br>「愛・愛・愛の嵐！！」" },
+    sleep: { img: "kekka-sleep.png",   msg: "もはや立って寝てるかも！？<br>「おやすみ3秒前！！」" },
+    sex:   { img: "kekka-h.png",       msg: "本能の赴くままに突き進め！<br>「Ｈな妄想フルスロットル！！」" },
+    money: { img: "kekka-kane.png",    msg: "頭の中はそろばんの音だけ！<br>「金・金・金！強欲モード！！」" },
+    none:  { img: "kekka-mu.png",      msg: "もはや悟りの境地・・・<br>「完全なる無！！！」" }
 };
 
-// 質問などはそのまま
+/* 質問データ */
 const questions = ["休日、気づいたら何を考えてる？", "魔法のランプにお願いするなら？", "今の自分に一番足りないものは？", "自分への最高のご褒美は？", "明日、地球が滅びるとしたら？", "宝くじで3億円当たったらどうする？", "無人島に一つだけ持っていくなら？", "一番リラックスできる瞬間は？", "最近、検索したワードの傾向は？", "今のあなたの「欲」を漢字一文字で言うと？"];
-const answerData = [{love:"好きな人", money:"貯金", sleep:"睡眠", sex:"妄想", work:"仕事", none:"無"},{love:"運命の人", money:"大金", sleep:"安眠", sex:"刺激", work:"地位", none:"無欲"},{love:"愛", money:"金", sleep:"眠り", sex:"エロ", work:"やる気", none:"悟り"},{love:"デート", money:"買い物", sleep:"爆睡", sex:"夜の遊び", work:"出世", none:"静寂"},{love:"告白", money:"豪遊", sleep:"寝る", sex:"合体", work:"完遂", none:"散歩"},{love:"結婚資金", money:"投資", sleep:"寝具購入", sex:"豪遊", work:"起業", none:"寄付"},{love:"好きな人", money:"クレカ", sleep:"枕", sex:"ゴム", work:"PC", none:"体一つ"},{love:"ハグ", money:"記帳", sleep:"二度寝", sex:"入浴", work:"達成", none:"瞑想"},{love:"恋愛", money:"副業", sleep:"快眠", sex:"秘密", work:"効率", none:"なし"},{love:"愛", money:"金", sleep:"眠", sex:"Ｈ", work:"仕事", none:"無"}];
+const answerData = [
+    {love:"好きな人", money:"貯金", sleep:"睡眠", sex:"妄想", work:"仕事", none:"無"},
+    {love:"運命の人", money:"大金", sleep:"安眠", sex:"刺激", work:"地位", none:"無欲"},
+    {love:"愛", money:"金", sleep:"眠り", sex:"エロ", work:"やる気", none:"悟り"},
+    {love:"デート", money:"買い物", sleep:"爆睡", sex:"夜の遊び", work:"出世", none:"静寂"},
+    {love:"告白", money:"豪遊", sleep:"寝る", sex:"合体", work:"完遂", none:"散歩"},
+    {love:"結婚資金", money:"投資", sleep:"寝具購入", sex:"豪遊", work:"起業", none:"寄付"},
+    {love:"好きな人", money:"クレカ", sleep:"枕", sex:"ゴム", work:"PC", none:"体一つ"},
+    {love:"ハグ", money:"記帳", sleep:"二度寝", sex:"入浴", work:"達成", none:"瞑想"},
+    {love:"恋愛", money:"副業", sleep:"快眠", sex:"秘密", work:"効率", none:"なし"},
+    {love:"愛", money:"金", sleep:"眠", sex:"Ｈ", work:"仕事", none:"無"}
+];
 
 let current = 0;
 let scores = { love:0, money:0, sleep:0, sex:0, work:0, none:0 };
 
+/* 質問を表示する関数 */
 function showQuestion() {
-    document.getElementById("q-number").innerText = `Q ${current + 1} / 10`;
+    document.getElementById("q-number").innerText = `第 ${current + 1} 問 / 10`;
     document.getElementById("question").innerText = questions[current];
     const optsDiv = document.getElementById("options");
     optsDiv.innerHTML = "";
@@ -103,38 +131,46 @@ function showQuestion() {
     keys.forEach(key => {
         const btn = document.createElement("button");
         btn.innerText = answerData[current][key];
-        btn.onclick = () => { scores[key]++; current++; if(current < 10) showQuestion(); else showLoading(); };
+        btn.onclick = () => { 
+            scores[key]++; 
+            current++; 
+            if(current < 10) showQuestion(); 
+            else showLoading(); 
+        };
         optsDiv.appendChild(btn);
     });
 }
 
+/* 演出用ローディングを表示する関数 */
 function showLoading() {
     document.getElementById("quiz").style.display = "none";
     document.getElementById("loading").style.display = "block";
+    // 1.5秒待ってから結果発表！
     setTimeout(showResult, 1500);
 }
 
+/* 結果を表示する関数 */
 function showResult() {
     document.getElementById("loading").style.display = "none";
     document.getElementById("result-area").style.display = "block";
     
+    // スコアが一番高いタイプを判定
     const sorted = Object.keys(scores).sort((a,b) => scores[b] - scores[a]);
     const mainType = sorted[0];
-
-    // 選ばれたカテゴリの画像とメッセージを取得
     const finalResult = resultData[mainType];
 
-    // 画像セット
+    // 画像のセット
     const resultImg = document.getElementById("result-file-display");
     resultImg.src = finalResult.img;
     resultImg.classList.add("result-animation");
 
-    // メッセージセット
+    // コメントのセット
     const resultComment = document.getElementById("result-comment");
     resultComment.innerHTML = finalResult.msg;
     resultComment.classList.add("comment-animation");
 }
 
+/* 診断スタート！ */
 showQuestion();
 </script>
 </body>
