@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🧠 あなたの脳内メーカー | ぽんっとラボ</title>
+<style>
+body { font-family:'ヒラギノ丸ゴ Pro','Arial Rounded MT Bold',sans-serif; background:#fff; margin:0; padding:0; text-align:center; overflow-x: hidden; }
+.wrapper { max-width:480px; margin:0 auto; padding:24px 16px; text-align:center; }
+h1 { font-size:26px; margin-bottom:12px; color:#2c3e50; }
+.question { font-size:16px; margin:24px 0 12px; font-weight: bold; min-height: 3em; display: flex; align-items: center; justify-content: center; }
+.options { display:flex; flex-direction:column; gap:10px; }
+.options button { padding:14px; border-radius:18px; border:none; background:#e0ffff; box-shadow:0 4px 10px rgba(0,0,0,0.06); font-size:15px; cursor:pointer; transition:0.2s; color: #333; }
+.options button:hover { transform: scale(1.03); background: #afeeee; }
+.options button:active { transform: scale(0.97); }
+
+/* 脳内メーカー専用の結果画面スタイル */
+#brain-container {
+    position: relative;
+    width: 280px;
+    height: 220px;
+    margin: 20px auto;
+    background: #ffecf2;
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    border: 4px solid #ffb6c1;
+    display: none;
+    overflow: hidden;
+}
+.brain-label {
+    position: absolute;
+    font-weight: bold;
+    color: #ff69b4;
+    transition: 0.5s;
+}
+
+#result { margin-top:20px; }
+#back { margin-top:20px; display:inline-block; padding:12px 24px; border-radius:16px; background:#f0f0f0; text-decoration:none; color:#333; font-weight: bold; }
+#loading { font-size:24px; margin-top:32px; color:#2c3e50; font-weight:bold; display:none; }
+</style>
+</head>
+<body>
+<div class="wrapper">
+<h1>🧠 あなたの脳内メーカー</h1>
+
+<div id="quiz">
+<p class="question" id="question"></p>
+<div id="options" class="options"></div>
+</div>
+
+<div id="loading">脳内をスキャン中…👀</div>
+
+<div id="result-area" style="display:none;">
+    <p style="font-size: 18px;">あなたの頭の中は…✨</p>
+    <div id="brain-container"></div>
+    <div id="result-desc"></div>
+    <a href="index.html" id="back">🏠 ぽんっとTOPにもどる</a>
+</div>
+</div>
+
+<script>
+const quizData = [
+  { q: "今一番やりたいことは？", a: [
+    { t: "money", text: "宝くじを当てる" }, { t: "love", text: "推しに会う" }, { t: "sleep", text: "泥のように眠る" }, { t: "play", text: "パーッと遊ぶ" }
+  ]},
+  { q: "無人島にひとつ持っていくなら？", a: [
+    { t: "money", text: "通帳と印鑑" }, { t: "love", text: "好きな人の写真" }, { t: "sleep", text: "高級な枕" }, { t: "play", text: "最新のゲーム機" }
+  ]},
+  { q: "目の前に魔法のランプが。何をお願いする？", a: [
+    { t: "money", text: "一生遊べるお金" }, { t: "love", text: "運命の出会い" }, { t: "sleep", text: "疲れを知らない体" }, { t: "play", text: "毎日が夏休み" }
+  ]},
+  { q: "明日、地球が滅びるとしたら？", a: [
+    { t: "money", text: "とりあえず爆買い" }, { t: "love", text: "愛を叫ぶ" }, { t: "sleep", text: "家でゴロゴロする" }, { t: "play", text: "豪華なパーティー" }
+  ]},
+  { q: "自分へのご褒美といえば？", a: [
+    { t: "money", text: "貯金額を確認" }, { t: "love", text: "限定グッズを買う" }, { t: "sleep", text: "12時間睡眠" }, { t: "play", text: "高級エステや旅行" }
+  ]}
+];
+
+// 漢字一文字の変換
+const wordMap = { money: "金", love: "愛", sleep: "眠", play: "欲" };
+const descMap = {
+  money: "今はとにかく「現実」を大事にしたい時期！お財布が潤うと心も潤うタイプです。",
+  love: "心の中は「好き」でいっぱい！推しや大切な存在があなたのエネルギー源です。",
+  sleep: "お疲れ気味かも？今はとにかく「癒やし」と「休息」を頭が求めています。",
+  play: "エネルギーが有り余ってる！楽しいこと、刺激的なことを常に探しています。"
+};
+
+let current = 0;
+let scores = { money:0, love:0, sleep:0, play:0 };
+let quizOrder = [...Array(quizData.length).keys()].sort(() => Math.random() - 0.5);
+
+function showQuestion() {
+  const data = quizData[quizOrder[current]];
+  document.getElementById("question").innerText = data.q;
+  const optionsDiv = document.getElementById("options");
+  optionsDiv.innerHTML = "";
+  [...data.a].sort(() => Math.random() - 0.5).forEach(choice => {
+    const btn = document.createElement("button");
+    btn.innerText = choice.text;
+    btn.onclick = () => { scores[choice.t]++; nextQuestion(); };
+    optionsDiv.appendChild(btn);
+  });
+}
+
+function nextQuestion() {
+  current++;
+  if (current < quizData.length) showQuestion(); else showLoading();
+}
+
+function showLoading() {
+  document.getElementById("quiz").style.display = "none";
+  document.getElementById("loading").style.display = "block";
+  setTimeout(showResult, 1500);
+}
+
+function showResult() {
+  document.getElementById("loading").style.display = "none";
+  document.getElementById("result-area").style.display = "block";
+  const brain = document.getElementById("brain-container");
+  brain.style.display = "block";
+  
+  // スコアが高い順に並び替え
+  const sorted = Object.keys(scores).sort((a, b) => scores[b] - scores[a]);
+  const mainType = sorted[0];
+
+  // 脳内に文字を散りばめる
+  for (let i = 0; i < 30; i++) {
+    const label = document.createElement("div");
+    label.className = "brain-label";
+    // スコアに応じて出る文字の割合を変える（一番高いやつを多めに出す）
+    const type = Math.random() < 0.6 ? mainType : sorted[Math.floor(Math.random() * 4)];
+    label.innerText = wordMap[type];
+    label.style.left = Math.random() * 80 + 10 + "%";
+    label.style.top = Math.random() * 70 + 15 + "%";
+    label.style.fontSize = (Math.random() * 20 + 10) + "px";
+    label.style.opacity = Math.random() * 0.7 + 0.3;
+    brain.appendChild(label);
+  }
+
+  document.getElementById("result-desc").innerHTML = `
+    <h2 style="color:#ff69b4;">${wordMap[mainType]}タイプ</h2>
+    <p>${descMap[mainType]}</p>
+  `;
+}
+
+showQuestion();
+</script>
+</body>
+</html>
