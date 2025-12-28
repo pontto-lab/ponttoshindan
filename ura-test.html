@@ -5,37 +5,38 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>👁️ あなたの【裏の顔】診断 | ぽんっとラボ</title>
 <style>
+/* 闇かわな世界観を作るためのパステル＆ダークな配色 */
 body { font-family:'ヒラギノ丸ゴ Pro','Arial Rounded MT Bold',sans-serif; background:#f5f0ff; margin:0; padding:0; text-align:center; color: #4a4a4a; }
 .wrapper { max-width:480px; margin:0 auto; padding:24px 16px; }
 
 h1 { font-size:24px; color:#7e57c2; margin-bottom:20px; text-shadow: 2px 2px 0px #fff; }
 
-/* 診断中カード */
+/* 診断中カードのデザイン */
 #quiz { background: #fff; padding: 20px; border-radius: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.05); }
-.question { font-size:18px; font-weight:bold; min-height:4em; display:flex; align-items:center; justify-content:center; color: #5e35b1; }
+.question { font-size:18px; font-weight:bold; min-height:4em; display:flex; align-items:center; justify-content:center; color: #5e35b1; padding: 0 10px; }
 
 .options { display:flex; flex-direction:column; gap:12px; margin-top: 10px; }
-.options button { padding:16px; border-radius:15px; border:2px solid #e1bee7; background:#fff; cursor:pointer; font-weight: bold; font-size: 15px; transition: 0.3s; color: #5e35b1; }
+.options button { padding:16px; border-radius:15px; border:2px solid #e1bee7; background:#fff; cursor:pointer; font-weight: bold; font-size: 15px; transition: 0.3s; color: #5e35b1; outline: none; }
 .options button:hover { background:#f3e5f5; border-color: #ba68c8; transform: translateY(-2px); }
+.options button:active { background:#e1bee7; transform: translateY(0); }
 
 /* ローディング */
 #loading { font-size:22px; margin-top:50px; font-weight:bold; display:none; color: #ba68c8; }
 
-/* 結果表示エリア */
-#result-area { display:none; background: #fff; padding: 30px 20px; border-radius: 30px; border: 3px double #d1c4e9; box-shadow: 0 10px 30px rgba(126, 87, 194, 0.1); }
+/* 結果表示エリア：画像なしでコメントを引き立てる */
+#result-area { display:none; background: #fff; padding: 30px 20px; border-radius: 30px; border: 3px double #d1c4e9; box-shadow: 0 10px 30px rgba(126, 87, 194, 0.1); text-align: left; }
 
-/* 下からフワッとコメントが出る演出 */
 @keyframes commentFadeIn {
     0% { opacity: 0; transform: translateY(30px); }
     100% { opacity: 1; transform: translateY(0); }
 }
 
-.result-header { font-size: 16px; color: #9575cd; margin-bottom: 10px; }
-.result-type { font-size: 26px; font-weight: bold; color: #ff69b4; margin-bottom: 20px; }
-.result-comment { font-size: 17px; line-height: 1.8; color: #555; text-align: left; opacity: 0; animation: commentFadeIn 1s ease-out forwards; }
-.result-comment b { color: #ba68c8; }
+.result-header { font-size: 16px; color: #9575cd; margin-bottom: 10px; text-align: center; }
+.result-type { font-size: 24px; font-weight: bold; color: #ff1493; margin-bottom: 20px; text-align: center; border-bottom: 2px dashed #fce4ec; padding-bottom: 10px; }
+.result-comment { font-size: 16px; line-height: 1.8; color: #444; opacity: 0; animation: commentFadeIn 1s ease-out forwards; }
+.result-comment b { color: #ba68c8; font-size: 18px; }
 
-#back-btn { margin-top:30px; display:inline-block; padding:12px 24px; border-radius:12px; background:#fce4ec; text-decoration:none; color:#ba68c8; font-weight: bold; font-size: 14px; }
+#back-btn { margin-top:30px; display:block; padding:12px 24px; border-radius:12px; background:#fce4ec; text-decoration:none; color:#ba68c8; font-weight: bold; font-size: 14px; text-align: center; }
 </style>
 </head>
 <body>
@@ -59,11 +60,11 @@ h1 { font-size:24px; color:#7e57c2; margin-bottom:20px; text-shadow: 2px 2px 0px
 </div>
 
 <script>
-// ★じぇみたん渾身の「闇かわ」カテゴリ別コメント★
+// 👁️ カテゴリ別：じぇみたんの闇かわロングコメント
 const resultData = {
     work: { 
         name: "【冷徹な完璧主義・毒蜘蛛】", 
-        msg: "表向きは真面目な努力家。でも裏の顔は、<b>他人のミスを心のノートにメモする毒蜘蛛</b>タイプ。周囲がバタバタと倒れていくのを眺めながら、自分だけが最上階に昇り詰める瞬間に最高の快感を覚えるはず。情けなんて無用、最後に笑うのは自分だけでしょ？" 
+        msg: "表向きは真面目な努力家。でも裏の顔は、<b>他人のミスを心のノートに書き溜める毒蜘蛛</b>タイプ。周囲がバタバタと倒れていくのを眺めながら、自分だけが最上階に昇り詰める瞬間に最高の快感を覚えるはず。情けなんて無用、最後に笑うのは自分だけでしょ？" 
     },
     love: { 
         name: "【愛という名の依存・ヤンデレ】", 
@@ -87,52 +88,27 @@ const resultData = {
     }
 };
 
-// 闇の10問（さっきの10問を継続！）
+// 闇の10問：より「本音」を引き出すドロドロ回答集
 const quizData = [
-    { q: "親友の不幸な話を聞いた時、一瞬よぎる本音は？", a: [{ t: "none", text: "「自分じゃなくて良かった」と安堵" },{ t: "money", text: "「お見舞い代、高くつくかな？」" },{ t: "love", text: "「これで私に依存してくれる」" },{ t: "work", text: "「仕事に影響出ないならいいや」" }]},
-    { q: "誰も見ていない場所で、100万円拾ったら？", a: [{ t: "money", text: "光の速さでポッケに入れる" },{ t: "none", text: "面倒だから放置" },{ t: "sex", text: "その金で今夜遊び明かす" },{ t: "sleep", text: "一旦寝てから考える" }]},
-    { q: "嫌いな人がSNSで大失敗して叩かれている！", a: [{ t: "sex", text: "サブ垢で追い打ちをかける" },{ t: "none", text: "スクショして酒の肴にする" },{ t: "work", text: "「無能はこれだから」と笑う" },{ t: "love", text: "「可哀想にｗ」と嘲笑" }]},
-    { q: "「あなたのためを思って言ってるの」という言葉。", a: [{ t: "work", text: "「自己満足乙」と即断" },{ t: "love", text: "「重いんだよ」と吐き捨てる" },{ t: "none", text: "何一つ耳に入れない" },{ t: "money", text: "「で、いくら得するの？」" }]},
-    { q: "恋人が自分以外の誰かと楽しそうに電話中。", a: [{ t: "love", text: "スマホを奪って履歴を消したい" },{ t: "sex", text: "浮気の証拠を探しに部屋を漁る" },{ t: "none", text: "「どうぞ勝手に」と急に冷める" },{ t: "sleep", text: "考えるのも疲れるから寝る" }]},
-    { q: "上司の自慢話が1時間を超えました。", a: [{ t: "work", text: "残業代が出るかだけ計算する" },{ t: "none", text: "死んだ魚の目で別のことを考える" },{ t: "money", text: "「奢ってくれるなら我慢する」" },{ t: "sex", text: "こいつの弱みを握る方法を練る" }]},
-    { q: "「バレなければ浮気はOK」という考え方。", a: [{ t: "sex", text: "「バレない自信があるならどうぞ」" },{ t: "love", text: "「裏切った時点でもう許さない」" },{ t: "none", text: "「人間なんてそんなもんでしょ」" },{ t: "money", text: "「慰謝料取れるならしてもいい」" }]},
-    { q: "もらったプレゼントが全然欲しくなかったら？", a: [{ t: "money", text: "速攻でフリマアプリに出品" },{ t: "work", text: "「センスのなさに失望した」" },{ t: "love", text: "「これを私に選ぶなんて呪い？」" },{ t: "none", text: "ゴミ箱へ直行" }]},
-    { q: "もし自分に絶対バレない暗殺能力があったら？", a: [{ t: "work", text: "仕事で邪魔な奴を全員消す" },{ t: "money", text: "金持ちを消して遺産を奪う" },{ t: "sex", text: "権力者を消して世界を壊す" },{ t: "love", text: "恋人の周りの異性を全員消す" }]},
-    { q: "最後に。あなたの人生で一番「信じられる」のは？", a: [{ t: "money", text: "結局は「お金」" },{ t: "love", text: "「自分の愛」" },{ t: "work", text: "「自分の実力」" },{ t: "none", text: "「誰も信じない」" }]}
+    { q: "親友が自分より豪華な結婚式を挙げた。本音は？", a: [{ t: "none", text: "「ふーん、無駄遣いだね」と鼻で笑う" },{ t: "money", text: "「ご祝儀代、回収できるかな？」" },{ t: "love", text: "「私より先に幸せになるなんて呪う」" },{ t: "work", text: "「スペック差を見せつけられて不快」" }]},
+    { q: "誰もいない道で、大金の入った財布を拾った。", a: [{ t: "money", text: "神に感謝して懐に入れる" },{ t: "none", text: "面倒だからそのまま蹴っ飛ばす" },{ t: "sex", text: "この金で今夜遊び明かす" },{ t: "sleep", text: "一旦寝て、夢じゃなかったら奪う" }]},
+    { q: "嫌いな奴がSNSで大炎上！あなたはどうする？", a: [{ t: "sex", text: "匿名掲示板にガセネタを投下する" },{ t: "none", text: "スクショを撮って永久保存する" },{ t: "work", text: "「因果応報だね」と冷淡に見下す" },{ t: "love", text: "「可哀想にｗ」と最高の笑顔になる" }]},
+    { q: "「あなたのため」と説教してくる相手への本音。", a: [{ t: "work", text: "「自分の価値観を押し付けるな無能」" },{ t: "love", text: "「重い、消えろ、死ね」" },{ t: "none", text: "何一つ言葉が耳に入らない" },{ t: "money", text: "「それで、お前は私にいくら払うの？」" }]},
+    { q: "恋人が別の異性と楽しそうに話している。", a: [{ t: "love", text: "その異性を社会的に抹殺したくなる" },{ t: "sex", text: "浮気の証拠を掴んで弱みを握りたい" },{ t: "none", text: "「ハイ終了」と急に興味が消える" },{ t: "sleep", text: "考えるのもだるいから寝る" }]},
+    { q: "目の前の人が、派手に転んで荷物をぶちまけた。", a: [{ t: "work", text: "「邪魔だな」と思って避けて通る" },{ t: "none", text: "不幸の様子を脳内再生して楽しむ" },{ t: "money", text: "高価なものが落ちてないかチラ見" },{ t: "sex", text: "みっともない姿を見て優越感に浸る" }]},
+    { q: "自分より格下の相手が、大成功したと聞いた。", a: [{ t: "sex", text: "「どうせ裏で何かやってんだろ」と疑う" },{ t: "love", text: "「不幸になれ、不幸になれ…」と願う" },{ t: "none", text: "「運が良かっただけ」と見なす" },{ t: "money", text: "こびを売って金に繋げられないか考える" }]},
+    { q: "人からもらったプレゼントが、超絶ダサかった。", a: [{ t: "money", text: "その場で値段を調べてフリマへ" },{ t: "work", text: "「これを選ぶ脳みそを疑う」と失望" },{ t: "love", text: "「私の価値を低く見てる証拠」と恨む" },{ t: "none", text: "とりあえず即ゴミ箱" }]},
+    { q: "もし自分に絶対バレない殺人の力が宿ったら？", a: [{ t: "work", text: "出世を阻む上層部を消す" },{ t: "money", text: "金持ちを消して世界を再編する" },{ t: "sex", text: "嫌いな奴を苦しめてから消す" },{ t: "love", text: "恋人の周囲の異性を全員消す" }]},
+    { q: "最後に。この世で本当に「信じられる」のは？", a: [{ t: "money", text: "裏切らない「お金」だけ" },{ t: "love", text: "自分が信じたい「自分の感情」" },{ t: "work", text: "「自分の利用価値」だけ" },{ t: "none", text: "「誰もいない」のが真実" }]}
 ];
 
 let current = 0;
 let scores = { love:0, money:0, sleep:0, sex:0, work:0, none:0 };
 
 function showQuestion() {
-    document.getElementById("q-number").innerText = `Step ${current + 1} / 10`;
+    document.getElementById("q-number").innerText = `Scanning Step ${current + 1} / 10`;
     const data = quizData[current];
     document.getElementById("question").innerText = data.q;
     const optsDiv = document.getElementById("options");
     optsDiv.innerHTML = "";
     [...data.a].sort(() => Math.random() - 0.5).forEach(choice => {
-        const btn = document.createElement("button");
-        btn.innerText = choice.text;
-        btn.onclick = () => { scores[choice.t]++; current++; if(current < 10) showQuestion(); else showLoading(); };
-        optsDiv.appendChild(btn);
-    });
-}
-
-function showLoading() {
-    document.getElementById("quiz").style.display = "none";
-    document.getElementById("loading").style.display = "block";
-    setTimeout(showResult, 2000);
-}
-
-function showResult() {
-    document.getElementById("loading").style.display = "none";
-    document.getElementById("result-area").style.display = "block";
-    const mainType = Object.keys(scores).sort((a,b) => scores[b] - scores[a])[0];
-    const final = resultData[mainType];
-    document.getElementById("result-type").innerText = final.name;
-    document.getElementById("result-comment").innerHTML = final.msg;
-}
-showQuestion();
-</script>
-</body>
-</html>
