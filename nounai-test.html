@@ -27,11 +27,11 @@ h1 { font-size:26px; margin-bottom:12px; color:#2c3e50; }
 
 #brain-inner {
     position: absolute;
-    /* ★さらに左に寄せ、下のはみ出しを防ぐために上に上げたよ★ */
-    top: 20px;    
-    left: 92px;  
-    width: 210px; /* 横を広げて左の隙間をカバー */
-    height: 140px; /* 縦を少し絞ってはみ出し防止 */
+    /* ★全体の配置を微調整★ */
+    top: 25px;    
+    left: 80px;  
+    width: 220px; 
+    height: 150px; 
     overflow: hidden;
     border-radius: 50%;
     display: flex;
@@ -39,7 +39,7 @@ h1 { font-size:26px; margin-bottom:12px; color:#2c3e50; }
     justify-content: center;
     align-content: center;  
     pointer-events: none;
-    padding: 2px;
+    padding: 5px;
     box-sizing: border-box;
 }
 
@@ -49,17 +49,20 @@ h1 { font-size:26px; margin-bottom:12px; color:#2c3e50; }
     justify-content: center;
     font-weight: bold;
     color: #ff69b4;
-    line-height: 0.9;
-    letter-spacing: -1.5px; /* 文字間を詰めて密度アップ */
+    line-height: 0.8;
+    letter-spacing: -1.5px;
     margin: 1px;
 }
 
-.big-label {
-    font-size: 65px !important; 
-    color: #ff1493 !important;  
-    text-shadow: 2px 2px 4px rgba(255,255,255,1);
+/* ★大文字（画像）の設定★ */
+.big-image {
+    width: 85px; /* サイズはここでお任せ調整したよ */
+    height: auto;
+    display: inline-block;
+    vertical-align: middle;
+    margin: 2px 8px; /* 左右に少し隙間を作って文字を誘い込む */
+    filter: drop-shadow(2px 2px 2px rgba(255,255,255,0.8));
     z-index: 10;
-    margin: 0 6px;
 }
 
 #result-area { margin-top:20px; }
@@ -168,19 +171,20 @@ function showResult() {
   const sorted = Object.keys(scores).sort((a, b) => scores[b] - scores[a]);
   const mainType = sorted[0];
 
-  // 小文字のサイズを微調整して、はみ出しを防ぎつつ隙間を埋める
-  for (let i = 0; i < 170; i++) {
-    if (i === 50) {
-        const bigLabel = document.createElement("span");
-        bigLabel.className = "brain-label big-label";
-        bigLabel.innerText = wordMap[mainType];
-        inner.appendChild(bigLabel);
+  // ★文字を生成し、途中で「画像」を挿入する★
+  for (let i = 0; i < 180; i++) {
+    if (i === 60) { // 大体真ん中にくるように60番目付近に画像を配置
+        const img = document.createElement("img");
+        img.className = "big-image";
+        img.src = `kekka-${mainType}.png`; // ファイル名と連動
+        img.alt = wordMap[mainType];
+        inner.appendChild(img);
     }
     const label = document.createElement("span");
     label.className = "brain-label";
     const type = Math.random() < 0.5 ? mainType : sorted[Math.floor(Math.random() * sorted.length)];
     label.innerText = wordMap[type];
-    label.style.fontSize = (Math.random() * 6 + 9) + "px"; // 少し小さくして密度アップ
+    label.style.fontSize = (Math.random() * 6 + 10) + "px";
     label.style.opacity = Math.random() * 0.7 + 0.3;
     inner.appendChild(label);
   }
