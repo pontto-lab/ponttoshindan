@@ -20,26 +20,26 @@ body { font-family:'ヒラギノ丸ゴ Pro','Arial Rounded MT Bold',sans-serif; 
     display: none;
 }
 
-/* ★結果画像：右に2mm(8px)・上に2mm(8px)移動★ */
+/* ★結果画像：真ん中から右に2mm、上に2mmを厳密に計算★ */
 #result-bg-image {
     position: absolute;
-    top: 103px;    /* 111pxから8px引き上げ */
-    left: 183px;   /* 175pxから8px右へ */
+    top: 103px;    /* 上へ微調整 */
+    left: 183px;   /* 右へ微調整 */
     transform: translate(-50%, -50%);
-    width: 60px;
+    width: 58px;   /* ほんの少しだけ小さくして馴染みを良く */
     height: auto;
     z-index: 1; 
     mix-blend-mode: multiply; 
     opacity: 0.9;
 }
 
-/* ★フォントの集合範囲：白いステージに最適化★ */
+/* ★フォント集合範囲：白いステージにピッタリ合わせる★ */
 #brain-inner {
     position: absolute;
-    top: 48px;    
-    left: 102px;  
-    width: 155px; 
-    height: 125px; 
+    top: 50px;    
+    left: 105px;  
+    width: 150px; 
+    height: 120px; 
     display: flex;
     flex-wrap: wrap;       
     justify-content: center;
@@ -47,6 +47,8 @@ body { font-family:'ヒラギノ丸ゴ Pro','Arial Rounded MT Bold',sans-serif; 
     overflow: hidden; 
     z-index: 10;
     pointer-events: none;
+    /* ステージの端に文字がくっつかないよう少しだけ余裕を */
+    padding: 5px;
 }
 
 .brain-label {
@@ -56,12 +58,10 @@ body { font-family:'ヒラギノ丸ゴ Pro','Arial Rounded MT Bold',sans-serif; 
     line-height: 0.8;
     letter-spacing: -1.5px;
     margin: 1px;
-    text-shadow: 0px 0px 1px rgba(255,255,255,0.5);
 }
 
 .options { display:flex; flex-direction:column; gap:10px; }
-.options button { padding:14px; border-radius:18px; border:none; background:#e0ffff; cursor:pointer; font-weight: bold; color: #333; transition: 0.2s; }
-.options button:hover { background:#afeeee; transform: scale(1.02); }
+.options button { padding:14px; border-radius:18px; border:none; background:#e0ffff; cursor:pointer; font-weight: bold; }
 #loading { font-size:24px; margin-top:32px; font-weight:bold; display:none; }
 #result-area { display:none; margin-top:20px; }
 </style>
@@ -71,17 +71,17 @@ body { font-family:'ヒラギノ丸ゴ Pro','Arial Rounded MT Bold',sans-serif; 
     <h1>🧠 あなたの脳内メーカー</h1>
     <div id="quiz">
         <p id="q-number" style="color:#888; font-size:12px;"></p>
-        <p id="question" style="font-weight:bold; min-height:3em; display:flex; align-items:center; justify-content:center;"></p>
+        <p id="question" style="font-weight:bold; min-height:4em; display:flex; align-items:center; justify-content:center;"></p>
         <div id="options" class="options"></div>
     </div>
-    <div id="loading">診断中...ぽぽーん！🚀</div>
+    <div id="loading">解析中...</div>
     <div id="result-area">
         <div id="brain-display">
             <img id="result-bg-image" src="" alt="">
             <div id="brain-inner"></div>
         </div>
         <div id="result-desc"></div>
-        <br><a href="index.html" style="text-decoration:none; color:#999; font-weight:bold;">🏠 TOPへもどる</a>
+        <br><a href="index.html" style="text-decoration:none; color:#999;">🏠 TOPへもどる</a>
     </div>
 </div>
 
@@ -106,16 +106,25 @@ const answerData = [
 let current = 0;
 let scores = { love:0, money:0, sleep:0, sex:0, work:0, none:0 };
 
+// ★配列をしっかり混ぜるための関数★
+function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
 function showQuestion() {
     document.getElementById("q-number").innerText = `第 ${current + 1} 問 / 10`;
     document.getElementById("question").innerText = questions[current];
     const optsDiv = document.getElementById("options");
     optsDiv.innerHTML = "";
     
-    // ★回答をランダムに並び替えるロジック★
     const currentAns = answerData[current];
-    const keys = Object.keys(currentAns);
-    keys.sort(() => Math.random() - 0.5); // ここでシャッフル！
+    // キーを取得してシャッフル！
+    let keys = Object.keys(currentAns);
+    keys = shuffle(keys); 
 
     keys.forEach(key => {
         const btn = document.createElement("button");
@@ -128,7 +137,7 @@ function showQuestion() {
 function showLoading() {
     document.getElementById("quiz").style.display = "none";
     document.getElementById("loading").style.display = "block";
-    setTimeout(showResult, 1000);
+    setTimeout(showResult, 800);
 }
 
 function showResult() {
@@ -143,21 +152,20 @@ function showResult() {
     const inner = document.getElementById("brain-inner");
     inner.innerHTML = "";
     
-    // 文字の流し込み（分類ごとに固める）
     sorted.forEach(type => {
-        const count = Math.floor((scores[type] / 10) * 125); 
+        // 全体の個数を少し減らして（110個）はみ出しを確実に防止
+        const count = Math.floor((scores[type] / 10) * 110); 
         for(let i=0; i < count; i++) {
             const span = document.createElement("span");
             span.className = "brain-label";
             span.innerText = wordMap[type];
             span.style.fontSize = (Math.random() * 4 + 11) + "px";
-            span.style.opacity = Math.random() * 0.4 + 0.6;
             inner.appendChild(span);
         }
     });
 
-    const types = { love:"愛たっぷり", money:"金運重視", sleep:"お疲れ", sex:"本能全開", work:"バリバリ仕事", none:"悟りの境地" };
-    document.getElementById("result-desc").innerHTML = `<h2 style="color:#ff69b4;">${types[main]}タイプ</h2>`;
+    const descs = { love:"愛", money:"金", sleep:"眠", sex:"Ｈ", work:"仕事", none:"無" };
+    document.getElementById("result-desc").innerHTML = `<h2 style="color:#ff69b4;">あなたの脳内は「${descs[main]}」多め！</h2>`;
 }
 showQuestion();
 </script>
