@@ -27,10 +27,11 @@ h1 { font-size:26px; margin-bottom:12px; color:#2c3e50; }
 
 #brain-inner {
     position: absolute;
-    top: 24px;    
-    left: 100px;  
-    width: 195px; 
-    height: 145px; 
+    /* ★さらに左に寄せ、下のはみ出しを防ぐために上に上げたよ★ */
+    top: 20px;    
+    left: 92px;  
+    width: 210px; /* 横を広げて左の隙間をカバー */
+    height: 140px; /* 縦を少し絞ってはみ出し防止 */
     overflow: hidden;
     border-radius: 50%;
     display: flex;
@@ -49,7 +50,7 @@ h1 { font-size:26px; margin-bottom:12px; color:#2c3e50; }
     font-weight: bold;
     color: #ff69b4;
     line-height: 0.9;
-    letter-spacing: -1px;
+    letter-spacing: -1.5px; /* 文字間を詰めて密度アップ */
     margin: 1px;
 }
 
@@ -58,7 +59,7 @@ h1 { font-size:26px; margin-bottom:12px; color:#2c3e50; }
     color: #ff1493 !important;  
     text-shadow: 2px 2px 4px rgba(255,255,255,1);
     z-index: 10;
-    margin: 0 4px;
+    margin: 0 6px;
 }
 
 #result-area { margin-top:20px; }
@@ -89,7 +90,6 @@ h1 { font-size:26px; margin-bottom:12px; color:#2c3e50; }
 </div>
 
 <script>
-// 全10問のリスト
 const questions = [
     "休日、気づいたら何を考えてる？",
     "魔法のランプにお願いするなら？",
@@ -128,7 +128,6 @@ const descMap = {
 
 let current = 0;
 let scores = { love:0, money:0, sleep:0, sex:0, work:0, none:0 };
-// questions.length を使うことで、リストにある分だけ自動でカウントするよ
 let quizOrder = [...Array(questions.length).keys()].sort(() => Math.random() - 0.5);
 
 function showQuestion() {
@@ -137,35 +136,25 @@ function showQuestion() {
   document.getElementById("question").innerText = questions[qIdx];
   const optionsDiv = document.getElementById("options");
   optionsDiv.innerHTML = "";
-  
   const currentPool = answerData[qIdx];
   const keys = Object.keys(currentPool);
-  
   keys.sort(() => Math.random() - 0.5).forEach(key => {
     const btn = document.createElement("button");
     btn.innerText = currentPool[key];
-    btn.onclick = () => { 
-        scores[key]++; 
-        nextQuestion(); 
-    };
+    btn.onclick = () => { scores[key]++; nextQuestion(); };
     optionsDiv.appendChild(btn);
   });
 }
 
 function nextQuestion() {
   current++;
-  // ここで判定！リストの数（10）に達するまで繰り返すよ
-  if (current < questions.length) {
-    showQuestion();
-  } else {
-    showLoading();
-  }
+  if (current < questions.length) showQuestion(); else showLoading();
 }
 
 function showLoading() {
   document.getElementById("quiz").style.display = "none";
   document.getElementById("loading").style.display = "block";
-  setTimeout(showResult, 2000);
+  setTimeout(showResult, 1500);
 }
 
 function showResult() {
@@ -179,8 +168,9 @@ function showResult() {
   const sorted = Object.keys(scores).sort((a, b) => scores[b] - scores[a]);
   const mainType = sorted[0];
 
-  for (let i = 0; i < 160; i++) {
-    if (i === 45) {
+  // 小文字のサイズを微調整して、はみ出しを防ぎつつ隙間を埋める
+  for (let i = 0; i < 170; i++) {
+    if (i === 50) {
         const bigLabel = document.createElement("span");
         bigLabel.className = "brain-label big-label";
         bigLabel.innerText = wordMap[mainType];
@@ -190,7 +180,7 @@ function showResult() {
     label.className = "brain-label";
     const type = Math.random() < 0.5 ? mainType : sorted[Math.floor(Math.random() * sorted.length)];
     label.innerText = wordMap[type];
-    label.style.fontSize = (Math.random() * 8 + 10) + "px";
+    label.style.fontSize = (Math.random() * 6 + 9) + "px"; // 少し小さくして密度アップ
     label.style.opacity = Math.random() * 0.7 + 0.3;
     inner.appendChild(label);
   }
@@ -201,7 +191,6 @@ function showResult() {
   `;
 }
 
-// 最初の問題を表示
 showQuestion();
 </script>
 </body>
