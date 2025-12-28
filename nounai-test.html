@@ -5,26 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>🧠 あなたの脳内メーカー | ぽんっとラボ</title>
 <style>
-/* 全体のスタイル設定 */
 body { font-family:'ヒラギノ丸ゴ Pro','Arial Rounded MT Bold',sans-serif; background:#fff; margin:0; padding:0; text-align:center; overflow-x: hidden; }
 .wrapper { max-width:480px; margin:0 auto; padding:24px 16px; }
 
-/* 🧠 くるくる回転して登場するアニメーション */
-@keyframes resultAppear {
-    0% { transform: scale(0) rotate(0deg); opacity: 0; }
-    50% { transform: scale(1.1) rotate(360deg); opacity: 1; }
-    100% { transform: scale(1) rotate(720deg); opacity: 1; }
-}
-
-/* 💬 下からフワッとコメントが出る演出 */
-@keyframes commentFadeIn {
-    0% { opacity: 0; transform: translateY(20px); }
-    100% { opacity: 1; transform: translateY(0); }
-}
-
 #result-area { display:none; margin-top:20px; }
-
-/* 結果画像の表示設定（トモちゃんの.jpg画像用） */
 #result-file-display {
     max-width: 100%;
     height: auto;
@@ -32,32 +16,19 @@ body { font-family:'ヒラギノ丸ゴ Pro','Arial Rounded MT Bold',sans-serif; 
     box-shadow: 0 10px 30px rgba(0,0,0,0.15);
 }
 
-.result-animation {
-    animation: resultAppear 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-}
-
-/* 一言コメントのスタイル */
 .result-comment {
     margin-top: 25px;
     font-size: 20px;
     font-weight: bold;
     color: #ff69b4;
     line-height: 1.6;
-    opacity: 0;
 }
 
-.comment-animation {
-    animation: commentFadeIn 0.8s ease-out 1.2s forwards;
-}
-
-/* 診断中のボタンなど */
 .options { display:flex; flex-direction:column; gap:10px; margin-top: 20px; }
-.options button { padding:14px; border-radius:18px; border:none; background:#e0ffff; cursor:pointer; font-weight: bold; font-size: 16px; transition: 0.2s; }
-.options button:hover { background:#afeeee; }
+.options button { padding:14px; border-radius:18px; border:none; background:#e0ffff; cursor:pointer; font-weight: bold; font-size: 16px; }
 
 #loading { font-size:24px; margin-top:50px; font-weight:bold; display:none; color: #ff69b4; }
 
-/* TOPへもどるボタンの装飾 */
 .back-home {
     display: inline-block;
     margin-top: 20px;
@@ -69,10 +40,6 @@ body { font-family:'ヒラギノ丸ゴ Pro','Arial Rounded MT Bold',sans-serif; 
     font-weight: bold;
     font-size: 16px;
     border: 1px solid #ddd;
-    transition: 0.3s;
-}
-.back-home:hover {
-    background-color: #e0e0e0;
 }
 </style>
 </head>
@@ -89,7 +56,7 @@ body { font-family:'ヒラギノ丸ゴ Pro','Arial Rounded MT Bold',sans-serif; 
     <div id="loading">あなたの脳内は・・・・！！！！🧠✨</div>
 
     <div id="result-area">
-        <img id="result-file-display" src="" alt="結果画像">
+        <img id="result-file-display" src="" alt="診断結果画像">
         <div id="result-comment" class="result-comment"></div>
         
         <div style="margin-top: 30px; display: flex; flex-direction: column; gap: 15px; align-items: center;">
@@ -100,14 +67,14 @@ body { font-family:'ヒラギノ丸ゴ Pro','Arial Rounded MT Bold',sans-serif; 
 </div>
 
 <script>
-// 画像ファイル（トモちゃんの.jpg）とメッセージ
+// 画像を全て .png に変更したよ！
 const resultData = {
-    work:  { img: "kekka-shigoto.jpg", msg: "君の脳内はこれ一色！<br>「THE！仕事！！」" },
-    love:  { img: "kekka-love.jpg",    msg: "溢れ出す想いが止まらない！<br>「愛・愛・愛の嵐！！」" },
-    sleep: { img: "kekka-sleep.jpg",   msg: "もはや立って寝てるかも！？<br>「おやすみ3秒前！！」" },
-    sex:   { img: "kekka-h.jpg",       msg: "本能の赴くままに突き進め！<br>「Ｈな妄想フルスロットル！！」" },
-    money: { img: "kekka-kane.jpg",    msg: "頭の中はそろばんの音だけ！<br>「金・金・金！強欲モード！！」" },
-    none:  { img: "kekka-mu.jpg",      msg: "もはや悟りの境地・・・<br>「完全なる無！！！」" }
+    work:  { img: "kekka-shigoto.png", msg: "君の脳内はこれ一色！<br>「THE！仕事！！」" },
+    love:  { img: "kekka-love.png",    msg: "溢れ出す想いが止まらない！<br>「愛・愛・愛の嵐！！」" },
+    sleep: { img: "kekka-sleep.png",   msg: "もはや立って寝てるかも！？<br>「おやすみ3秒前！！」" },
+    sex:   { img: "kekka-h.png",       msg: "本能の赴くままに突き進め！<br>「Ｈな妄想フルスロットル！！」" },
+    money: { img: "kekka-kane.png",    msg: "頭の中はそろばんの音だけ！<br>「金・金・金！強欲モード！！」" },
+    none:  { img: "kekka-mu.png",      msg: "もはや悟りの境地・・・<br>「完全なる無！！！」" }
 };
 
 const questions = ["休日、気づいたら何を考えてる？", "魔法のランプにお願いするなら？", "今の自分に一番足りないものは？", "自分への最高のご褒美は？", "明日、地球が滅びるとしたら？", "宝くじで3億円当たったらどうする？", "無人島に一つだけ持っていくなら？", "一番リラックスできる瞬間は？", "最近、検索したワードの傾向は？", "今のあなたの「欲」を漢字一文字で言うと？"];
@@ -144,10 +111,8 @@ function showResult() {
     const finalResult = resultData[mainType];
     const resultImg = document.getElementById("result-file-display");
     resultImg.src = finalResult.img;
-    resultImg.classList.add("result-animation");
     const resultComment = document.getElementById("result-comment");
     resultComment.innerHTML = finalResult.msg;
-    resultComment.classList.add("comment-animation");
 }
 showQuestion();
 </script>
