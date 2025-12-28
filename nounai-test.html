@@ -133,4 +133,76 @@ let quizOrder = [...Array(questions.length).keys()].sort(() => Math.random() - 0
 
 function showQuestion() {
   const qIdx = quizOrder[current];
-  document.getElementById("q-
+  document.getElementById("q-number").innerText = `第 ${current + 1} 問 / ${questions.length}`;
+  document.getElementById("question").innerText = questions[qIdx];
+  const optionsDiv = document.getElementById("options");
+  optionsDiv.innerHTML = "";
+  
+  const currentPool = answerData[qIdx];
+  const keys = Object.keys(currentPool);
+  
+  keys.sort(() => Math.random() - 0.5).forEach(key => {
+    const btn = document.createElement("button");
+    btn.innerText = currentPool[key];
+    btn.onclick = () => { 
+        scores[key]++; 
+        nextQuestion(); 
+    };
+    optionsDiv.appendChild(btn);
+  });
+}
+
+function nextQuestion() {
+  current++;
+  // ここで判定！リストの数（10）に達するまで繰り返すよ
+  if (current < questions.length) {
+    showQuestion();
+  } else {
+    showLoading();
+  }
+}
+
+function showLoading() {
+  document.getElementById("quiz").style.display = "none";
+  document.getElementById("loading").style.display = "block";
+  setTimeout(showResult, 2000);
+}
+
+function showResult() {
+  document.getElementById("loading").style.display = "none";
+  document.getElementById("result-area").style.display = "block";
+  document.getElementById("brain-display").style.display = "block";
+  
+  const inner = document.getElementById("brain-inner");
+  inner.innerHTML = ""; 
+  
+  const sorted = Object.keys(scores).sort((a, b) => scores[b] - scores[a]);
+  const mainType = sorted[0];
+
+  for (let i = 0; i < 160; i++) {
+    if (i === 45) {
+        const bigLabel = document.createElement("span");
+        bigLabel.className = "brain-label big-label";
+        bigLabel.innerText = wordMap[mainType];
+        inner.appendChild(bigLabel);
+    }
+    const label = document.createElement("span");
+    label.className = "brain-label";
+    const type = Math.random() < 0.5 ? mainType : sorted[Math.floor(Math.random() * sorted.length)];
+    label.innerText = wordMap[type];
+    label.style.fontSize = (Math.random() * 8 + 10) + "px";
+    label.style.opacity = Math.random() * 0.7 + 0.3;
+    inner.appendChild(label);
+  }
+
+  document.getElementById("result-desc").innerHTML = `
+    <h2 style="color:#ff69b4;">${wordMap[mainType]}タイプ</h2>
+    <p>${descMap[mainType]}</p>
+  `;
+}
+
+// 最初の問題を表示
+showQuestion();
+</script>
+</body>
+</html>
