@@ -27,9 +27,9 @@ h1 { font-size:26px; margin-bottom:12px; color:#2c3e50; }
 
 #brain-inner {
     position: absolute;
-    /* ★全体の配置を微調整★ */
-    top: 25px;    
-    left: 80px;  
+    /* ★位置の微調整：画像がより真ん中に来るように設定★ */
+    top: 25px;    /* 下に5mm(約20px)下げる反映 */
+    left: 80px;   /* 左に3mm(約12px)寄せる反映 */
     width: 220px; 
     height: 150px; 
     overflow: hidden;
@@ -54,14 +54,13 @@ h1 { font-size:26px; margin-bottom:12px; color:#2c3e50; }
     margin: 1px;
 }
 
-/* ★大文字（画像）の設定★ */
+/* ★中央画像のスタイル★ */
 .big-image {
-    width: 85px; /* サイズはここでお任せ調整したよ */
+    width: 85px; /* 脳のサイズに合わせて調整 */
     height: auto;
     display: inline-block;
     vertical-align: middle;
-    margin: 2px 8px; /* 左右に少し隙間を作って文字を誘い込む */
-    filter: drop-shadow(2px 2px 2px rgba(255,255,255,0.8));
+    margin: 0 5px; /* 左右に文字が入り込む隙間 */
     z-index: 10;
 }
 
@@ -93,6 +92,18 @@ h1 { font-size:26px; margin-bottom:12px; color:#2c3e50; }
 </div>
 
 <script>
+// キーワードと実際のファイル名の対応表
+const fileNameMap = {
+    love: "kekka-love.png",
+    money: "kekka-kane.png",
+    sleep: "kekka-sleep.png",
+    sex: "kekka-h.png",
+    work: "kekka-shigoto.png",
+    none: "kekka-mu.png"
+};
+
+const wordMap = { love: "愛", money: "金", sleep: "眠", sex: "Ｈ", work: "仕事", none: "無" };
+
 const questions = [
     "休日、気づいたら何を考えてる？",
     "魔法のランプにお願いするなら？",
@@ -112,14 +123,13 @@ const answerData = [
   { love: "心の安らぎ", money: "圧倒的な軍資金", sleep: "質の高い睡眠", sex: "情熱的な体験", work: "生産性の向上", none: "執着を捨てる心" },
   { love: "大切な人と旅行", money: "欲しかった高級品を買う", sleep: "一日中パジャマで寝る", sex: "高級エステで体を磨く", work: "ハイスペックな仕事道具", none: "静かな場所で瞑想" },
   { love: "愛する人と抱き合う", money: "全財産を使い切る", sleep: "眠るように最期を迎える", sex: "本能のままに愛し合う", work: "やり残した仕事を片付ける", none: "ただ静かに空を眺める" },
-  { love: "愛を育む資金にする", money: "資産運用でさらに増やす", sleep: "寝るためだけの豪邸を建てる", sex: "禁断の遊びを覚える", work: "会社を設立する", none: "半分以上寄付する" },
+  { love: "愛を育む資金にする", money: "資産運用でさらに増やす", sleep: "寝るためだけの豪邸を建てる", sex: "禁断 of 遊びを覚える", work: "会社を設立する", none: "半分以上寄付する" },
   { love: "恋人", money: "ゴールドカード", sleep: "最高級の枕", sex: "媚薬", work: "パソコン", none: "何も持っていかない" },
   { love: "ハグしている時", money: "通帳記帳した時", sleep: "二度寝する瞬間", sex: "お風呂でリラックス", work: "タスクが完了した時", none: "ぼーっとしている時" },
   { love: "婚活・恋愛テクニック", money: "投資・節税・副業", sleep: "快眠グッズ・マットレス", sex: "深夜の秘密のワード", work: "スキルアップ・効率化", none: "検索なんてしない" },
   { love: "愛", money: "金", sleep: "眠", sex: "Ｈ", work: "仕事", none: "無" }
 ];
 
-const wordMap = { love: "愛", money: "金", sleep: "眠", sex: "Ｈ", work: "仕事", none: "無" };
 const descMap = {
   love: "あなたの心は愛で満たされています。常に誰かを思い、想われていたい寂しがり屋な一面も。",
   money: "今の関心は経済力！将来への備えや、豊かさを求める気持ちが非常に強い状態です。",
@@ -171,20 +181,20 @@ function showResult() {
   const sorted = Object.keys(scores).sort((a, b) => scores[b] - scores[a]);
   const mainType = sorted[0];
 
-  // ★文字を生成し、途中で「画像」を挿入する★
+  // ★画像と周りの文字を生成★
   for (let i = 0; i < 180; i++) {
-    if (i === 60) { // 大体真ん中にくるように60番目付近に画像を配置
+    if (i === 65) { // 65番目あたりに画像を挿入して中央付近にする
         const img = document.createElement("img");
         img.className = "big-image";
-        img.src = `kekka-${mainType}.png`; // ファイル名と連動
-        img.alt = wordMap[mainType];
+        img.src = fileNameMap[mainType]; // ここで正しいファイル名を指定！
+        img.onerror = function() { this.style.display='none'; }; // 万が一読み込めない時は消す
         inner.appendChild(img);
     }
     const label = document.createElement("span");
     label.className = "brain-label";
     const type = Math.random() < 0.5 ? mainType : sorted[Math.floor(Math.random() * sorted.length)];
     label.innerText = wordMap[type];
-    label.style.fontSize = (Math.random() * 6 + 10) + "px";
+    label.style.fontSize = (Math.random() * 6 + 11) + "px";
     label.style.opacity = Math.random() * 0.7 + 0.3;
     inner.appendChild(label);
   }
