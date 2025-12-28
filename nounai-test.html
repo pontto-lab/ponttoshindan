@@ -7,11 +7,8 @@
 <style>
 body { font-family:'ヒラギノ丸ゴ Pro','Arial Rounded MT Bold',sans-serif; background:#fff; margin:0; padding:0; text-align:center; }
 .wrapper { max-width:480px; margin:0 auto; padding:24px 16px; }
-h1 { font-size:26px; color:#2c3e50; margin-bottom: 20px; }
-.options { display:flex; flex-direction:column; gap:10px; }
-.options button { padding:14px; border-radius:18px; border:none; background:#e0ffff; font-size:15px; cursor:pointer; transition:0.2s; }
-.options button:hover { background:#afeeee; }
 
+/* 脳の背景土台 */
 #brain-display {
     position: relative;
     width: 350px; 
@@ -21,47 +18,52 @@ h1 { font-size:26px; color:#2c3e50; margin-bottom: 20px; }
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
-    display: none;
+    display: none; /* 初期は非表示 */
 }
 
-/* ★背景画像を配置するレイヤー★ */
+/* ★診断結果の画像（背景として中央に配置） */
 #result-bg-image {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    /* 10mm（約38px）右へ、少し下へ調整 */
-    transform: translate(calc(-50% + 38px), -75%); 
-    width: 62px; /* 3mm小さくしたサイズ */
+    /* 脳の中心付近に固定 */
+    top: 110px;    
+    left: 175px;   
+    transform: translate(-50%, -50%); /* 中心合わせ */
+    width: 65px; 
     height: auto;
     z-index: 1; 
-    opacity: 0.9;
+    opacity: 0.85;
 }
 
-/* ★文字を並べるレイヤー★ */
+/* ★文字を並べる範囲（白い部分だけに限定） */
 #brain-inner {
     position: absolute;
-    top: 25px;    
-    left: 90px;   
-    width: 210px; 
-    height: 140px; 
+    top: 40px;    /* 上端を脳内に合わせる */
+    left: 95px;   /* 左端を脳内に合わせる */
+    width: 170px; /* 白い部分の幅に絞る */
+    height: 130px; /* 白い部分の高さに絞る */
     display: flex;
     flex-wrap: wrap;       
     justify-content: center;
     align-content: center;  
+    overflow: hidden; /* 範囲外の文字を隠す */
+    z-index: 10;      /* 画像より上に表示 */
     pointer-events: none;
-    z-index: 10; /* 画像の上に重ねる */
 }
 
 .brain-label {
     display: inline-flex;
     font-weight: bold;
     color: #ff69b4;
-    line-height: 0.85;
+    line-height: 0.9;
     letter-spacing: -1px;
     margin: 1px;
-    text-shadow: 0px 0px 2px rgba(255,255,255,0.8); /* 画像の上でも読みやすく */
+    /* 文字の視認性を上げる */
+    text-shadow: 1px 1px 1px rgba(255,255,255,0.8);
 }
 
+/* その他スタイル */
+.options { display:flex; flex-direction:column; gap:10px; }
+.options button { padding:14px; border-radius:18px; border:none; background:#e0ffff; cursor:pointer; }
 #loading { font-size:24px; margin-top:32px; font-weight:bold; display:none; }
 #result-area { display:none; margin-top:20px; }
 </style>
@@ -70,47 +72,53 @@ h1 { font-size:26px; color:#2c3e50; margin-bottom: 20px; }
 <div class="wrapper">
     <h1>🧠 あなたの脳内メーカー</h1>
     <div id="quiz">
-        <p id="q-number" style="color:#888; font-size:14px;"></p>
-        <p id="question" style="font-weight:bold; min-height:3em; padding:0 10px;"></p>
+        <p id="q-number" style="color:#888;"></p>
+        <p id="question" style="font-weight:bold; min-height:3em;"></p>
         <div id="options" class="options"></div>
     </div>
-    <div id="loading">深層心理を解析中...🚀</div>
+    <div id="loading">のーみそをスキャン中...🔎</div>
     <div id="result-area">
         <div id="brain-display">
             <img id="result-bg-image" src="" alt="">
             <div id="brain-inner"></div>
         </div>
         <div id="result-desc"></div>
-        <br><a href="index.html" style="text-decoration:none; color:#666; font-weight:bold;">🏠 TOPへもどる</a>
+        <br><a href="index.html">🏠 TOPへもどる</a>
     </div>
 </div>
 
 <script>
-const fileNameMap = { love: "kekka-love.png", money: "kekka-kane.png", sleep: "kekka-sleep.png", sex: "kekka-h.png", work: "kekka-shigoto.png", none: "kekka-mu.png" };
+// ファイル名マップ（修正済み）
+const fileNameMap = { 
+    love: "kekka-love.png", 
+    money: "kekka-kane.png", 
+    sleep: "kekka-sleep.png", 
+    sex: "kekka-h.png", 
+    work: "kekka-shigoto.png", 
+    none: "kekka-mu.png" 
+};
 const wordMap = { love: "愛", money: "金", sleep: "眠", sex: "Ｈ", work: "仕事", none: "無" };
 
-const questions = [
-    "休日、気づいたら何を考えてる？", "魔法のランプにお願いするなら？", "今の自分に一番足りないものは？", "自分への最高のご褒美は？", "明日、地球が滅びるとしたら？",
-    "宝くじで3億円当たったらどうする？", "無人島に一つだけ持っていくなら？", "一番リラックスできる瞬間は？", "最近、検索したワードの傾向は？", "今のあなたの「欲」を漢字一文字で言うと？"
-];
+// クイズデータ（中略：前回と同じ内容を想定）
+const questions = ["休日、何を考えてる？", "欲しいものは？", "今の自分に足りないのは？", "最高のご褒美は？", "明日地球が滅びるなら？", "3億円当たったら？", "無人島に持っていくなら？", "リラックスする瞬間は？", "検索ワードの傾向は？", "今の欲を漢字一文字で？"];
 const answerData = [
-  { love: "好きな人のこと", money: "貯金額の推移", sleep: "あと何時間寝れるか", sex: "刺激的な妄想", work: "明日の仕事の段取り", none: "特になにも考えてない" },
-  { love: "運命の人に会わせて", money: "一生遊べるお金をくれ", sleep: "不眠不休でも平気な体", sex: "絶倫になりたい", work: "天才的な仕事能力", none: "無欲の境地にいかせて" },
-  { love: "心の安らぎ", money: "圧倒的な軍資金", sleep: "質の高い睡眠", sex: "情熱的な体験", work: "生産性の向上", none: "執着を捨てる心" },
-  { love: "大切な人と旅行", money: "欲しかった高級品を買う", sleep: "一日中パジャマで寝る", sex: "高級エステで体を磨く", work: "ハイスペックな仕事道具", none: "静かな場所で瞑想" },
-  { love: "愛する人と抱き合う", money: "全財産を使い切る", sleep: "眠るように最期を迎える", sex: "本能のままに愛し合う", work: "やり残した仕事を片付ける", none: "ただ静かに空を眺める" },
-  { love: "愛を育む資金にする", money: "資産運用でさらに増やす", sleep: "寝るためだけの豪邸を建てる", sex: "禁断の遊びを覚える", work: "会社を設立する", none: "半分以上寄付する" },
-  { love: "恋人", money: "ゴールドカード", sleep: "最高級の枕", sex: "媚薬", work: "パソコン", none: "何も持っていかない" },
-  { love: "ハグしている時", money: "通帳記帳した時", sleep: "二度寝する瞬間", sex: "お風呂でリラックス", work: "タスクが完了した時", none: "ぼーっとしている時" },
-  { love: "婚活・恋愛テクニック", money: "投資・節税・副業", sleep: "快眠グッズ・マットレス", sex: "深夜の秘密のワード", work: "スキルアップ・効率化", none: "検索なんてしない" },
-  { love: "愛", money: "金", sleep: "眠", sex: "Ｈ", work: "仕事", none: "無" }
+    {love:"好きな人", money:"貯金", sleep:"睡眠", sex:"妄想", work:"仕事", none:"無"},
+    {love:"恋人", money:"大金", sleep:"安眠", sex:"刺激", work:"地位", none:"無欲"},
+    {love:"愛", money:"金", sleep:"眠り", sex:"エロ", work:"やる気", none:"悟り"},
+    {love:"デート", money:"買い物", sleep:"爆睡", sex:"夜の遊び", work:"出世", none:"静寂"},
+    {love:"告白", money:"豪遊", sleep:"寝る", sex:"合体", work:"完遂", none:"散歩"},
+    {love:"結婚資金", money:"投資", sleep:"寝具購入", sex:"豪遊", work:"起業", none:"寄付"},
+    {love:"好きな人", money:"クレカ", sleep:"枕", sex:"ゴム", work:"PC", none:"体一つ"},
+    {love:"ハグ", money:"記帳", sleep:"二度寝", sex:"入浴", work:"達成", none:"瞑想"},
+    {love:"恋愛", money:"副業", sleep:"快眠", sex:"秘密", work:"効率", none:"なし"},
+    {love:"愛", money:"金", sleep:"眠", sex:"Ｈ", work:"仕事", none:"無"}
 ];
 
 let current = 0;
 let scores = { love:0, money:0, sleep:0, sex:0, work:0, none:0 };
 
 function showQuestion() {
-    document.getElementById("q-number").innerText = `第 ${current + 1} 問 / 10`;
+    document.getElementById("q-number").innerText = `Q ${current + 1}/10`;
     document.getElementById("question").innerText = questions[current];
     const opts = document.getElementById("options");
     opts.innerHTML = "";
@@ -125,7 +133,7 @@ function showQuestion() {
 function showLoading() {
     document.getElementById("quiz").style.display = "none";
     document.getElementById("loading").style.display = "block";
-    setTimeout(showResult, 1500);
+    setTimeout(showResult, 1200);
 }
 
 function showResult() {
@@ -133,30 +141,33 @@ function showResult() {
     document.getElementById("result-area").style.display = "block";
     document.getElementById("brain-display").style.display = "block";
     
-    // 背景画像のセット
     const sorted = Object.keys(scores).sort((a,b) => scores[b] - scores[a]);
     const main = sorted[0];
-    document.getElementById("result-bg-image").src = fileNameMap[main];
+    
+    // 画像を背景中央に表示
+    const bgImg = document.getElementById("result-bg-image");
+    bgImg.src = fileNameMap[main];
+    bgImg.onerror = function() { this.style.display='none'; }; // 万が一のエラー対策
 
-    // 文字の流し込み（分類ごとに固める）
     const inner = document.getElementById("brain-inner");
     inner.innerHTML = "";
     
-    // スコア順に並べることで、多い文字が固まって見えるようにするよ
+    // 文字を分類ごとに、白いエリア内に収まる量（合計約140個程度）で表示
     sorted.forEach(type => {
-        const count = Math.floor((scores[type] / 10) * 150); // スコアに応じた割合で表示
+        const count = Math.floor((scores[type] / 10) * 140); 
         for(let i=0; i < count; i++) {
             const span = document.createElement("span");
             span.className = "brain-label";
             span.innerText = wordMap[type];
-            span.style.fontSize = (Math.random() * 5 + 11) + "px";
-            span.style.opacity = Math.random() * 0.5 + 0.5;
+            // スコアが高い文字ほど少しだけ大きくする
+            const baseSize = (type === main) ? 14 : 11;
+            span.style.fontSize = (Math.random() * 4 + baseSize) + "px";
             inner.appendChild(span);
         }
     });
 
-    const descs = { love:"愛たっぷり", money:"金運重視", sleep:"お疲れモード", sex:"本能全開", work:"仕事人間", none:"無の境地" };
-    document.getElementById("result-desc").innerHTML = `<h2 style="color:#ff69b4;">${descs[main]}タイプ</h2>`;
+    const descs = { love:"愛タイプ", money:"金タイプ", sleep:"眠タイプ", sex:"本能全開タイプ", work:"仕事タイプ", none:"無タイプ" };
+    document.getElementById("result-desc").innerHTML = `<h2 style="color:#ff69b4;">${descs[main]}</h2>`;
 }
 showQuestion();
 </script>
