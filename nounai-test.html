@@ -8,7 +8,9 @@
 body { font-family:'ヒラギノ丸ゴ Pro','Arial Rounded MT Bold',sans-serif; background:#fff; margin:0; padding:0; text-align:center; overflow-x: hidden; }
 .wrapper { max-width:480px; margin:0 auto; padding:24px 16px; }
 
-#result-area { display:none; margin-top:20px; }
+/* 診断・結果・ロード画面共通 */
+#result-area, #loading-screen { display:none; margin-top:20px; }
+
 #result-file-display {
     max-width: 100%;
     height: auto;
@@ -27,7 +29,39 @@ body { font-family:'ヒラギノ丸ゴ Pro','Arial Rounded MT Bold',sans-serif; 
 .options { display:flex; flex-direction:column; gap:10px; margin-top: 20px; }
 .options button { padding:14px; border-radius:18px; border:none; background:#e0ffff; cursor:pointer; font-weight: bold; font-size: 16px; }
 
-#loading { font-size:24px; margin-top:50px; font-weight:bold; display:none; color: #ff69b4; }
+/* 収益化用ロード画面のデザイン */
+#loading-screen { padding: 20px; background: #fffafb; border: 2px solid #ffeef2; border-radius: 20px; }
+.progress-container { width: 100%; background: #eee; height: 15px; border-radius: 10px; margin: 15px 0; overflow: hidden; }
+#progress-bar { width: 0%; background: #ff69b4; height: 100%; transition: width 3s linear; }
+
+.ad-box { 
+    margin: 20px 0; 
+    padding: 10px; 
+    background: #fff; 
+    border: 1px dashed #ffb6c1; 
+    border-radius: 10px;
+}
+
+.result-view-btn {
+    display: none; /* 最初は隠しておく */
+    width: 100%;
+    padding: 16px;
+    background: #ff69b4;
+    color: white;
+    border: none;
+    border-radius: 30px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 0 #d44d8c;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+    100% { transform: scale(1); }
+}
 
 .back-home {
     display: inline-block;
@@ -53,7 +87,19 @@ body { font-family:'ヒラギノ丸ゴ Pro','Arial Rounded MT Bold',sans-serif; 
         <div id="options" class="options"></div>
     </div>
 
-    <div id="loading">あなたの脳内は・・・・！！！！🧠✨</div>
+    <div id="loading-screen">
+        <h2 style="color: #ff69b4; font-size: 20px;">🧠 あなたの脳内をスキャン中...</h2>
+        <div class="progress-container">
+            <div id="progress-bar"></div>
+        </div>
+        
+        <div class="ad-box">
+            <p style="font-size: 11px; color: #ff69b4; margin-bottom: 8px;">鑑定結果を生成するために広告をチェック！👇</p>
+            <a href="//af.moshimo.com/af/c/click?a_id=5322069&p_id=54&pc_id=54&pl_id=1220" rel="nofollow" referrerpolicy="no-referrer-when-downgrade" attributionsrc><img src="//image.moshimo.com/af-img/0032/000000001220.gif" width="100%" height="auto" style="border:none; max-width: 468px;"></a><img src="//i.moshimo.com/af/i/impression?a_id=5322069&p_id=54&pc_id=54&pl_id=1220" width="1" height="1" style="border:none;" loading="lazy">
+        </div>
+
+        <button id="result-view-btn" class="result-view-btn" onclick="showResult()">鑑定結果を表示する✨</button>
+    </div>
 
     <div id="result-area">
         <img id="result-file-display" src="" alt="診断結果画像">
@@ -67,7 +113,6 @@ body { font-family:'ヒラギノ丸ゴ Pro','Arial Rounded MT Bold',sans-serif; 
 </div>
 
 <script>
-// 画像を全て .png に変更したよ！
 const resultData = {
     work:  { img: "kekka-shigoto.png", msg: "君の脳内はこれ一色！<br>「THE！仕事！！」" },
     love:  { img: "kekka-love.png",    msg: "溢れ出す想いが止まらない！<br>「愛・愛・愛の嵐！！」" },
@@ -78,7 +123,7 @@ const resultData = {
 };
 
 const questions = ["休日、気づいたら何を考えてる？", "魔法のランプにお願いするなら？", "今の自分に一番足りないものは？", "自分への最高のご褒美は？", "明日、地球が滅びるとしたら？", "宝くじで3億円当たったらどうする？", "無人島に一つだけ持っていくなら？", "一番リラックスできる瞬間は？", "最近、検索したワードの傾向は？", "今のあなたの「欲」を漢字一文字で言うと？"];
-const answerData = [{love:"好きな人", money:"貯金", sleep:"睡眠", sex:"妄想", work:"仕事", none:"無"},{love:"運命の人", money:"大金", sleep:"安眠", sex:"刺激", work:"地位", none:"無欲"},{love:"愛", money:"金", sleep:"眠り", sex:"エロ", work:"やる気", none:"悟り"},{love:"デート", money:"買い物", sleep:"爆睡", sex:"夜の遊び", work:"出世", none:"静寂"},{love:"告白", money:"豪遊", sleep:"寝る", sex:"合体", work:"完遂", none:"散歩"},{love:"結婚資金", money:"投資", sleep:"寝具購入", sex:"豪遊", work:"起業", none:"寄付"},{love:"好きな人", money:"クレカ", sleep:"枕", sex:"ゴム", work:"PC", none:"体一つ"},{love:"ハグ", money:"記帳", sleep:"二度寝", sex:"入浴", work:"達成", none:"瞑想"},{love:"恋愛", money:"副業", sleep:"快眠", sex:"秘密", work:"効率", none:"なし"},{love:"愛", money:"金", sleep:"眠", sex:"Ｈ", work:"仕事", none:"無"}];
+const answerData = [{love:"好きな人", money:"貯金", sleep:"睡眠", sex:"妄想", work:"仕事", none:"無"},{love:"運命の人", money:"大金", sleep:"安眠", sex:"刺激", work:"地位", none:"無欲"},{love:"愛", money:"金", sleep:"眠り", sex:"エロ", work:"やる気", none:"悟り"},{love:"デート", margin:"買い物", sleep:"爆睡", sex:"夜の遊び", work:"出世", none:"静寂"},{love:"告白", money:"豪遊", sleep:"寝る", sex:"合体", work:"完遂", none:"散歩"},{love:"結婚資金", money:"投資", sleep:"寝具購入", sex:"豪遊", work:"起業", none:"寄付"},{love:"好きな人", money:"クレカ", sleep:"枕", sex:"ゴム", work:"PC", none:"体一つ"},{love:"ハグ", money:"記帳", sleep:"二度寝", sex:"入浴", work:"達成", none:"瞑松"},{love:"恋愛", money:"副業", sleep:"快眠", sex:"秘密", work:"効率", none:"なし"},{love:"愛", money:"金", sleep:"眠", sex:"Ｈ", work:"仕事", none:"無"}];
 
 let current = 0;
 let scores = { love:0, money:0, sleep:0, sex:0, work:0, none:0 };
@@ -92,19 +137,28 @@ function showQuestion() {
     keys.forEach(key => {
         const btn = document.createElement("button");
         btn.innerText = answerData[current][key];
-        btn.onclick = () => { scores[key]++; current++; if(current < 10) showQuestion(); else showLoading(); };
+        btn.onclick = () => { scores[key]++; current++; if(current < 10) showQuestion(); else startLoading(); };
         optsDiv.appendChild(btn);
     });
 }
 
-function showLoading() {
+function startLoading() {
     document.getElementById("quiz").style.display = "none";
-    document.getElementById("loading").style.display = "block";
-    setTimeout(showResult, 1500);
+    document.getElementById("loading-screen").style.display = "block";
+    
+    // プログレスバーを動かす
+    setTimeout(() => {
+        document.getElementById("progress-bar").style.width = "100%";
+    }, 100);
+
+    // 3秒後に「結果を表示する」ボタンを出す
+    setTimeout(() => {
+        document.getElementById("result-view-btn").style.display = "block";
+    }, 3000);
 }
 
 function showResult() {
-    document.getElementById("loading").style.display = "none";
+    document.getElementById("loading-screen").style.display = "none";
     document.getElementById("result-area").style.display = "block";
     const sorted = Object.keys(scores).sort((a,b) => scores[b] - scores[a]);
     const mainType = sorted[0];
@@ -114,6 +168,7 @@ function showResult() {
     const resultComment = document.getElementById("result-comment");
     resultComment.innerHTML = finalResult.msg;
 }
+
 showQuestion();
 </script>
 </body>
