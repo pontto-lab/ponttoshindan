@@ -8,154 +8,162 @@
 body { font-family:'ヒラギノ丸ゴ Pro','Arial Rounded MT Bold',sans-serif; background:#fff; margin:0; padding:0; text-align:center; }
 .wrapper { max-width:480px; margin:0 auto; padding:24px 16px; text-align:center; }
 h1 { font-size:26px; margin-bottom:12px; color:#e67e22; }
-.question { font-size:16px; margin:24px 0 12px; font-weight: bold; min-height: 3em; display: flex; align-items: center; justify-content: center; }
+
+/* 質問エリア */
+#quiz { background: #fffdf0; padding: 20px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+.question { font-size:17px; margin:20px 0; font-weight: bold; min-height: 3.5em; display: flex; align-items: center; justify-content: center; color: #d35400; }
+
 .options { display:flex; flex-direction:column; gap:10px; }
-.options button { padding:14px; border-radius:18px; border:none; background:#fff9c4; box-shadow:0 4px 10px rgba(0,0,0,0.06); font-size:15px; cursor:pointer; transition:0.2s; color: #333; }
-.options button:hover { transform: scale(1.03); background: #fff59d; }
-.options button:active { transform: scale(0.97); }
-#result { font-size:18px; margin-top:32px; }
-#back { margin-top:20px; display:inline-block; padding:12px 24px; border-radius:16px; background:#e1f5fe; text-decoration:none; color:#333; font-weight: bold; border: 2px solid #81d4fa; }
+.options button { padding:14px; border-radius:18px; border:none; background:#fff9c4; box-shadow:0 4px 10px rgba(0,0,0,0.06); font-size:15px; cursor:pointer; transition:0.2s; color: #333; font-weight: bold; }
+.options button:hover { transform: scale(1.02); background: #fff59d; }
+
+/* ローディング */
 #loading { font-size:24px; margin-top:32px; color:#e67e22; font-weight:bold; display:none; }
+
+/* 結果表示エリア */
+#result-area { display:none; margin-top:20px; }
 .result-name { font-size: 24px; color: #ff8f00; margin: 10px 0; font-weight: bold; }
+.result-desc { line-height: 1.6; color: #555; font-size: 16px; margin-bottom: 30px; }
+
+/* ボタン類 */
+.btn-container { display: flex; flex-direction: column; gap: 15px; align-items: center; }
+.btn-home { display:inline-block; padding:12px 40px; border-radius:25px; background:#e1f5fe; text-decoration:none; color:#333; font-weight: bold; border: 2px solid #81d4fa; transition: 0.3s; }
+.btn-home:hover { background: #b3e5fc; }
+.btn-retry { color: #e67e22; font-size: 14px; text-decoration: underline; cursor: pointer; border: none; background: none; font-weight: bold; }
 </style>
 </head>
 <body>
 <div class="wrapper">
-<h1>👼 前世のあなたは何だった？</h1>
+    <h1>👼 前世のあなたは何だった？</h1>
 
-<div id="quiz">
-<p class="question" id="question"></p>
-<div id="options" class="options"></div>
-</div>
+    <div id="quiz">
+        <p id="q-number" style="color:#e67e22; font-size:12px; margin:0;"></p>
+        <p class="question" id="question"></p>
+        <div id="options" class="options"></div>
+    </div>
 
-<div id="loading">時空をさかのぼり中…⏳✨</div>
-<div id="result"></div>
-<a href="index.html" id="back" style="display:none;">🏠 ぽんっとTOPにもどる</a>
+    <div id="loading">時空をさかのぼり中…⏳✨</div>
+
+    <div id="result-area">
+        <p style="font-size: 18px; color: #888;">あなたの魂の記憶を呼び覚ましました…</p>
+        <div id="result-name" class="result-name"></div>
+        <div id="result-desc" class="result-desc"></div>
+        
+        <div class="btn-container">
+            <button onclick="location.reload();" class="btn-retry">🔄 もう一度診断する</button>
+            <a href="index.html" class="btn-home">🏠 ぽんっとTOPにもどる</a>
+        </div>
+    </div>
 </div>
 
 <script>
-// 質問と、その質問に合った回答のセット（整合性を重視！）
 const quizData = [
-  {
-    q: "森の奥で古い扉を見つけたよ。どうする？",
-    a: [
-      { t: "royal", text: "迷わず開けて中を確認する" },
-      { t: "magic", text: "呪文を唱えて開けてみる" },
-      { t: "free",  text: "風の向くままに通り過ぎる" },
-      { t: "unique",text: "とりあえずノックして挨拶" }
-    ]
-  },
-  {
-    q: "夜空にひときわ輝く星が。あれは何だと思う？",
-    a: [
-      { t: "royal", text: "未来を導く王国の道しるべ" },
-      { t: "magic", text: "伝説の魔力が宿る結晶" },
-      { t: "free",  text: "自由な旅人を見守る瞳" },
-      { t: "unique",text: "誰かが落とした光るアメ玉" }
-    ]
-  },
-  {
-    q: "目の前に不思議な宝石が。何色を選びたい？",
-    a: [
-      { t: "royal", text: "気品あふれる純金の色" },
-      { t: "magic", text: "神秘的な深い紫色" },
-      { t: "free",  text: "澄み渡る空のような青色" },
-      { t: "unique",text: "キラキラ光る虹色" }
-    ]
-  },
-  {
-    q: "旅の途中で動物が話しかけてきたよ。何て言った？",
-    a: [
-      { t: "royal", text: "「お城への道を教えましょう」" },
-      { t: "magic", text: "「不思議な力が目覚めています」" },
-      { t: "free",  text: "「一緒に広い世界を見に行こう」" },
-      { t: "unique",text: "「お腹すいたからパンちょうだい」" }
-    ]
-  },
-  {
-    q: "もし魔法がひとつだけ使えるなら？",
-    a: [
-      { t: "royal", text: "国を豊かにする魔法" },
-      { t: "magic", text: "空を自在に飛ぶ魔法" },
-      { t: "free",  text: "動物と心が通じる魔法" },
-      { t: "unique",text: "一生お腹が空かない魔法" }
-    ]
-  }
+    { q: "森の奥で古い扉を見つけたよ。どうする？", a: [
+        { t: "royal", text: "迷わず開けて中を確認する" },
+        { t: "magic", text: "呪文を唱えて開けてみる" },
+        { t: "free",  text: "風の向くままに通り過ぎる" },
+        { t: "unique",text: "とりあえずノックして挨拶" }
+    ]},
+    { q: "夜空にひときわ輝く星が。あれは何だと思う？", a: [
+        { t: "royal", text: "未来を導く王国の道しるべ" },
+        { t: "magic", text: "伝説の魔力が宿る結晶" },
+        { t: "free",  text: "自由な旅人を見守る瞳" },
+        { t: "unique",text: "誰かが落とした光るアメ玉" }
+    ]},
+    { q: "目の前に不思議な宝石が。何色を選びたい？", a: [
+        { t: "royal", text: "気品あふれる純金の色" },
+        { t: "magic", text: "神秘的な深い紫色" },
+        { t: "free",  text: "澄み渡る空のような青色" },
+        { t: "unique",text: "キラキラ光る虹色" }
+    ]},
+    { q: "旅の途中で動物が話しかけてきたよ。何て言った？", a: [
+        { t: "royal", text: "「お城への道を教えましょう」" },
+        { t: "magic", text: "「不思議な力が目覚めています」" },
+        { t: "free",  text: "「一緒に広い世界を見に行こう」" },
+        { t: "unique",text: "「お腹すいたからパンちょうだい」" }
+    ]},
+    { q: "もし魔法がひとつだけ使えるなら？", a: [
+        { t: "royal", text: "国を豊かにする魔法" },
+        { t: "magic", text: "空を自在に飛ぶ魔法" },
+        { t: "free",  text: "動物と心が通じる魔法" },
+        { t: "unique",text: "一生お腹が空かない魔法" }
+    ]},
+    { q: "一番落ち着く場所はどこ？", a: [
+        { t: "royal", text: "豪華なシャンデリアのある部屋" },
+        { t: "magic", text: "古びた書物が並ぶ図書室" },
+        { t: "free",  text: "波の音が聞こえる海辺" },
+        { t: "unique",text: "お日様が当たる縁側" }
+    ]},
+    { q: "あなたの性格をひと言で言うと？", a: [
+        { t: "royal", text: "責任感が強いリーダータイプ" },
+        { t: "magic", text: "ひとり時間を愛する追求者" },
+        { t: "free",  text: "好奇心旺盛な自由人" },
+        { t: "unique",text: "みんなを笑顔にする癒やし系" }
+    ]},
+    { q: "夢の中で、あなたは誰かから贈り物をもらったよ。それは？", a: [
+        { t: "royal", text: "装飾が美しい豪華な剣" },
+        { t: "magic", text: "予言が書かれた古い巻物" },
+        { t: "free",  text: "どこまでも歩ける丈夫な靴" },
+        { t: "unique",text: "なでると温かい不思議なタマゴ" }
+    ]},
+    { q: "朝、目が覚めて一番にしたいことは？", a: [
+        { t: "royal", text: "今日の予定を完璧に立てる" },
+        { t: "magic", text: "昨日見た夢の続きを分析する" },
+        { t: "free",  text: "とりあえず外の空気を吸いに行く" },
+        { t: "unique",text: "美味しいごはんを食べる" }
+    ]},
+    { q: "生まれ変わるなら、何になりたい？", a: [
+        { t: "royal", text: "歴史に名を残す偉人" },
+        { t: "magic", text: "時空を超える魔術師" },
+        { t: "free",  text: "世界中を旅する鳥" },
+        { t: "unique",text: "誰からも愛されるマスコット" }
+    ]}
 ];
 
 const results = [
-  { name:"誇り高き伝説の騎士⚔️", desc:"前世のあなたは、多くの人を守った英雄でした。その勇気は今も魂に刻まれています！" },
-  { name:"月夜に踊る大魔法使い🧙‍♀️", desc:"不思議な力を操り、世界を旅していたあなた。今の直感の鋭さは、その時の名残かも。" },
-  { name:"風と旅した自由な吟遊詩人🎶", desc:"どこにも縛られず、歌と共に生きたあなた。あなたの明るさは、周りの人を幸せにします。" },
-  { name:"実は…とっても愛された子犬🐶", desc:"前世はみんなに可愛がられていたワンちゃんでした。愛され力は今世でも最強です！" }
+    { id: "royal", name:"誇り高き伝説の騎士⚔️", desc:"前世のあなたは、多くの人を守った英雄でした。その勇気と責任感は今も魂に刻まれています。今世でも、困っている人を放っておけないリーダーシップを発揮するはず！" },
+    { id: "magic", name:"月夜に踊る大魔法使い🧙‍♀️", desc:"不思議な力を操り、世界の真理を追求していたあなた。今の直感の鋭さや集中力は、その時の名残かも。目に見えないものを大切にする心が、今のあなたを支えています。" },
+    { id: "free",  name:"風と旅した自由な吟遊詩人🎶", desc:"どこにも縛られず、歌と共に世界中を旅したあなた。あなたの持つ明るさと適応力は、周りの人を自然と幸せにします。自由に生きることこそが、あなたの魂の願いです。" },
+    { id: "unique",name:"実は…とっても愛された子犬🐶", desc:"前世はみんなに可愛がられていたワンちゃんでした。あなたの愛嬌と、なぜか放っておけない魅力は、当時の「愛され力」そのもの。今世でもみんなのアイドルです！" }
 ];
 
 let current = 0;
 let scores = { royal:0, magic:0, free:0, unique:0 };
-let quizOrder = [];
-
-function initQuiz() {
-  // 質問をシャッフル
-  quizOrder = [...Array(quizData.length).keys()].sort(() => Math.random() - 0.5);
-  showQuestion();
-}
 
 function showQuestion() {
-  const data = quizData[quizOrder[current]];
-  document.getElementById("question").innerText = data.q;
+    document.getElementById("q-number").innerText = `記憶の断片 ${current + 1} / 10`;
+    const data = quizData[current];
+    document.getElementById("question").innerText = data.q;
 
-  const optionsDiv = document.getElementById("options");
-  optionsDiv.innerHTML = "";
-
-  // その質問用の回答をシャッフルして表示
-  const shuffledA = [...data.a].sort(() => Math.random() - 0.5);
-
-  shuffledA.forEach(choice => {
-    const btn = document.createElement("button");
-    btn.innerText = choice.text;
-    btn.onclick = () => {
-      scores[choice.t]++;
-      nextQuestion();
-    };
-    optionsDiv.appendChild(btn);
-  });
-}
-
-function nextQuestion() {
-  current++;
-  if (current < quizData.length) {
-    showQuestion();
-  } else {
-    showLoading();
-  }
+    const optionsDiv = document.getElementById("options");
+    optionsDiv.innerHTML = "";
+    [...data.a].sort(() => Math.random() - 0.5).forEach(choice => {
+        const btn = document.createElement("button");
+        btn.innerText = choice.text;
+        btn.onclick = () => { scores[choice.t]++; current++; if(current < 10) showQuestion(); else showLoading(); };
+        optionsDiv.appendChild(btn);
+    });
 }
 
 function showLoading() {
-  document.getElementById("quiz").style.display = "none";
-  document.getElementById("loading").style.display = "block";
-  setTimeout(showResult, 1500);
+    document.getElementById("quiz").style.display = "none";
+    document.getElementById("loading").style.display = "block";
+    setTimeout(showResult, 2000);
 }
 
 function showResult() {
-  document.getElementById("loading").style.display = "none";
-  let maxType = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
-  
-  let resultData;
-  if (maxType === 'royal') resultData = results[0];
-  else if (maxType === 'magic') resultData = results[1];
-  else if (maxType === 'free') resultData = results[2];
-  else resultData = results[3];
+    document.getElementById("loading").style.display = "none";
+    document.getElementById("result-area").style.display = "block";
+    
+    let maxType = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
+    const final = results.find(r => r.id === maxType);
 
-  const resultDiv = document.getElementById("result");
-  resultDiv.innerHTML = `
-    <p style="font-size: 20px;">あなたの前世は…✨</p>
-    <div class="result-name">${resultData.name}</div>
-    <p style="line-height: 1.6;">${resultData.desc}</p>
-  `;
-  document.getElementById("back").style.display = "inline-block";
+    document.getElementById("result-name").innerText = final.name;
+    document.getElementById("result-desc").innerText = final.desc;
+    document.getElementById("back").style.display = "inline-block";
 }
 
-initQuiz();
+showQuestion();
 </script>
 </body>
 </html>
