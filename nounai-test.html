@@ -26,10 +26,10 @@ h1 { font-size:26px; margin-bottom:12px; color:#2c3e50; }
     display: none;
 }
 
-/* ★5mm上に調整＆レイアウトの修正★ */
+/* ★5mm上に調整★ */
 #brain-inner {
     position: absolute;
-    top: 32px;    /* 前より上に引き上げたよ！ */
+    top: 32px;    
     left: 108px;  
     width: 185px; 
     height: 135px; 
@@ -50,14 +50,13 @@ h1 { font-size:26px; margin-bottom:12px; color:#2c3e50; }
     line-height: 1;
 }
 
-/* ★主役のデカ文字：真ん中にドーン！★ */
 .big-label {
-    font-size: 55px !important; /* さらに大きく！ */
+    font-size: 55px !important; 
     color: #ff1493 !important;  
-    display: block;             /* 改行させて目立たせる */
-    width: 100%;               /* 真ん中を占領 */
+    display: block;             
+    width: 100%;               
     text-shadow: 2px 2px 4px rgba(255,255,255,0.8);
-    margin: -5px 0;            /* 隙間を詰める */
+    margin: -5px 0;            
 }
 
 #result-area { margin-top:20px; }
@@ -113,13 +112,16 @@ function showQuestion() {
   document.getElementById("question").innerText = questions[qIdx];
   const optionsDiv = document.getElementById("options");
   optionsDiv.innerHTML = "";
+  
   const currentPool = answerData[qIdx];
+  // ★ここで選択肢を毎回シャッフルするよ★
   const choices = [
     { t: "money", text: currentPool.money[Math.floor(Math.random() * currentPool.money.length)] },
     { t: "love",  text: currentPool.love[Math.floor(Math.random() * currentPool.love.length)] },
     { t: "sleep", text: currentPool.sleep[Math.floor(Math.random() * currentPool.sleep.length)] },
     { t: "play",  text: currentPool.play[Math.floor(Math.random() * currentPool.play.length)] }
-  ].sort(() => Math.random() - 0.5);
+  ].sort(() => Math.random() - 0.5); // ここで並び順をランダムに入れ替え！
+
   choices.forEach(choice => {
     const btn = document.createElement("button");
     btn.innerText = choice.text;
@@ -150,21 +152,20 @@ function showResult() {
   const sorted = Object.keys(scores).sort((a, b) => scores[b] - scores[a]);
   const mainType = sorted[0];
 
-  // ★演出ロジック★
-  // まず周りの小さな文字を表示（半分）
+  // 小さな文字（前半）
   for (let i = 0; i < 40; i++) {
-    addLabel(inner, sorted, mainType, false);
+    addLabel(inner, sorted, mainType);
   }
 
-  // 次にドーンとデカ文字を表示
+  // ★主役のデカ文字★
   const bigLabel = document.createElement("span");
   bigLabel.className = "brain-label big-label";
   bigLabel.innerText = wordMap[mainType];
   inner.appendChild(bigLabel);
 
-  // 最後に残りの小さな文字を表示（隙間埋め）
+  // 小さな文字（後半：隙間埋め）
   for (let i = 0; i < 40; i++) {
-    addLabel(inner, sorted, mainType, false);
+    addLabel(inner, sorted, mainType);
   }
 
   document.getElementById("result-desc").innerHTML = `
@@ -173,7 +174,6 @@ function showResult() {
   `;
 }
 
-// 文字を追加する共通関数
 function addLabel(container, sorted, mainType) {
     const label = document.createElement("span");
     label.className = "brain-label";
