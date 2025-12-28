@@ -8,7 +8,7 @@
 body { font-family:'ヒラギノ丸ゴ Pro','Arial Rounded MT Bold',sans-serif; background:#fff; margin:0; padding:0; text-align:center; }
 .wrapper { max-width:480px; margin:0 auto; padding:24px 16px; text-align:center; }
 h1 { font-size:26px; margin-bottom:12px; color:#5e35b1; }
-.question { font-size:16px; margin:24px 0 12px; font-weight: bold; }
+.question { font-size:16px; margin:24px 0 12px; font-weight: bold; min-height: 3em; display: flex; align-items: center; justify-content: center; }
 .options { display:flex; flex-direction:column; gap:10px; }
 .options button { padding:14px; border-radius:18px; border:none; background:#ede7f6; box-shadow:0 4px 10px rgba(0,0,0,0.06); font-size:15px; cursor:pointer; transition:0.2s; color: #333; }
 .options button:hover { transform: scale(1.03); background: #d1c4e9; }
@@ -34,26 +34,55 @@ h1 { font-size:26px; margin-bottom:12px; color:#5e35b1; }
 </div>
 
 <script>
-// 質問リスト
-const questions = [
-  "友達が自分より高いプレゼントをもらっていたら？",
-  "行列で前の人が割り込んできたら？",
-  "「秘密だよ」と言われた話、どうする？",
-  "苦手な人が困っているのを見かけたら？",
-  "SNSでキラキラしてる知り合いを見ると？",
-  "自分より不幸な人の話を聞くと？",
-  "もし透明人間になれたら、まず何をする？"
+// 質問と、その質問に合った回答のセット（裏の顔Ver.）
+const quizData = [
+  {
+    q: "友達が自分より高いプレゼントをもらっていたら？",
+    a: [
+      { t: "angel", text: "「いいなー！」と純粋に喜ぶ" },
+      { t: "devil", text: "内心「私の方が似合うのに」と思う" },
+      { t: "black", text: "値段をこっそりネットで調べる" },
+      { t: "king",  text: "「よかったね」と言いつつ自分も買う" }
+    ]
+  },
+  {
+    q: "行列で前の人が割り込んできたら、どうする？",
+    a: [
+      { t: "angel", text: "「並んでますよ」と優しく注意する" },
+      { t: "devil", text: "ムスッとしてSNSに愚痴を書く" },
+      { t: "black", text: "聞こえない程度の音量で舌打ちする" },
+      { t: "king",  text: "無言で背後に立って圧をかける" }
+    ]
+  },
+  {
+    q: "「秘密だよ」と言われた話。あなたならどうする？",
+    a: [
+      { t: "angel", text: "絶対に誰にも言わず墓場まで持っていく" },
+      { t: "devil", text: "信頼できる親友一人にだけ話す" },
+      { t: "black", text: "「誰にも言わないでね」と前置きして話す" },
+      { t: "king",  text: "こっそり自分のためのネタとしてキープ" }
+    ]
+  },
+  {
+    q: "苦手な人が大きなミスをして困っているよ。",
+    a: [
+      { t: "angel", text: "過去は忘れて、迷わず助ける" },
+      { t: "devil", text: "「自業自得かな」と遠くから見守る" },
+      { t: "black", text: "助けるふりをして優越感に浸る" },
+      { t: "king",  text: "忙しいふりをしてそのまま通り過ぎる" }
+    ]
+  },
+  {
+    q: "SNSでキラキラしてる知り合いを見ると？",
+    a: [
+      { t: "angel", text: "「すごいな！」と素直に憧れる" },
+      { t: "devil", text: "「加工かな？」と画像を拡大して確認する" },
+      { t: "black", text: "とりあえず「いいね」して心の中ではスルー" },
+      { t: "king",  text: "見たくないのでそっとミュートする" }
+    ]
+  }
 ];
 
-// 答えの「カテゴリ別」リスト（ここからランダムに選ばれる！）
-const answerPool = {
-  angel: ["「いいなー！」と純粋に喜ぶ", "迷わず声をかけて助ける", "心から同情して力になりたい", "「すごいな」と憧れる", "墓場まで持っていく"],
-  devil: ["内心「私の方が似合うのに」と思う", "ムスッとしてSNSに書き込む", "とりあえず「いいね」してスルー", "忙しいふりをして通り過ぎる", "「秘密だよ」と前置きして話す"],
-  black: ["値段をこっそり予想する", "舌打ちが聞こえない程度に出る", "「自業自得かな」と遠くから見る", "「加工かな？」とアップで確認する", "こっそりネタとしてメモしておく"],
-  king: ["無言で背後に圧をかける", "助けるふりをして優越感に浸る", "そっとミュートする", "「自分じゃなくてよかった」と安堵する", "特に何も感じず、ふーんと思う"]
-};
-
-// 結果タイプ
 const results = [
   { name:"純白のエンジェル度100%👼", desc:"裏も表もない、本当に心の綺麗なあなた。眩しすぎて周りが直視できないかも！" },
   { name:"ちゃっかり小悪魔度40%😈", desc:"少しだけ自分に正直なタイプ。可愛げのあるワガママで世渡り上手なあなたです。" },
@@ -65,32 +94,25 @@ let current = 0;
 let scores = { angel:0, devil:0, black:0, king:0 };
 let quizOrder = [];
 
-// 質問をランダムに並び替え
 function initQuiz() {
-  quizOrder = [...Array(questions.length).keys()].sort(() => Math.random() - 0.5);
+  quizOrder = [...Array(quizData.length).keys()].sort(() => Math.random() - 0.5);
   showQuestion();
 }
 
 function showQuestion() {
-  const qText = questions[quizOrder[current]];
-  document.getElementById("question").innerText = qText;
+  const data = quizData[quizOrder[current]];
+  document.getElementById("question").innerText = data.q;
 
   const optionsDiv = document.getElementById("options");
   optionsDiv.innerHTML = "";
 
-  // 各カテゴリから1つずつランダムに回答を抽出
-  const choices = [
-    { type: 'angel', text: answerPool.angel[Math.floor(Math.random() * answerPool.angel.length)] },
-    { type: 'devil', text: answerPool.devil[Math.floor(Math.random() * answerPool.devil.length)] },
-    { type: 'black', text: answerPool.black[Math.floor(Math.random() * answerPool.black.length)] },
-    { type: 'king',  text: answerPool.king[Math.floor(Math.random() * answerPool.king.length)] }
-  ].sort(() => Math.random() - 0.5); // ボタンの並び順もシャッフル
+  const shuffledA = [...data.a].sort(() => Math.random() - 0.5);
 
-  choices.forEach(choice => {
+  shuffledA.forEach(choice => {
     const btn = document.createElement("button");
     btn.innerText = choice.text;
     btn.onclick = () => {
-      scores[choice.type]++;
+      scores[choice.t]++;
       nextQuestion();
     };
     optionsDiv.appendChild(btn);
@@ -99,7 +121,7 @@ function showQuestion() {
 
 function nextQuestion() {
   current++;
-  if (current < 5) { // 5問答えたら終了
+  if (current < quizData.length) {
     showQuestion();
   } else {
     showLoading();
@@ -114,8 +136,6 @@ function showLoading() {
 
 function showResult() {
   document.getElementById("loading").style.display = "none";
-  
-  // スコアが一番高いタイプを判定
   let maxType = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
   
   let resultData;
@@ -136,5 +156,4 @@ function showResult() {
 initQuiz();
 </script>
 </body>
-</html>
 </html>
