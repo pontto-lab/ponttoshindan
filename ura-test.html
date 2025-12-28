@@ -18,12 +18,11 @@ h1 { font-size:24px; color:#7e57c2; margin-bottom:20px; text-shadow: 2px 2px 0px
 .options { display:flex; flex-direction:column; gap:12px; margin-top: 10px; }
 .options button { padding:16px; border-radius:15px; border:2px solid #e1bee7; background:#fff; cursor:pointer; font-weight: bold; font-size: 15px; transition: 0.3s; color: #5e35b1; outline: none; }
 .options button:hover { background:#f3e5f5; border-color: #ba68c8; transform: translateY(-2px); }
-.options button:active { background:#e1bee7; transform: translateY(0); }
 
 /* ローディング */
 #loading { font-size:22px; margin-top:50px; font-weight:bold; display:none; color: #ba68c8; }
 
-/* 結果表示エリア：画像なしでコメントを引き立てる */
+/* 結果表示エリア */
 #result-area { display:none; background: #fff; padding: 30px 20px; border-radius: 30px; border: 3px double #d1c4e9; box-shadow: 0 10px 30px rgba(126, 87, 194, 0.1); text-align: left; }
 
 @keyframes commentFadeIn {
@@ -36,7 +35,15 @@ h1 { font-size:24px; color:#7e57c2; margin-bottom:20px; text-shadow: 2px 2px 0px
 .result-comment { font-size: 16px; line-height: 1.8; color: #444; opacity: 0; animation: commentFadeIn 1s ease-out forwards; }
 .result-comment b { color: #ba68c8; font-size: 18px; }
 
-#back-btn { margin-top:30px; display:block; padding:12px 24px; border-radius:12px; background:#fce4ec; text-decoration:none; color:#ba68c8; font-weight: bold; font-size: 14px; text-align: center; }
+/* ボタンコンテナ */
+.btn-container { margin-top: 30px; display: flex; flex-direction: column; gap: 15px; align-items: center; }
+
+/* 共通ボタン形式 */
+.btn-common { display: inline-block; padding: 12px 40px; border-radius: 25px; font-weight: bold; font-size: 16px; text-decoration: none; transition: 0.3s; width: 80%; text-align: center; }
+
+.btn-retry { color: #ff69b4; font-size: 14px; text-decoration: underline; }
+.btn-home { background-color: #fce4ec; color: #ba68c8; border: 1px solid #ffc1e3; }
+.btn-home:hover { background-color: #ffd1e8; }
 </style>
 </head>
 <body>
@@ -55,50 +62,36 @@ h1 { font-size:24px; color:#7e57c2; margin-bottom:20px; text-shadow: 2px 2px 0px
         <div class="result-header">スキャン完了。あなたの正体は…</div>
         <div id="result-type" class="result-type"></div>
         <div id="result-comment" class="result-comment"></div>
-        <a href="javascript:location.reload();" id="back-btn">🏠 もう一度スキャンする</a>
+        
+        <div class="btn-container">
+            <a href="javascript:location.reload();" class="btn-retry">🔄 もう一度スキャンする</a>
+            <a href="index.html" class="btn-home">🏠 ぽんっとTOPにもどる</a>
+        </div>
     </div>
 </div>
 
 <script>
-// 👁️ カテゴリ別：じぇみたんの闇かわロングコメント
+// カテゴリ別：闇かわロングコメント
 const resultData = {
-    work: { 
-        name: "【冷徹な完璧主義・毒蜘蛛】", 
-        msg: "表向きは真面目な努力家。でも裏の顔は、<b>他人のミスを心のノートに書き溜める毒蜘蛛</b>タイプ。周囲がバタバタと倒れていくのを眺めながら、自分だけが最上階に昇り詰める瞬間に最高の快感を覚えるはず。情けなんて無用、最後に笑うのは自分だけでしょ？" 
-    },
-    love: { 
-        name: "【愛という名の依存・ヤンデレ】", 
-        msg: "一見、尽くすタイプ。でもその裏側は、<b>相手の全てを監禁したい執着の塊</b>。優しさの皮を被った重い愛で、相手の自由を少しずつ奪うのが得意。嫌いな相手には、一生消えない呪いの言葉を心の中で吐き続ける…そんなドロドロの純愛こそがあなたの本質。" 
-    },
-    sleep: { 
-        name: "【現実拒絶・夢の中の迷子】", 
-        msg: "「疲れちゃった」が口癖のあなた。裏の顔は、<b>この汚い世界を1ミリも信じていない絶望の住人</b>。人間関係のしがらみも、将来への不安も、全部布団の中に持ち込んでシャットアウト。寝ている時だけが、誰にも傷つけられない唯一の聖域。現実はもう、いらないよね？" 
-    },
-    sex: { 
-        name: "【本能全開・深夜のモンスター】", 
-        msg: "昼間は常識人のフリ。でも裏の顔は、<b>道徳なんてゴミ箱に捨てた本能の怪物</b>。抑えられない欲望や、人には言えないマニアックな妄想で脳内を汚染されているはず。綺麗事はもう聞き飽きた。もっと刺激を、もっと快楽を。深夜のあなたは、もう誰にも止められない。" 
-    },
-    money: { 
-        name: "【強欲な守銭奴・銭ゲバブラック】", 
-        msg: "「お金より大事なものがある」なんて、心の中で鼻で笑ってるでしょ？裏の顔は、<b>全ての人間関係を『損か得か』で測る計算機</b>。友情も愛情も、結局は数字。誰かの不幸でさえ、お財布が潤うチャンスなら喜んで受け入れる。だって、最後に守ってくれるのはお金だけでしょ？" 
-    },
-    none: { 
-        name: "【虚無に潜む・冷ややかな傍観者】", 
-        msg: "一番ヤバいのはこのタイプ。裏の顔は、<b>人間という生き物を完全に見限った『無』の境地</b>。誰が泣こうが喚こうが、心の底では1ミリも動じない。世界の終わりをポップコーン食べながら眺めていられるような、圧倒的な冷たさ。あなたにとって、他人は全員ただの風景なの。" 
-    }
+    work: { name: "【冷徹な完璧主義・毒蜘蛛】", msg: "表向きは真面目な努力家。でも裏の顔は、<b>他人のミスを心のノートに書き溜める毒蜘蛛</b>タイプ。周囲がバタバタと倒れていくのを眺めながら、自分だけが最上階に昇り詰める瞬間に最高の快感を覚えるはず。情けなんて無用、最後に笑うのは自分だけでしょ？" },
+    love: { name: "【愛という名の依存・ヤンデレ】", msg: "一見、尽くすタイプ。でもその裏側は、<b>相手の全てを監禁したい執着の塊</b>。優しさの皮を被った重い愛で、相手の自由を少しずつ奪うのが得意。嫌いな相手には、一生消えない呪いの言葉を心の中で吐き続ける…そんなドロドロの純愛こそがあなたの本質。" },
+    sleep: { name: "【現実拒絶・夢の中の迷子】", msg: "「疲れちゃった」が口癖のあなた。裏の顔は、<b>この汚い世界を1ミリも信じていない絶望の住人</b>。人間関係のしがらみも、将来への不安も、全部布団の中に持ち込んでシャットアウト。寝ている時だけが、誰にも傷つけられない唯一の聖域。現実はもう、いらないよね？" },
+    sex: { name: "【本能全開・深夜のモンスター】", msg: "昼間は常識人のフリ。でも裏の顔は、<b>道徳なんてゴミ箱に捨てた本能の怪物</b>。抑えられない欲望や、人には言えないマニアックな妄想で脳内を汚染されているはず。綺麗事はもう聞き飽きた。もっと刺激を、もっと快楽を。深夜のあなたは、もう誰にも止められない。" },
+    money: { name: "【強欲な守銭奴・銭ゲバブラック】", msg: "「お金より大事なものがある」なんて、心の中で鼻で笑ってるでしょ？裏の顔は、<b>全ての人間関係を『損か得か』で測る計算機</b>。友情も愛情も、結局は数字。誰かの不幸でさえ、お財布が潤うチャンスなら喜んで受け入れる。だって、最後に守ってくれるのはお金だけでしょ？" },
+    none: { name: "【虚無に潜む・冷ややかな傍観者】", msg: "一番ヤバいのはこのタイプ。裏の顔は、<b>人間という生き物を完全に見限った『無』の境地</b>。誰が泣こうが喚こうが、心の底では1ミリも動じない。世界の終わりをポップコーン食べながら眺めていられるような、圧倒的な冷たさ。あなたにとって、他人は全員ただの風景なの。" }
 };
 
-// 闇の10問：より「本音」を引き出すドロドロ回答集
+// 闇の10問
 const quizData = [
     { q: "親友が自分より豪華な結婚式を挙げた。本音は？", a: [{ t: "none", text: "「ふーん、無駄遣いだね」と鼻で笑う" },{ t: "money", text: "「ご祝儀代、回収できるかな？」" },{ t: "love", text: "「私より先に幸せになるなんて呪う」" },{ t: "work", text: "「スペック差を見せつけられて不快」" }]},
     { q: "誰もいない道で、大金の入った財布を拾った。", a: [{ t: "money", text: "神に感謝して懐に入れる" },{ t: "none", text: "面倒だからそのまま蹴っ飛ばす" },{ t: "sex", text: "この金で今夜遊び明かす" },{ t: "sleep", text: "一旦寝て、夢じゃなかったら奪う" }]},
     { q: "嫌いな奴がSNSで大炎上！あなたはどうする？", a: [{ t: "sex", text: "匿名掲示板にガセネタを投下する" },{ t: "none", text: "スクショを撮って永久保存する" },{ t: "work", text: "「因果応報だね」と冷淡に見下す" },{ t: "love", text: "「可哀想にｗ」と最高の笑顔になる" }]},
-    { q: "「あなたのため」と説教してくる相手への本音。", a: [{ t: "work", text: "「自分の価値観を押し付けるな無能」" },{ t: "love", text: "「重い、消えろ、死ね」" },{ t: "none", text: "何一つ言葉が耳に入らない" },{ t: "money", text: "「それで、お前は私にいくら払うの？」" }]},
+    { q: "「あなたのため」と説教してくる相手への本音。", a: [{ t: "work", text: "「自分の価値観を押し付けるな無能」" },{ t: "love", text: "「重い、消えろ、死ね」" },{ t: "none", text: "何一つ言葉が耳に入らない" },{ t: "money", text: "「で、いくら得するの？」" }]},
     { q: "恋人が別の異性と楽しそうに話している。", a: [{ t: "love", text: "その異性を社会的に抹殺したくなる" },{ t: "sex", text: "浮気の証拠を掴んで弱みを握りたい" },{ t: "none", text: "「ハイ終了」と急に興味が消える" },{ t: "sleep", text: "考えるのもだるいから寝る" }]},
     { q: "目の前の人が、派手に転んで荷物をぶちまけた。", a: [{ t: "work", text: "「邪魔だな」と思って避けて通る" },{ t: "none", text: "不幸の様子を脳内再生して楽しむ" },{ t: "money", text: "高価なものが落ちてないかチラ見" },{ t: "sex", text: "みっともない姿を見て優越感に浸る" }]},
     { q: "自分より格下の相手が、大成功したと聞いた。", a: [{ t: "sex", text: "「どうせ裏で何かやってんだろ」と疑う" },{ t: "love", text: "「不幸になれ、不幸になれ…」と願う" },{ t: "none", text: "「運が良かっただけ」と見なす" },{ t: "money", text: "こびを売って金に繋げられないか考える" }]},
     { q: "人からもらったプレゼントが、超絶ダサかった。", a: [{ t: "money", text: "その場で値段を調べてフリマへ" },{ t: "work", text: "「これを選ぶ脳みそを疑う」と失望" },{ t: "love", text: "「私の価値を低く見てる証拠」と恨む" },{ t: "none", text: "とりあえず即ゴミ箱" }]},
-    { q: "もし自分に絶対バレない殺人の力が宿ったら？", a: [{ t: "work", text: "出世を阻む上層部を消す" },{ t: "money", text: "金持ちを消して世界を再編する" },{ t: "sex", text: "嫌いな奴を苦しめてから消す" },{ t: "love", text: "恋人の周囲の異性を全員消す" }]},
+    { q: "もし自分に絶対バレない殺人の力が宿ったら？", a: [{ t: "work", text: "出世を阻む上層部を消す" },{ t: "money", text: "金持ちを消して遺産を奪う" },{ t: "sex", text: "嫌いな奴を苦しめてから消す" },{ t: "love", text: "恋人の周囲の異性を全員消す" }]},
     { q: "最後に。この世で本当に「信じられる」のは？", a: [{ t: "money", text: "裏切らない「お金」だけ" },{ t: "love", text: "自分が信じたい「自分の感情」" },{ t: "work", text: "「自分の利用価値」だけ" },{ t: "none", text: "「誰もいない」のが真実" }]}
 ];
 
@@ -112,3 +105,28 @@ function showQuestion() {
     const optsDiv = document.getElementById("options");
     optsDiv.innerHTML = "";
     [...data.a].sort(() => Math.random() - 0.5).forEach(choice => {
+        const btn = document.createElement("button");
+        btn.innerText = choice.text;
+        btn.onclick = () => { scores[choice.t]++; current++; if(current < 10) showQuestion(); else showLoading(); };
+        optsDiv.appendChild(btn);
+    });
+}
+
+function showLoading() {
+    document.getElementById("quiz").style.display = "none";
+    document.getElementById("loading").style.display = "block";
+    setTimeout(showResult, 2000);
+}
+
+function showResult() {
+    document.getElementById("loading").style.display = "none";
+    document.getElementById("result-area").style.display = "block";
+    const mainType = Object.keys(scores).sort((a,b) => scores[b] - scores[a])[0];
+    const final = resultData[mainType];
+    document.getElementById("result-type").innerText = final.name;
+    document.getElementById("result-comment").innerHTML = final.msg;
+}
+showQuestion();
+</script>
+</body>
+</html>
