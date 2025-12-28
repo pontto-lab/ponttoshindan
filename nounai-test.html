@@ -66,37 +66,37 @@ const questions = [
   "自分への最高のご褒美は？"
 ];
 
-// カテゴリごとの回答プール（質問ごとに整合性をとるためのデータ構造）
+// カテゴリごとの回答プール（ボリュームを大幅に増やしたよ！）
 const answerData = [
-  { // Q1用
-    money: ["宝くじで一攫千金", "株価をチェックする"],
-    love:  ["推しと結婚する", "デートの計画を立てる"],
-    sleep: ["泥のように15時間眠る", "高級ベッドで爆睡"],
-    play:  ["世界一周旅行に出る", "朝まで飲み明かす"]
+  { // Q1
+    money: ["宝くじで一攫千金", "株価の爆上がりを待つ", "ATMの残高を増やす魔法"],
+    love:  ["推しと結婚する", "デートの計画を練る", "好きな人と目が合う"],
+    sleep: ["泥のように15時間眠る", "高級ベッドで爆睡", "お布団と親友になる"],
+    play:  ["世界一周旅行に出る", "朝まで飲み明かす", "テーマパークを貸し切る"]
   },
-  { // Q2用
-    money: ["パンパンの財布", "換金できる金塊"],
-    love:  ["大好きな人の写真", "お揃いのアクセサリー"],
-    sleep: ["最高級の羽毛布団", "お気に入りの枕"],
-    play:  ["最新のゲーム機", "一生分の漫画本"]
+  { // Q2
+    money: ["パンパンの財布", "換金できる金塊", "ブラックカード"],
+    love:  ["大好きな人の写真", "お揃いのアクセサリー", "愛のメッセージカード"],
+    sleep: ["最高級の羽毛布団", "お気に入りの枕", "アイマスクと耳栓セット"],
+    play:  ["最新のゲーム機", "一生分の漫画本", "大量のポテトチップス"]
   },
-  { // Q3用
-    money: ["一生遊べる不労所得", "庭から石油が出る"],
-    love:  ["運命の人を連れてきて", "みんなに愛される魔法"],
-    sleep: ["3秒で爆睡できる能力", "疲れを感じない体"],
-    play:  ["毎日が日曜日の世界", "どこでもドアで遊びたい"]
+  { // Q3
+    money: ["一生遊べる不労所得", "庭から石油が出る", "買い物ですべてタダになる"],
+    love:  ["運命の人を連れてきて", "全人類に愛される魔法", "好きな人の記憶に残る"],
+    sleep: ["3秒で爆睡できる能力", "疲れを感じない体", "一生眠らなくていい体力"],
+    play:  ["毎日が日曜日の世界", "どこでもドアで遊びたい", "透明人間になって遊ぶ"]
   },
-  { // Q4用
-    money: ["全財産を使い切る", "銀行に立てこもる"],
-    love:  ["愛する人に告白する", "家族と一緒に過ごす"],
-    sleep: ["家でゴロゴロ寝て待つ", "いつも通り昼寝する"],
-    play:  ["豪華なパーティーを開く", "やりたい放題暴れる"]
+  { // Q4
+    money: ["全財産を使い切る", "銀行に立てこもる", "高い寿司を食べまくる"],
+    love:  ["愛する人に告白する", "家族と一緒に過ごす", "元カレ元カノに電話する"],
+    sleep: ["家でゴロゴロ寝て待つ", "いつも通り昼寝する", "最後に最高の夢を見る"],
+    play:  ["豪華なパーティーを開く", "やりたい放題暴れる", "ジェットコースターに乗る"]
   },
-  { // Q5用
-    money: ["貯金額を眺める", "デパコスを大人買い"],
-    love:  ["推しの限定ライブ", "豪華ディナーデート"],
-    sleep: ["1日中パジャマで過ごす", "昼下がりの二度寝"],
-    play:  ["弾丸で海外旅行", "遊園地で遊びまくる"]
+  { // Q5
+    money: ["貯金額を眺める", "デパコスを大人買い", "ハイブランドの新作"],
+    love:  ["推しの限定ライブ", "豪華ディナーデート", "ラブレターをもらう"],
+    sleep: ["1日中パジャマで過ごす", "昼下がりの二度寝", "スマホの電源を切る"],
+    play:  ["弾丸で海外旅行", "遊園地で遊びまくる", "カラオケで100点取る"]
   }
 ];
 
@@ -113,4 +113,67 @@ let scores = { money:0, love:0, sleep:0, play:0 };
 let quizOrder = [...Array(questions.length).keys()].sort(() => Math.random() - 0.5);
 
 function showQuestion() {
-  const qIdx = quizOrder
+  const qIdx = quizOrder[current];
+  document.getElementById("question").innerText = questions[qIdx];
+  const optionsDiv = document.getElementById("options");
+  optionsDiv.innerHTML = "";
+
+  const currentPool = answerData[qIdx];
+  const choices = [
+    { t: "money", text: currentPool.money[Math.floor(Math.random() * currentPool.money.length)] },
+    { t: "love",  text: currentPool.love[Math.floor(Math.random() * currentPool.love.length)] },
+    { t: "sleep", text: currentPool.sleep[Math.floor(Math.random() * currentPool.sleep.length)] },
+    { t: "play",  text: currentPool.play[Math.floor(Math.random() * currentPool.play.length)] }
+  ].sort(() => Math.random() - 0.5);
+
+  choices.forEach(choice => {
+    const btn = document.createElement("button");
+    btn.innerText = choice.text;
+    btn.onclick = () => { scores[choice.t]++; nextQuestion(); };
+    optionsDiv.appendChild(btn);
+  });
+}
+
+function nextQuestion() {
+  current++;
+  if (current < questions.length) showQuestion(); else showLoading();
+}
+
+function showLoading() {
+  document.getElementById("quiz").style.display = "none";
+  document.getElementById("loading").style.display = "block";
+  setTimeout(showResult, 1500);
+}
+
+function showResult() {
+  document.getElementById("loading").style.display = "none";
+  document.getElementById("result-area").style.display = "block";
+  const brain = document.getElementById("brain-container");
+  brain.style.display = "block";
+  brain.innerHTML = ""; 
+  
+  const sorted = Object.keys(scores).sort((a, b) => scores[b] - scores[a]);
+  const mainType = sorted[0];
+
+  for (let i = 0; i < 40; i++) { // 文字の数も少し増やして賑やかにしたよ！
+    const label = document.createElement("div");
+    label.className = "brain-label";
+    const type = Math.random() < 0.6 ? mainType : sorted[Math.floor(Math.random() * 4)];
+    label.innerText = wordMap[type];
+    label.style.left = Math.random() * 80 + 10 + "%";
+    label.style.top = Math.random() * 70 + 15 + "%";
+    label.style.fontSize = (Math.random() * 24 + 12) + "px";
+    label.style.opacity = Math.random() * 0.8 + 0.2;
+    brain.appendChild(label);
+  }
+
+  document.getElementById("result-desc").innerHTML = `
+    <h2 style="color:#ff69b4;">${wordMap[mainType]}タイプ</h2>
+    <p>${descMap[mainType]}</p>
+  `;
+}
+
+showQuestion();
+</script>
+</body>
+</html>
