@@ -7,8 +7,8 @@
 <style>
 body { font-family:'ヒラギノ丸ゴ Pro','Arial Rounded MT Bold',sans-serif; background:#fff; margin:0; padding:0; text-align:center; }
 .wrapper { max-width:480px; margin:0 auto; padding:24px 16px; text-align:center; }
-h1 { font-size:26px; margin-bottom:12px; color:#e67e22; } /* 暖かみのあるオレンジ系 */
-.question { font-size:16px; margin:24px 0 12px; font-weight: bold; }
+h1 { font-size:26px; margin-bottom:12px; color:#e67e22; }
+.question { font-size:16px; margin:24px 0 12px; font-weight: bold; min-height: 3em; display: flex; align-items: center; justify-content: center; }
 .options { display:flex; flex-direction:column; gap:10px; }
 .options button { padding:14px; border-radius:18px; border:none; background:#fff9c4; box-shadow:0 4px 10px rgba(0,0,0,0.06); font-size:15px; cursor:pointer; transition:0.2s; color: #333; }
 .options button:hover { transform: scale(1.03); background: #fff59d; }
@@ -34,26 +34,55 @@ h1 { font-size:26px; margin-bottom:12px; color:#e67e22; } /* 暖かみのある�
 </div>
 
 <script>
-// 不思議な前世質問リスト
-const questions = [
-  "森の奥で古い扉を見つけたよ。どうする？",
-  "夜空にひときわ輝く星が。あれは何だと思う？",
-  "不思議な力を持つ宝石。何色を選びたい？",
-  "旅の途中で出会った動物が話しかけてきたよ。",
-  "夢の中で見た、忘れられない景色は？",
-  "もし魔法がひとつだけ使えるなら？",
-  "古い図書館で見つけた、ボロボロの地図。"
+// 質問と、その質問に合った回答のセット（整合性を重視！）
+const quizData = [
+  {
+    q: "森の奥で古い扉を見つけたよ。どうする？",
+    a: [
+      { t: "royal", text: "迷わず開けて中を確認する" },
+      { t: "magic", text: "呪文を唱えて開けてみる" },
+      { t: "free",  text: "風の向くままに通り過ぎる" },
+      { t: "unique",text: "とりあえずノックして挨拶" }
+    ]
+  },
+  {
+    q: "夜空にひときわ輝く星が。あれは何だと思う？",
+    a: [
+      { t: "royal", text: "未来を導く王国の道しるべ" },
+      { t: "magic", text: "伝説の魔力が宿る結晶" },
+      { t: "free",  text: "自由な旅人を見守る瞳" },
+      { t: "unique",text: "誰かが落とした光るアメ玉" }
+    ]
+  },
+  {
+    q: "目の前に不思議な宝石が。何色を選びたい？",
+    a: [
+      { t: "royal", text: "気品あふれる純金の色" },
+      { t: "magic", text: "神秘的な深い紫色" },
+      { t: "free",  text: "澄み渡る空のような青色" },
+      { t: "unique",text: "キラキラ光る虹色" }
+    ]
+  },
+  {
+    q: "旅の途中で動物が話しかけてきたよ。何て言った？",
+    a: [
+      { t: "royal", text: "「お城への道を教えましょう」" },
+      { t: "magic", text: "「不思議な力が目覚めています」" },
+      { t: "free",  text: "「一緒に広い世界を見に行こう」" },
+      { t: "unique",text: "「お腹すいたからパンちょうだい」" }
+    ]
+  },
+  {
+    q: "もし魔法がひとつだけ使えるなら？",
+    a: [
+      { t: "royal", text: "国を豊かにする魔法" },
+      { t: "magic", text: "空を自在に飛ぶ魔法" },
+      { t: "free",  text: "動物と心が通じる魔法" },
+      { t: "unique",text: "一生お腹が空かない魔法" }
+    ]
+  }
 ];
 
-// 回答プール（カテゴリ別：ロイヤル、魔法、自由、ユニーク）
-const answerPool = {
-  royal: ["迷わず開けて中を確認する", "未来を映す鏡", "高貴な金色", "「私を城へ連れて行って」", "豪華な宮殿の広間", "世界を平和にする魔法", "自分の国を探す"],
-  magic: ["呪文を唱えてみる", "伝説の魔法の杖", "神秘的な紫色", "不思議な予言を聞く", "静かな夜の湖畔", "空を自由に飛ぶ魔法", "隠された宝の場所を解く"],
-  free:  ["風の向くままに通り過ぎる", "自由な鳥の羽", "爽やかな青色", "一緒に昼寝をする", "果てしなく続く草原", "動物と話せる魔法", "まだ誰も知らない島へ行く"],
-  unique:["とりあえずノックして挨拶", "美味しそうな大きな飴玉", "派手な虹色", "面白いジョークを教わる", "賑やかな市場の風景", "一生お腹が空かない魔法", "美味しいパン屋さんを探す"]
-};
-
-// 前世の結果タイプ
 const results = [
   { name:"誇り高き伝説の騎士⚔️", desc:"前世のあなたは、多くの人を守った英雄でした。その勇気は今も魂に刻まれています！" },
   { name:"月夜に踊る大魔法使い🧙‍♀️", desc:"不思議な力を操り、世界を旅していたあなた。今の直感の鋭さは、その時の名残かも。" },
@@ -66,29 +95,26 @@ let scores = { royal:0, magic:0, free:0, unique:0 };
 let quizOrder = [];
 
 function initQuiz() {
-  quizOrder = [...Array(questions.length).keys()].sort(() => Math.random() - 0.5);
+  // 質問をシャッフル
+  quizOrder = [...Array(quizData.length).keys()].sort(() => Math.random() - 0.5);
   showQuestion();
 }
 
 function showQuestion() {
-  const qText = questions[quizOrder[current]];
-  document.getElementById("question").innerText = qText;
+  const data = quizData[quizOrder[current]];
+  document.getElementById("question").innerText = data.q;
 
   const optionsDiv = document.getElementById("options");
   optionsDiv.innerHTML = "";
 
-  const choices = [
-    { type: 'royal',  text: answerPool.royal[Math.floor(Math.random() * answerPool.royal.length)] },
-    { type: 'magic',  text: answerPool.magic[Math.floor(Math.random() * answerPool.magic.length)] },
-    { type: 'free',   text: answerPool.free[Math.floor(Math.random() * answerPool.free.length)] },
-    { type: 'unique', text: answerPool.unique[Math.floor(Math.random() * answerPool.unique.length)] }
-  ].sort(() => Math.random() - 0.5);
+  // その質問用の回答をシャッフルして表示
+  const shuffledA = [...data.a].sort(() => Math.random() - 0.5);
 
-  choices.forEach(choice => {
+  shuffledA.forEach(choice => {
     const btn = document.createElement("button");
     btn.innerText = choice.text;
     btn.onclick = () => {
-      scores[choice.type]++;
+      scores[choice.t]++;
       nextQuestion();
     };
     optionsDiv.appendChild(btn);
@@ -97,7 +123,7 @@ function showQuestion() {
 
 function nextQuestion() {
   current++;
-  if (current < 5) {
+  if (current < quizData.length) {
     showQuestion();
   } else {
     showLoading();
