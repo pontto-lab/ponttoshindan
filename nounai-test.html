@@ -3,15 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🧠 あなたの脳内メーカー | ぽんっとラボ</title>
+<title>🧠 あなたの脳内メーカー</title>
 <style>
-body { font-family:'ヒラギノ丸ゴ Pro','Arial Rounded MT Bold',sans-serif; background:#fff; margin:0; padding:0; text-align:center; overflow-x: hidden; }
-.wrapper { max-width:480px; margin:0 auto; padding:24px 16px; text-align:center; }
-h1 { font-size:26px; margin-bottom:12px; color:#2c3e50; }
-.question { font-size:16px; margin:24px 0 12px; font-weight: bold; min-height: 3em; display: flex; align-items: center; justify-content: center; padding: 0 10px; }
+body { font-family:'ヒラギノ丸ゴ Pro','Arial Rounded MT Bold',sans-serif; background:#fff; margin:0; padding:0; text-align:center; }
+.wrapper { max-width:480px; margin:0 auto; padding:24px 16px; }
+h1 { font-size:26px; color:#2c3e50; margin-bottom: 20px; }
 .options { display:flex; flex-direction:column; gap:10px; }
-.options button { padding:14px; border-radius:18px; border:none; background:#e0ffff; box-shadow:0 4px 10px rgba(0,0,0,0.06); font-size:15px; cursor:pointer; transition:0.2s; color: #333; }
-.options button:hover { transform: scale(1.03); background: #afeeee; }
+.options button { padding:14px; border-radius:18px; border:none; background:#e0ffff; font-size:15px; cursor:pointer; transition:0.2s; }
+.options button:hover { background:#afeeee; }
 
 #brain-display {
     position: relative;
@@ -25,186 +24,140 @@ h1 { font-size:26px; margin-bottom:12px; color:#2c3e50; }
     display: none;
 }
 
+/* ★背景画像を配置するレイヤー★ */
+#result-bg-image {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    /* 10mm（約38px）右へ、少し下へ調整 */
+    transform: translate(calc(-50% + 38px), -75%); 
+    width: 62px; /* 3mm小さくしたサイズ */
+    height: auto;
+    z-index: 1; 
+    opacity: 0.9;
+}
+
+/* ★文字を並べるレイヤー★ */
 #brain-inner {
     position: absolute;
-    /* ★位置の微調整：画像がより真ん中に来るように設定★ */
-    top: 25px;    /* 下に5mm(約20px)下げる反映 */
-    left: 80px;   /* 左に3mm(約12px)寄せる反映 */
-    width: 220px; 
-    height: 150px; 
-    overflow: hidden;
-    border-radius: 50%;
+    top: 25px;    
+    left: 90px;   
+    width: 210px; 
+    height: 140px; 
     display: flex;
     flex-wrap: wrap;       
     justify-content: center;
     align-content: center;  
     pointer-events: none;
-    padding: 5px;
-    box-sizing: border-box;
+    z-index: 10; /* 画像の上に重ねる */
 }
 
 .brain-label {
     display: inline-flex;
-    align-items: center;
-    justify-content: center;
     font-weight: bold;
     color: #ff69b4;
-    line-height: 0.8;
-    letter-spacing: -1.5px;
+    line-height: 0.85;
+    letter-spacing: -1px;
     margin: 1px;
+    text-shadow: 0px 0px 2px rgba(255,255,255,0.8); /* 画像の上でも読みやすく */
 }
 
-/* ★中央画像のスタイル★ */
-.big-image {
-    width: 85px; /* 脳のサイズに合わせて調整 */
-    height: auto;
-    display: inline-block;
-    vertical-align: middle;
-    margin: 0 5px; /* 左右に文字が入り込む隙間 */
-    z-index: 10;
-}
-
-#result-area { margin-top:20px; }
-#back { margin-top:20px; display:inline-block; padding:12px 24px; border-radius:16px; background:#f0f0f0; text-decoration:none; color:#333; font-weight: bold; border: 2px solid #ddd; }
-#loading { font-size:24px; margin-top:32px; color:#2c3e50; font-weight:bold; display:none; }
+#loading { font-size:24px; margin-top:32px; font-weight:bold; display:none; }
+#result-area { display:none; margin-top:20px; }
 </style>
 </head>
 <body>
 <div class="wrapper">
-<h1>🧠 あなたの脳内メーカー</h1>
-
-<div id="quiz">
-<p id="q-number" style="font-size:14px; color:#888; margin:0;"></p>
-<p class="question" id="question"></p>
-<div id="options" class="options"></div>
-</div>
-
-<div id="loading">深層心理を解析中…🚀</div>
-
-<div id="result-area" style="display:none;">
-    <p style="font-size: 18px;">あなたの頭の中は…✨</p>
-    <div id="brain-display">
-        <div id="brain-inner"></div>
+    <h1>🧠 あなたの脳内メーカー</h1>
+    <div id="quiz">
+        <p id="q-number" style="color:#888; font-size:14px;"></p>
+        <p id="question" style="font-weight:bold; min-height:3em; padding:0 10px;"></p>
+        <div id="options" class="options"></div>
     </div>
-    <div id="result-desc"></div>
-    <a href="index.html" id="back">🏠 ぽんっとTOPにもどる</a>
-</div>
+    <div id="loading">深層心理を解析中...🚀</div>
+    <div id="result-area">
+        <div id="brain-display">
+            <img id="result-bg-image" src="" alt="">
+            <div id="brain-inner"></div>
+        </div>
+        <div id="result-desc"></div>
+        <br><a href="index.html" style="text-decoration:none; color:#666; font-weight:bold;">🏠 TOPへもどる</a>
+    </div>
 </div>
 
 <script>
-// キーワードと実際のファイル名の対応表
-const fileNameMap = {
-    love: "kekka-love.png",
-    money: "kekka-kane.png",
-    sleep: "kekka-sleep.png",
-    sex: "kekka-h.png",
-    work: "kekka-shigoto.png",
-    none: "kekka-mu.png"
-};
-
+const fileNameMap = { love: "kekka-love.png", money: "kekka-kane.png", sleep: "kekka-sleep.png", sex: "kekka-h.png", work: "kekka-shigoto.png", none: "kekka-mu.png" };
 const wordMap = { love: "愛", money: "金", sleep: "眠", sex: "Ｈ", work: "仕事", none: "無" };
 
 const questions = [
-    "休日、気づいたら何を考えてる？",
-    "魔法のランプにお願いするなら？",
-    "今の自分に一番足りないものは？",
-    "自分への最高のご褒美は？",
-    "明日、地球が滅びるとしたら？",
-    "宝くじで3億円当たったらどうする？",
-    "無人島に一つだけ持っていくなら？",
-    "一番リラックスできる瞬間は？",
-    "最近、検索したワードの傾向は？",
-    "今のあなたの「欲」を漢字一文字で言うと？"
+    "休日、気づいたら何を考えてる？", "魔法のランプにお願いするなら？", "今の自分に一番足りないものは？", "自分への最高のご褒美は？", "明日、地球が滅びるとしたら？",
+    "宝くじで3億円当たったらどうする？", "無人島に一つだけ持っていくなら？", "一番リラックスできる瞬間は？", "最近、検索したワードの傾向は？", "今のあなたの「欲」を漢字一文字で言うと？"
 ];
-
 const answerData = [
   { love: "好きな人のこと", money: "貯金額の推移", sleep: "あと何時間寝れるか", sex: "刺激的な妄想", work: "明日の仕事の段取り", none: "特になにも考えてない" },
   { love: "運命の人に会わせて", money: "一生遊べるお金をくれ", sleep: "不眠不休でも平気な体", sex: "絶倫になりたい", work: "天才的な仕事能力", none: "無欲の境地にいかせて" },
   { love: "心の安らぎ", money: "圧倒的な軍資金", sleep: "質の高い睡眠", sex: "情熱的な体験", work: "生産性の向上", none: "執着を捨てる心" },
   { love: "大切な人と旅行", money: "欲しかった高級品を買う", sleep: "一日中パジャマで寝る", sex: "高級エステで体を磨く", work: "ハイスペックな仕事道具", none: "静かな場所で瞑想" },
   { love: "愛する人と抱き合う", money: "全財産を使い切る", sleep: "眠るように最期を迎える", sex: "本能のままに愛し合う", work: "やり残した仕事を片付ける", none: "ただ静かに空を眺める" },
-  { love: "愛を育む資金にする", money: "資産運用でさらに増やす", sleep: "寝るためだけの豪邸を建てる", sex: "禁断 of 遊びを覚える", work: "会社を設立する", none: "半分以上寄付する" },
+  { love: "愛を育む資金にする", money: "資産運用でさらに増やす", sleep: "寝るためだけの豪邸を建てる", sex: "禁断の遊びを覚える", work: "会社を設立する", none: "半分以上寄付する" },
   { love: "恋人", money: "ゴールドカード", sleep: "最高級の枕", sex: "媚薬", work: "パソコン", none: "何も持っていかない" },
   { love: "ハグしている時", money: "通帳記帳した時", sleep: "二度寝する瞬間", sex: "お風呂でリラックス", work: "タスクが完了した時", none: "ぼーっとしている時" },
   { love: "婚活・恋愛テクニック", money: "投資・節税・副業", sleep: "快眠グッズ・マットレス", sex: "深夜の秘密のワード", work: "スキルアップ・効率化", none: "検索なんてしない" },
   { love: "愛", money: "金", sleep: "眠", sex: "Ｈ", work: "仕事", none: "無" }
 ];
 
-const descMap = {
-  love: "あなたの心は愛で満たされています。常に誰かを思い、想われていたい寂しがり屋な一面も。",
-  money: "今の関心は経済力！将来への備えや、豊かさを求める気持ちが非常に強い状態です。",
-  sleep: "脳が休息を求めています！とにかくゆっくり、何も考えずに眠りたいのが本音のようです。",
-  sex: "本能がとてもアクティブ！刺激と興奮を求めていて、頭の中は少しのぼせ気味かも？",
-  work: "超絶仕事人間！休みの日も目標達成やタスクのことで頭がいっぱいな、頼れるリーダータイプ。",
-  none: "悟りの境地です。余計な欲がなく、ありのままの自分を受け入れている非常に穏やかな状態。"
-};
-
 let current = 0;
 let scores = { love:0, money:0, sleep:0, sex:0, work:0, none:0 };
-let quizOrder = [...Array(questions.length).keys()].sort(() => Math.random() - 0.5);
 
 function showQuestion() {
-  const qIdx = quizOrder[current];
-  document.getElementById("q-number").innerText = `第 ${current + 1} 問 / ${questions.length}`;
-  document.getElementById("question").innerText = questions[qIdx];
-  const optionsDiv = document.getElementById("options");
-  optionsDiv.innerHTML = "";
-  const currentPool = answerData[qIdx];
-  const keys = Object.keys(currentPool);
-  keys.sort(() => Math.random() - 0.5).forEach(key => {
-    const btn = document.createElement("button");
-    btn.innerText = currentPool[key];
-    btn.onclick = () => { scores[key]++; nextQuestion(); };
-    optionsDiv.appendChild(btn);
-  });
-}
-
-function nextQuestion() {
-  current++;
-  if (current < questions.length) showQuestion(); else showLoading();
+    document.getElementById("q-number").innerText = `第 ${current + 1} 問 / 10`;
+    document.getElementById("question").innerText = questions[current];
+    const opts = document.getElementById("options");
+    opts.innerHTML = "";
+    Object.keys(answerData[current]).forEach(key => {
+        const b = document.createElement("button");
+        b.innerText = answerData[current][key];
+        b.onclick = () => { scores[key]++; current++; if(current < 10) showQuestion(); else showLoading(); };
+        opts.appendChild(b);
+    });
 }
 
 function showLoading() {
-  document.getElementById("quiz").style.display = "none";
-  document.getElementById("loading").style.display = "block";
-  setTimeout(showResult, 1500);
+    document.getElementById("quiz").style.display = "none";
+    document.getElementById("loading").style.display = "block";
+    setTimeout(showResult, 1500);
 }
 
 function showResult() {
-  document.getElementById("loading").style.display = "none";
-  document.getElementById("result-area").style.display = "block";
-  document.getElementById("brain-display").style.display = "block";
-  
-  const inner = document.getElementById("brain-inner");
-  inner.innerHTML = ""; 
-  
-  const sorted = Object.keys(scores).sort((a, b) => scores[b] - scores[a]);
-  const mainType = sorted[0];
+    document.getElementById("loading").style.display = "none";
+    document.getElementById("result-area").style.display = "block";
+    document.getElementById("brain-display").style.display = "block";
+    
+    // 背景画像のセット
+    const sorted = Object.keys(scores).sort((a,b) => scores[b] - scores[a]);
+    const main = sorted[0];
+    document.getElementById("result-bg-image").src = fileNameMap[main];
 
-  // ★画像と周りの文字を生成★
-  for (let i = 0; i < 180; i++) {
-    if (i === 65) { // 65番目あたりに画像を挿入して中央付近にする
-        const img = document.createElement("img");
-        img.className = "big-image";
-        img.src = fileNameMap[mainType]; // ここで正しいファイル名を指定！
-        img.onerror = function() { this.style.display='none'; }; // 万が一読み込めない時は消す
-        inner.appendChild(img);
-    }
-    const label = document.createElement("span");
-    label.className = "brain-label";
-    const type = Math.random() < 0.5 ? mainType : sorted[Math.floor(Math.random() * sorted.length)];
-    label.innerText = wordMap[type];
-    label.style.fontSize = (Math.random() * 6 + 11) + "px";
-    label.style.opacity = Math.random() * 0.7 + 0.3;
-    inner.appendChild(label);
-  }
+    // 文字の流し込み（分類ごとに固める）
+    const inner = document.getElementById("brain-inner");
+    inner.innerHTML = "";
+    
+    // スコア順に並べることで、多い文字が固まって見えるようにするよ
+    sorted.forEach(type => {
+        const count = Math.floor((scores[type] / 10) * 150); // スコアに応じた割合で表示
+        for(let i=0; i < count; i++) {
+            const span = document.createElement("span");
+            span.className = "brain-label";
+            span.innerText = wordMap[type];
+            span.style.fontSize = (Math.random() * 5 + 11) + "px";
+            span.style.opacity = Math.random() * 0.5 + 0.5;
+            inner.appendChild(span);
+        }
+    });
 
-  document.getElementById("result-desc").innerHTML = `
-    <h2 style="color:#ff69b4;">${wordMap[mainType]}タイプ</h2>
-    <p>${descMap[mainType]}</p>
-  `;
+    const descs = { love:"愛たっぷり", money:"金運重視", sleep:"お疲れモード", sex:"本能全開", work:"仕事人間", none:"無の境地" };
+    document.getElementById("result-desc").innerHTML = `<h2 style="color:#ff69b4;">${descs[main]}タイプ</h2>`;
 }
-
 showQuestion();
 </script>
 </body>
