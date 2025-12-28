@@ -8,7 +8,7 @@
 body { font-family:'ヒラギノ丸ゴ Pro','Arial Rounded MT Bold',sans-serif; background:#fff; margin:0; padding:0; text-align:center; overflow-x: hidden; }
 .wrapper { max-width:480px; margin:0 auto; padding:24px 16px; text-align:center; }
 h1 { font-size:26px; margin-bottom:12px; color:#2c3e50; }
-.question { font-size:16px; margin:24px 0 12px; font-weight: bold; min-height: 3em; display: flex; align-items: center; justify-content: center; }
+.question { font-size:16px; margin:24px 0 12px; font-weight: bold; min-height: 3em; display: flex; align-items: center; justify-content: center; padding: 0 10px; }
 .options { display:flex; flex-direction:column; gap:10px; }
 .options button { padding:14px; border-radius:18px; border:none; background:#e0ffff; box-shadow:0 4px 10px rgba(0,0,0,0.06); font-size:15px; cursor:pointer; transition:0.2s; color: #333; }
 .options button:hover { transform: scale(1.03); background: #afeeee; }
@@ -27,7 +27,6 @@ h1 { font-size:26px; margin-bottom:12px; color:#2c3e50; }
 
 #brain-inner {
     position: absolute;
-    /* ★左上に2mm（約8px）ずらしたよ★ */
     top: 24px;    
     left: 100px;  
     width: 195px; 
@@ -54,13 +53,12 @@ h1 { font-size:26px; margin-bottom:12px; color:#2c3e50; }
     margin: 1px;
 }
 
-/* ★デカ文字をインラインにして左右に文字が回り込むようにしたよ★ */
 .big-label {
     font-size: 65px !important; 
     color: #ff1493 !important;  
     text-shadow: 2px 2px 4px rgba(255,255,255,1);
     z-index: 10;
-    margin: 0 4px; /* 左右に少しだけ隙間を作って小文字を誘い込む */
+    margin: 0 4px;
 }
 
 #result-area { margin-top:20px; }
@@ -73,11 +71,12 @@ h1 { font-size:26px; margin-bottom:12px; color:#2c3e50; }
 <h1>🧠 あなたの脳内メーカー</h1>
 
 <div id="quiz">
+<p id="q-number" style="font-size:14px; color:#888; margin:0;">第 1 問</p>
 <p class="question" id="question"></p>
 <div id="options" class="options"></div>
 </div>
 
-<div id="loading">脳内をスキャン中…👀</div>
+<div id="loading">深層心理を解析中…🚀</div>
 
 <div id="result-area" style="display:none;">
     <p style="font-size: 18px;">あなたの頭の中は…✨</p>
@@ -90,30 +89,41 @@ h1 { font-size:26px; margin-bottom:12px; color:#2c3e50; }
 </div>
 
 <script>
+// ★10問に増やしたよ！★
 const questions = [
     "休日、気づいたら何を考えてる？",
     "魔法のランプにお願いするなら？",
     "今の自分に一番足りないものは？",
     "自分への最高のご褒美は？",
-    "明日、地球が滅びるとしたら？"
+    "明日、地球が滅びるとしたら？",
+    "宝くじで3億円当たったらどうする？",
+    "無人島に一つだけ持っていくなら？",
+    "一番リラックスできる瞬間は？",
+    "最近、検索したワードの傾向は？",
+    "今のあなたの「欲」を漢字一文字で言うと？"
 ];
 
 const answerData = [
-  { love: "推しのこと", money: "銀行の残高", sleep: "昼寝のタイミング", sex: "ムフフな妄想", work: "明日のタスク", none: "無心で壁を見る" },
-  { love: "一生愛されたい", money: "油田のオーナーになる", sleep: "3秒で爆睡する能力", sex: "究極のモテ期", work: "出世街道まっしぐら", none: "煩悩を捨てたい" },
-  { love: "トキメキ", money: "圧倒的な資金力", sleep: "深い眠り", sex: "刺激的な夜", work: "やる気スイッチ", none: "悟りの境地" },
-  { love: "恋人と豪華ディナー", money: "宝くじで一攫千金！", sleep: "高級羽毛布団で15時間", sex: "魅惑のボディケア", work: "最新のPC", none: "デジタルデトックス" },
-  { love: "家族と過ごす", money: "全財産使い切る", sleep: "そのまま永眠", sex: "本能のままに振る舞う", work: "仕事を終わらせる", none: "いつも通り過ごす" }
+  { love: "好きな人のこと", money: "貯金額の推移", sleep: "あと何時間寝れるか", sex: "刺激的な妄想", work: "明日の仕事の段取り", none: "特になにも考えてない" },
+  { love: "運命の人に会わせて", money: "一生遊べるお金をくれ", sleep: "不眠不休でも平気な体", sex: "絶倫になりたい", work: "天才的な仕事能力", none: "無欲の境地にいかせて" },
+  { love: "心の安らぎ", money: "圧倒的な軍資金", sleep: "質の高い睡眠", sex: "情熱的な体験", work: "生産性の向上", none: "執着を捨てる心" },
+  { love: "大切な人と旅行", money: "欲しかった高級品を買う", sleep: "一日中パジャマで寝る", sex: "高級エステで体を磨く", work: "ハイスペックな仕事道具", none: "静かな場所で瞑想" },
+  { love: "愛する人と抱き合う", money: "全財産を使い切る", sleep: "眠るように最期を迎える", sex: "本能のままに愛し合う", work: "やり残した仕事を片付ける", none: "ただ静かに空を眺める" },
+  { love: "愛を育む資金にする", money: "資産運用でさらに増やす", sleep: "寝るためだけの豪邸を建てる", sex: "禁断の遊びを覚える", work: "会社を設立する", none: "半分以上寄付する" },
+  { love: "恋人", money: "ゴールドカード", sleep: "最高級の枕", sex: "媚薬", work: "パソコン", none: "何も持っていかない" },
+  { love: "ハグしている時", money: "通帳記帳した時", sleep: "二度寝する瞬間", sex: "お風呂でリラックス", work: "タスクが完了した時", none: "ぼーっとしている時" },
+  { love: "婚活・恋愛テクニック", money: "投資・節税・副業", sleep: "快眠グッズ・マットレス", sex: "深夜の秘密のワード", work: "スキルアップ・効率化", none: "検索なんてしない" },
+  { love: "愛", money: "金", sleep: "休", sex: "欲", work: "職", none: "空" }
 ];
 
 const wordMap = { love: "愛", money: "金", sleep: "眠", sex: "Ｈ", work: "仕事", none: "無" };
 const descMap = {
-  love: "心の中は「愛」でいっぱい！愛し愛されたいロマンチストさんです。",
-  money: "今はとにかく「金」が大事！お財布の潤いが心の平和に直結します。",
-  sleep: "お疲れ気味かも？頭の中はふかふかの布団のことで埋め尽くされています。",
-  sex: "本能が爆発中！刺激的な何かを求めて頭がのぼせているようです。",
-  work: "責任感が強すぎ！休みの日もどこかで仕事のことを考えていませんか？",
-  none: "悟りを開いています。何事にも動じない、静かな精神状態にあるようです。"
+  love: "あなたの心は愛で満たされています。常に誰かを思い、想われていたい寂しがり屋な一面も。",
+  money: "今の関心は経済力！将来への備えや、豊かさを求める気持ちが非常に強い状態です。",
+  sleep: "脳が休息を求めています！とにかくゆっくり、何も考えずに眠りたいのが本音のようです。",
+  sex: "本能がとてもアクティブ！刺激と興奮を求めていて、頭の中は少しのぼせ気味かも？",
+  work: "超絶仕事人間！休みの日も目標達成やタスクのことで頭がいっぱいな、頼れるリーダータイプ。",
+  none: "悟りの境地です。余計な欲がなく、ありのままの自分を受け入れている非常に穏やかな状態。"
 };
 
 let current = 0;
@@ -122,6 +132,7 @@ let quizOrder = [...Array(questions.length).keys()].sort(() => Math.random() - 0
 
 function showQuestion() {
   const qIdx = quizOrder[current];
+  document.getElementById("q-number").innerText = `第 ${current + 1} 問 / 10`;
   document.getElementById("question").innerText = questions[qIdx];
   const optionsDiv = document.getElementById("options");
   optionsDiv.innerHTML = "";
@@ -143,7 +154,7 @@ function nextQuestion() {
 function showLoading() {
   document.getElementById("quiz").style.display = "none";
   document.getElementById("loading").style.display = "block";
-  setTimeout(showResult, 1500);
+  setTimeout(showResult, 2000);
 }
 
 function showResult() {
@@ -157,9 +168,8 @@ function showResult() {
   const sorted = Object.keys(scores).sort((a, b) => scores[b] - scores[a]);
   const mainType = sorted[0];
 
-  // ★文字を大量に生成して、途中でデカ文字を混ぜる★
-  for (let i = 0; i < 150; i++) {
-    if (i === 40) { // 40番目くらいにデカ文字を配置（中央付近にくる）
+  for (let i = 0; i < 160; i++) { // さらに密度を上げたよ
+    if (i === 45) {
         const bigLabel = document.createElement("span");
         bigLabel.className = "brain-label big-label";
         bigLabel.innerText = wordMap[mainType];
@@ -182,5 +192,3 @@ function showResult() {
 
 showQuestion();
 </script>
-</body>
-</html>
