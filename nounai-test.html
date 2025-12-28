@@ -14,7 +14,6 @@ h1 { font-size:26px; margin-bottom:12px; color:#2c3e50; }
 .options button:hover { transform: scale(1.03); background: #afeeee; }
 .options button:active { transform: scale(0.97); }
 
-/* 脳内メーカー専用の結果画面スタイル */
 #brain-container {
     position: relative;
     width: 280px;
@@ -33,8 +32,8 @@ h1 { font-size:26px; margin-bottom:12px; color:#2c3e50; }
     transition: 0.5s;
 }
 
-#result { margin-top:20px; }
-#back { margin-top:20px; display:inline-block; padding:12px 24px; border-radius:16px; background:#f0f0f0; text-decoration:none; color:#333; font-weight: bold; }
+#result-area { margin-top:20px; }
+#back { margin-top:20px; display:inline-block; padding:12px 24px; border-radius:16px; background:#f0f0f0; text-decoration:none; color:#333; font-weight: bold; border: 2px solid #ddd; }
 #loading { font-size:24px; margin-top:32px; color:#2c3e50; font-weight:bold; display:none; }
 </style>
 </head>
@@ -58,25 +57,49 @@ h1 { font-size:26px; margin-bottom:12px; color:#2c3e50; }
 </div>
 
 <script>
-const quizData = [
-  { q: "今一番やりたいことは？", a: [
-    { t: "money", text: "宝くじを当てる" }, { t: "love", text: "推しに会う" }, { t: "sleep", text: "泥のように眠る" }, { t: "play", text: "パーッと遊ぶ" }
-  ]},
-  { q: "無人島にひとつ持っていくなら？", a: [
-    { t: "money", text: "通帳と印鑑" }, { t: "love", text: "好きな人の写真" }, { t: "sleep", text: "高級な枕" }, { t: "play", text: "最新のゲーム機" }
-  ]},
-  { q: "目の前に魔法のランプが。何をお願いする？", a: [
-    { t: "money", text: "一生遊べるお金" }, { t: "love", text: "運命の出会い" }, { t: "sleep", text: "疲れを知らない体" }, { t: "play", text: "毎日が夏休み" }
-  ]},
-  { q: "明日、地球が滅びるとしたら？", a: [
-    { t: "money", text: "とりあえず爆買い" }, { t: "love", text: "愛を叫ぶ" }, { t: "sleep", text: "家でゴロゴロする" }, { t: "play", text: "豪華なパーティー" }
-  ]},
-  { q: "自分へのご褒美といえば？", a: [
-    { t: "money", text: "貯金額を確認" }, { t: "love", text: "限定グッズを買う" }, { t: "sleep", text: "12時間睡眠" }, { t: "play", text: "高級エステや旅行" }
-  ]}
+// 質問リスト
+const questions = [
+  "今、一番やりたいことは？",
+  "無人島にひとつ持っていくなら？",
+  "魔法のランプにお願いするなら？",
+  "明日、地球が滅びるとしたら？",
+  "自分への最高のご褒美は？"
 ];
 
-// 漢字一文字の変換
+// カテゴリごとの回答プール（質問ごとに整合性をとるためのデータ構造）
+const answerData = [
+  { // Q1用
+    money: ["宝くじで一攫千金", "株価をチェックする"],
+    love:  ["推しと結婚する", "デートの計画を立てる"],
+    sleep: ["泥のように15時間眠る", "高級ベッドで爆睡"],
+    play:  ["世界一周旅行に出る", "朝まで飲み明かす"]
+  },
+  { // Q2用
+    money: ["パンパンの財布", "換金できる金塊"],
+    love:  ["大好きな人の写真", "お揃いのアクセサリー"],
+    sleep: ["最高級の羽毛布団", "お気に入りの枕"],
+    play:  ["最新のゲーム機", "一生分の漫画本"]
+  },
+  { // Q3用
+    money: ["一生遊べる不労所得", "庭から石油が出る"],
+    love:  ["運命の人を連れてきて", "みんなに愛される魔法"],
+    sleep: ["3秒で爆睡できる能力", "疲れを感じない体"],
+    play:  ["毎日が日曜日の世界", "どこでもドアで遊びたい"]
+  },
+  { // Q4用
+    money: ["全財産を使い切る", "銀行に立てこもる"],
+    love:  ["愛する人に告白する", "家族と一緒に過ごす"],
+    sleep: ["家でゴロゴロ寝て待つ", "いつも通り昼寝する"],
+    play:  ["豪華なパーティーを開く", "やりたい放題暴れる"]
+  },
+  { // Q5用
+    money: ["貯金額を眺める", "デパコスを大人買い"],
+    love:  ["推しの限定ライブ", "豪華ディナーデート"],
+    sleep: ["1日中パジャマで過ごす", "昼下がりの二度寝"],
+    play:  ["弾丸で海外旅行", "遊園地で遊びまくる"]
+  }
+];
+
 const wordMap = { money: "金", love: "愛", sleep: "眠", play: "欲" };
 const descMap = {
   money: "今はとにかく「現実」を大事にしたい時期！お財布が潤うと心も潤うタイプです。",
@@ -87,63 +110,7 @@ const descMap = {
 
 let current = 0;
 let scores = { money:0, love:0, sleep:0, play:0 };
-let quizOrder = [...Array(quizData.length).keys()].sort(() => Math.random() - 0.5);
+let quizOrder = [...Array(questions.length).keys()].sort(() => Math.random() - 0.5);
 
 function showQuestion() {
-  const data = quizData[quizOrder[current]];
-  document.getElementById("question").innerText = data.q;
-  const optionsDiv = document.getElementById("options");
-  optionsDiv.innerHTML = "";
-  [...data.a].sort(() => Math.random() - 0.5).forEach(choice => {
-    const btn = document.createElement("button");
-    btn.innerText = choice.text;
-    btn.onclick = () => { scores[choice.t]++; nextQuestion(); };
-    optionsDiv.appendChild(btn);
-  });
-}
-
-function nextQuestion() {
-  current++;
-  if (current < quizData.length) showQuestion(); else showLoading();
-}
-
-function showLoading() {
-  document.getElementById("quiz").style.display = "none";
-  document.getElementById("loading").style.display = "block";
-  setTimeout(showResult, 1500);
-}
-
-function showResult() {
-  document.getElementById("loading").style.display = "none";
-  document.getElementById("result-area").style.display = "block";
-  const brain = document.getElementById("brain-container");
-  brain.style.display = "block";
-  
-  // スコアが高い順に並び替え
-  const sorted = Object.keys(scores).sort((a, b) => scores[b] - scores[a]);
-  const mainType = sorted[0];
-
-  // 脳内に文字を散りばめる
-  for (let i = 0; i < 30; i++) {
-    const label = document.createElement("div");
-    label.className = "brain-label";
-    // スコアに応じて出る文字の割合を変える（一番高いやつを多めに出す）
-    const type = Math.random() < 0.6 ? mainType : sorted[Math.floor(Math.random() * 4)];
-    label.innerText = wordMap[type];
-    label.style.left = Math.random() * 80 + 10 + "%";
-    label.style.top = Math.random() * 70 + 15 + "%";
-    label.style.fontSize = (Math.random() * 20 + 10) + "px";
-    label.style.opacity = Math.random() * 0.7 + 0.3;
-    brain.appendChild(label);
-  }
-
-  document.getElementById("result-desc").innerHTML = `
-    <h2 style="color:#ff69b4;">${wordMap[mainType]}タイプ</h2>
-    <p>${descMap[mainType]}</p>
-  `;
-}
-
-showQuestion();
-</script>
-</body>
-</html>
+  const qIdx = quizOrder
