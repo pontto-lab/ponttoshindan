@@ -26,24 +26,37 @@ h1 { font-size:26px; margin-bottom:12px; color:#2c3e50; }
     display: none;
 }
 
-/* ★鉄壁ガード：白い部分の位置をミリ単位で指定★ */
+/* ★のうみそエリア：重なりを防ぐために flex を使用★ */
 #brain-inner {
     position: absolute;
-    top: 45px;    /* 上から45pxの位置 */
-    left: 105px;   /* 左から105pxの位置 */
-    width: 195px;  /* 横幅 */
-    height: 145px; /* 縦幅 */
-    overflow: hidden; /* はみ出しをカット */
-    border-radius: 50% 50% 42% 42%; /* 楕円形にガード */
+    top: 52px;    
+    left: 108px;  
+    width: 185px; 
+    height: 135px; 
+    overflow: hidden;
+    border-radius: 50%;
+    display: flex;
+    flex-wrap: wrap;       /* 文字を詰め込む */
+    justify-content: center;
+    align-content: center;  
     pointer-events: none;
 }
 
 .brain-label {
-    position: absolute;
+    display: inline-block;
     font-weight: bold;
     color: #ff69b4;
-    white-space: nowrap;
+    padding: 1px; 
     line-height: 1;
+    transition: 0.3s;
+}
+
+/* ★主役級にデカい文字用のスタイル★ */
+.big-label {
+    font-size: 42px !important; /* ドーンと大きく！ */
+    color: #ff1493 !important;  /* 色も少し濃くして目立たせる */
+    text-shadow: 2px 2px 0px #fff; /* 重なっても見えるように縁取り */
+    z-index: 10;
 }
 
 #result-area { margin-top:20px; }
@@ -64,11 +77,9 @@ h1 { font-size:26px; margin-bottom:12px; color:#2c3e50; }
 
 <div id="result-area" style="display:none;">
     <p style="font-size: 18px;">あなたの頭の中は…✨</p>
-    
     <div id="brain-display">
         <div id="brain-inner"></div>
     </div>
-
     <div id="result-desc"></div>
     <a href="index.html" id="back">🏠 ぽんっとTOPにもどる</a>
 </div>
@@ -77,11 +88,11 @@ h1 { font-size:26px; margin-bottom:12px; color:#2c3e50; }
 <script>
 const questions = ["今、一番やりたいことは？", "無人島にひとつ持っていくなら？", "魔法のランプにお願いするなら？", "明日、地球が滅びるとしたら？", "自分への最高のご褒美は？"];
 const answerData = [
-  { money: ["宝くじで一攫千金", "株価の爆上がり", "庭から石油"], love: ["推しと結婚する", "デートの計画", "愛の言葉"], sleep: ["15時間眠る", "高級ベッドで爆睡", "お布団と親友"], play: ["世界一周旅行", "朝まで飲み明かす", "テーマパーク貸切"] },
-  { money: ["パンパンの財布", "換金できる金塊", "ブラックカード"], love: ["大好きな人の写真", "お揃いの指輪", "愛のメッセージ"], sleep: ["最高級の羽毛布団", "お気に入りの枕", "アイマスク"], play: ["最新のゲーム機", "一生分の漫画本", "大量のポテチ"] },
-  { money: ["不労所得ゲット", "買い物すべてタダ", "金に困らない"], love: ["運命の人を呼ぶ", "全人類に愛される", "好きな人と目が合う"], sleep: ["3秒で爆睡", "疲れを知らない体", "一生眠れる"], play: ["毎日が日曜日", "どこでもドア", "透明人間になる"] },
-  { money: ["全財産を使い切る", "高い寿司", "銀行へ行く"], love: ["愛を叫ぶ", "家族と過ごす", "告白する"], sleep: ["昼寝して待つ", "いつも通り寝る", "最高の夢を見る"], play: ["パーティーを開く", "やりたい放題", "爆買いする"] },
-  { money: ["貯金額を眺める", "デパコス大人買い", "ハイブランド新作"], love: ["推しのライブ", "ディナーデート", "ラブレター"], sleep: ["1日中パジャマ", "二度寝の嵐", "スマホを捨てる"], play: ["弾丸で海外旅行", "遊園地で遊ぶ", "カラオケ100点"] }
+  { money: ["宝くじ", "株価"], love: ["結婚", "デート"], sleep: ["15時間寝る", "爆睡"], play: ["世界旅行", "飲み明かす"] },
+  { money: ["財布", "金塊"], love: ["写真", "指輪"], sleep: ["羽毛布団", "枕"], play: ["ゲーム", "漫画本"] },
+  { money: ["不労所得", "石油"], love: ["運命の人", "愛される"], sleep: ["爆睡能力", "疲れ知らず"], play: ["毎日休日", "どこでもドア"] },
+  { money: ["爆買い", "高い寿司"], love: ["告白", "家族"], sleep: ["昼寝", "夢を見る"], play: ["パーティー", "暴れる"] },
+  { money: ["貯金額", "デパコス"], love: ["ライブ", "ディナー"], sleep: ["パジャマ", "二度寝"], play: ["海外旅行", "遊園地"] }
 ];
 
 const wordMap = { money: "金", love: "愛", sleep: "眠", play: "欲" };
@@ -138,20 +149,19 @@ function showResult() {
   const sorted = Object.keys(scores).sort((a, b) => scores[b] - scores[a]);
   const mainType = sorted[0];
 
-  // ★物量：100個！
-  for (let i = 0; i < 100; i++) {
-    const label = document.createElement("div");
+  // ★10文字目に1回だけ、デカい文字を混ぜる演出！
+  for (let i = 0; i < 75; i++) {
+    const label = document.createElement("span");
     label.className = "brain-label";
     const type = Math.random() < 0.6 ? mainType : sorted[Math.floor(Math.random() * 4)];
     label.innerText = wordMap[type];
     
-    // 全体に広がるように配置
-    label.style.left = (Math.random() * 95) + "%";
-    label.style.top = (Math.random() * 95) + "%";
-    
-    // サイズを調整
-    label.style.fontSize = (Math.random() * 16 + 11) + "px";
-    label.style.opacity = Math.random() * 0.8 + 0.2;
+    if (i === 10) { 
+      label.classList.add("big-label"); // 10番目の文字をデカくする！
+    } else {
+      label.style.fontSize = (Math.random() * 8 + 14) + "px";
+      label.style.opacity = Math.random() * 0.7 + 0.3;
+    }
     inner.appendChild(label);
   }
 
