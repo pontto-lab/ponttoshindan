@@ -19,8 +19,39 @@ h1 { font-size:24px; color:#7e57c2; margin-bottom:20px; text-shadow: 2px 2px 0px
 .options button { padding:16px; border-radius:15px; border:2px solid #e1bee7; background:#fff; cursor:pointer; font-weight: bold; font-size: 15px; transition: 0.3s; color: #5e35b1; outline: none; }
 .options button:hover { background:#f3e5f5; border-color: #ba68c8; transform: translateY(-2px); }
 
-/* ローディング */
-#loading { font-size:22px; margin-top:50px; font-weight:bold; display:none; color: #ba68c8; }
+/* 🌟 収益化ロード画面（闇かわ仕様） */
+#loading-screen { display:none; padding: 20px; background: #fff; border-radius: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.05); }
+.progress-container { width: 100%; background: #eee; height: 15px; border-radius: 10px; margin: 15px 0; overflow: hidden; }
+#progress-bar { width: 0%; background: #ba68c8; height: 100%; transition: width 3s linear; }
+
+.ad-box { 
+    margin: 20px 0; 
+    padding: 10px; 
+    background: #fdfbff; 
+    border: 1px dashed #ba68c8; 
+    border-radius: 10px;
+}
+
+#result-view-btn {
+    display: none; 
+    width: 100%;
+    padding: 16px;
+    background: #ba68c8;
+    color: white;
+    border: none;
+    border-radius: 30px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 0 #7e57c2;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+    100% { transform: scale(1); }
+}
 
 /* 結果表示エリア */
 #result-area { display:none; background: #fff; padding: 30px 20px; border-radius: 30px; border: 3px double #d1c4e9; box-shadow: 0 10px 30px rgba(126, 87, 194, 0.1); text-align: left; }
@@ -41,7 +72,7 @@ h1 { font-size:24px; color:#7e57c2; margin-bottom:20px; text-shadow: 2px 2px 0px
 /* 共通ボタン形式 */
 .btn-common { display: inline-block; padding: 12px 40px; border-radius: 25px; font-weight: bold; font-size: 16px; text-decoration: none; transition: 0.3s; width: 80%; text-align: center; }
 
-.btn-retry { color: #ff69b4; font-size: 14px; text-decoration: underline; }
+.btn-retry { color: #ff69b4; font-size: 14px; text-decoration: underline; cursor: pointer; border: none; background: none; font-weight: bold; }
 .btn-home { background-color: #fce4ec; color: #ba68c8; border: 1px solid #ffc1e3; }
 .btn-home:hover { background-color: #ffd1e8; }
 </style>
@@ -56,7 +87,19 @@ h1 { font-size:24px; color:#7e57c2; margin-bottom:20px; text-shadow: 2px 2px 0px
         <div id="options" class="options"></div>
     </div>
 
-    <div id="loading">本性を暴いています…👁️🕸️</div>
+    <div id="loading-screen">
+        <h2 style="color: #ba68c8; font-size: 20px;">🕸️ 本性を暴いています…👁️</h2>
+        <div class="progress-container">
+            <div id="progress-bar"></div>
+        </div>
+        
+        <div class="ad-box">
+            <p style="font-size: 11px; color: #ba68c8; margin-bottom: 8px;">スキャン完了まであと少し。広告をチェック 👇</p>
+            <a href="//af.moshimo.com/af/c/click?a_id=5322069&p_id=54&pc_id=54&pl_id=1220" rel="nofollow" referrerpolicy="no-referrer-when-downgrade" attributionsrc><img src="//image.moshimo.com/af-img/0032/000000001220.gif" width="100%" height="auto" style="border:none; max-width: 468px;"></a><img src="//i.moshimo.com/af/i/impression?a_id=5322069&p_id=54&pc_id=54&pl_id=1220" width="1" height="1" style="border:none;" loading="lazy">
+        </div>
+
+        <button id="result-view-btn" onclick="showResult()">本当の姿を見る👁️</button>
+    </div>
 
     <div id="result-area">
         <div class="result-header">スキャン完了。あなたの正体は…</div>
@@ -64,14 +107,13 @@ h1 { font-size:24px; color:#7e57c2; margin-bottom:20px; text-shadow: 2px 2px 0px
         <div id="result-comment" class="result-comment"></div>
         
         <div class="btn-container">
-            <a href="javascript:location.reload();" class="btn-retry">🔄 もう一度スキャンする</a>
-            <a href="index.html" class="btn-home">🏠 ぽんっとTOPにもどる</a>
+            <button onclick="location.reload();" class="btn-retry">🔄 もう一度スキャンする</button>
+            <a href="index.html" class="btn-home btn-common">🏠 ぽんっとTOPにもどる</a>
         </div>
     </div>
 </div>
 
 <script>
-// カテゴリ別：闇かわロングコメント
 const resultData = {
     work: { name: "【冷徹な完璧主義・毒蜘蛛】", msg: "表向きは真面目な努力家。でも裏の顔は、<b>他人のミスを心のノートに書き溜める毒蜘蛛</b>タイプ。周囲がバタバタと倒れていくのを眺めながら、自分だけが最上階に昇り詰める瞬間に最高の快感を覚えるはず。情けなんて無用、最後に笑うのは自分だけでしょ？" },
     love: { name: "【愛という名の依存・ヤンデレ】", msg: "一見、尽くすタイプ。でもその裏側は、<b>相手の全てを監禁したい執着の塊</b>。優しさの皮を被った重い愛で、相手の自由を少しずつ奪うのが得意。嫌いな相手には、一生消えない呪いの言葉を心の中で吐き続ける…そんなドロドロの純愛こそがあなたの本質。" },
@@ -81,7 +123,6 @@ const resultData = {
     none: { name: "【虚無に潜む・冷ややかな傍観者】", msg: "一番ヤバいのはこのタイプ。裏の顔は、<b>人間という生き物を完全に見限った『無』の境地</b>。誰が泣こうが喚こうが、心の底では1ミリも動じない。世界の終わりをポップコーン食べながら眺めていられるような、圧倒的な冷たさ。あなたにとって、他人は全員ただの風景なの。" }
 };
 
-// 闇の10問
 const quizData = [
     { q: "親友が自分より豪華な結婚式を挙げた。本音は？", a: [{ t: "none", text: "「ふーん、無駄遣いだね」と鼻で笑う" },{ t: "money", text: "「ご祝儀代、回収できるかな？」" },{ t: "love", text: "「私より先に幸せになるなんて呪う」" },{ t: "work", text: "「スペック差を見せつけられて不快」" }]},
     { q: "誰もいない道で、大金の入った財布を拾った。", a: [{ t: "money", text: "神に感謝して懐に入れる" },{ t: "none", text: "面倒だからそのまま蹴っ飛ばす" },{ t: "sex", text: "この金で今夜遊び明かす" },{ t: "sleep", text: "一旦寝て、夢じゃなかったら奪う" }]},
@@ -107,19 +148,20 @@ function showQuestion() {
     [...data.a].sort(() => Math.random() - 0.5).forEach(choice => {
         const btn = document.createElement("button");
         btn.innerText = choice.text;
-        btn.onclick = () => { scores[choice.t]++; current++; if(current < 10) showQuestion(); else showLoading(); };
+        btn.onclick = () => { scores[choice.t]++; current++; if(current < 10) showQuestion(); else startLoading(); };
         optsDiv.appendChild(btn);
     });
 }
 
-function showLoading() {
+function startLoading() {
     document.getElementById("quiz").style.display = "none";
-    document.getElementById("loading").style.display = "block";
-    setTimeout(showResult, 2000);
+    document.getElementById("loading-screen").style.display = "block";
+    setTimeout(() => { document.getElementById("progress-bar").style.width = "100%"; }, 100);
+    setTimeout(() => { document.getElementById("result-view-btn").style.display = "block"; }, 3000);
 }
 
 function showResult() {
-    document.getElementById("loading").style.display = "none";
+    document.getElementById("loading-screen").style.display = "none";
     document.getElementById("result-area").style.display = "block";
     const mainType = Object.keys(scores).sort((a,b) => scores[b] - scores[a])[0];
     const final = resultData[mainType];
