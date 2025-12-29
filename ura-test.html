@@ -19,7 +19,7 @@ h1 { font-size:24px; color:#7e57c2; margin-bottom:20px; text-shadow: 2px 2px 0px
 .options button { padding:16px; border-radius:15px; border:2px solid #e1bee7; background:#fff; cursor:pointer; font-weight: bold; font-size: 15px; transition: 0.3s; color: #5e35b1; outline: none; }
 .options button:hover { background:#f3e5f5; border-color: #ba68c8; transform: translateY(-2px); }
 
-/* 🌟 収益化ロード画面 */
+/* 🌟 ロード画面（バナー入り） */
 #loading-screen { display:none; padding: 20px; background: #fff; border-radius: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.05); }
 .progress-container { width: 100%; background: #eee; height: 15px; border-radius: 10px; margin: 15px 0; overflow: hidden; }
 #progress-bar { width: 0%; background: #ba68c8; height: 100%; transition: width 3s linear; }
@@ -27,29 +27,30 @@ h1 { font-size:24px; color:#7e57c2; margin-bottom:20px; text-shadow: 2px 2px 0px
 .ad-box { margin: 20px 0; padding: 10px; background: #fdfbff; border: 1px dashed #ba68c8; border-radius: 10px; }
 
 #result-view-btn { display: none; width: 100%; padding: 16px; background: #ba68c8; color: white; border: none; border-radius: 30px; font-size: 18px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 0 #7e57c2; animation: pulse 1.5s infinite; }
-
 @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
 
 /* 結果表示エリア */
 #result-area { display:none; background: #fff; padding: 30px 20px; border-radius: 30px; border: 3px double #d1c4e9; box-shadow: 0 10px 30px rgba(126, 87, 194, 0.1); text-align: center; }
 
-/* ✨ キラキラエフェクトの設定 */
+/* ✨ キラキラエフェクト */
 .result-img-container { position: relative; width: 100%; max-width: 300px; margin: 0 auto 20px; }
 #result-img { width: 100%; height: auto; border-radius: 20px; animation: shineEffect 2s infinite alternate; }
-
 @keyframes shineEffect {
   0% { filter: drop-shadow(0 0 5px #fff) brightness(1); transform: scale(1); }
   100% { filter: drop-shadow(0 0 20px #ffd700) brightness(1.1); transform: scale(1.02); }
 }
 
-.result-header { font-size: 16px; color: #9575cd; margin-bottom: 10px; }
 .result-type { font-size: 22px; font-weight: bold; color: #ff1493; margin-bottom: 20px; border-bottom: 2px dashed #fce4ec; padding-bottom: 10px; }
-.result-comment { font-size: 15px; line-height: 1.8; color: #444; text-align: left; animation: commentFadeIn 1s ease-out forwards; }
+.result-comment { font-size: 15px; line-height: 1.8; color: #444; text-align: left; background: #faf5ff; padding: 15px; border-radius: 15px; }
 
-@keyframes commentFadeIn { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } }
+/* シェアボタン */
+.share-container { display: flex; flex-direction: column; gap: 10px; margin: 20px 0; align-items: center; }
+.btn-share { width: 85%; padding: 12px; border-radius: 25px; font-weight: bold; text-decoration: none; color: white; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px; transition: 0.3s; }
+.btn-x { background-color: #000; }
+.btn-line { background-color: #06C755; }
 
 .btn-container { margin-top: 30px; display: flex; flex-direction: column; gap: 15px; align-items: center; }
-.btn-common { display: inline-block; padding: 12px 40px; border-radius: 25px; font-weight: bold; font-size: 16px; text-decoration: none; transition: 0.3s; width: 80%; text-align: center; }
+.btn-common { display: inline-block; padding: 12px 40px; border-radius: 25px; font-weight: bold; font-size: 16px; text-decoration: none; width: 80%; text-align: center; }
 .btn-retry { color: #ff69b4; font-size: 14px; text-decoration: underline; cursor: pointer; border: none; background: none; font-weight: bold; }
 .btn-home { background-color: #fce4ec; color: #ba68c8; border: 1px solid #ffc1e3; }
 </style>
@@ -65,91 +66,29 @@ h1 { font-size:24px; color:#7e57c2; margin-bottom:20px; text-shadow: 2px 2px 0px
     </div>
 
     <div id="loading-screen">
-        <h2 style="color: #ba68c8; font-size: 20px;">🕸️ 本性を暴いています…👁️</h2>
-        <div class="progress-container">
-            <div id="progress-bar"></div>
-        </div>
+        <h2 style="color: #ba68c8; font-size: 18px;">🕸️ 本性を暴いています…👁️</h2>
+        <div class="progress-container"><div id="progress-bar"></div></div>
         <div class="ad-box">
-            <p style="font-size: 11px; color: #ba68c8; margin-bottom: 8px;">スキャン完了まであと少し。広告をチェック 👇</p>
-            <a href="#"><img src="//image.moshimo.com/af-img/0032/000000001220.gif" width="100%" style="max-width:468px;"></a>
+            <p style="font-size: 11px; color: #ba68c8; margin-bottom: 8px;">スキャン完了まであと少し。おすすめをチェック 👇</p>
+            <a href="//af.moshimo.com/af/c/click?a_id=5322069&p_id=54&pc_id=54&pl_id=1220" rel="nofollow" referrerpolicy="no-referrer-when-downgrade" attributionsrc><img src="//image.moshimo.com/af-img/0032/000000001220.gif" width="100%" height="auto" style="border:none; max-width: 468px;"></a><img src="//i.moshimo.com/af/i/impression?a_id=5322069&p_id=54&pc_id=54&pl_id=1220" width="1" height="1" style="border:none;" loading="lazy">
         </div>
         <button id="result-view-btn" onclick="showResult()">本当の姿を見る👁️</button>
     </div>
 
     <div id="result-area">
-        <div class="result-header">スキャン完了。あなたの正体は…</div>
+        <div class="result-header" style="color:#9575cd; margin-bottom:10px;">スキャン完了。あなたの正体は…</div>
         <div class="result-img-container">
             <img id="result-img" src="" alt="結果画像">
         </div>
         <div id="result-type" class="result-type"></div>
         <div id="result-comment" class="result-comment"></div>
         
+        <div class="share-container">
+            <p style="font-size: 12px; color: #7e57c2; margin-bottom: 5px;">＼ 結果をみんなに晒そう ／</p>
+            <a id="share-x" href="" target="_blank" class="btn-share btn-x">𝕏 でポストする</a>
+            <a id="share-line" href="" target="_blank" class="btn-share btn-line">LINEで送る</a>
+        </div>
+
         <div class="btn-container">
             <button onclick="location.reload();" class="btn-retry">🔄 もう一度スキャンする</button>
-            <a href="index.html" class="btn-home btn-common">🏠 ぽんっとTOPにもどる</a>
-        </div>
-    </div>
-</div>
-
-<script>
-// キャラクターと画像の紐付け
-const resultData = {
-    panda: { name: "実は「計算高い策士」", img: "sakushi.png", msg: "のんびり屋に見えるけど…実はすべてを冷静に観察して損得を考えている裏の顔。あなたの手のひらで、みんな転がされているのかも？" },
-    kuma: { name: "実は「燃え盛る情熱家」", img: "jonetsu.png", msg: "どっしり構えているようで、一度火がつくと誰よりも熱い！好きなものへの独占欲や執着心は、誰にも負けないエネルギーを秘めています。" },
-    neko: { name: "実は「甘えん坊な乙女心」", img: "amae.png", msg: "クールで自由奔放に見えて、本当は誰よりも愛されたくてたまらない素顔。素直になれないだけで、心の中はとってもピュアな乙女心でいっぱいです。" },
-    usagi: { name: "実は「寂しがり屋なかまってちゃん」", img: "kamatte.png", msg: "明るい表の顔の裏に、深い孤独を抱えていたりして…。本当は、24時間誰かに気にかけてほしい、究極の寂しがり屋さんです。" }
-};
-
-const quizData = [
-    { q: "親友が自分より豪華な結婚式を挙げた。本音は？", a: [{ t: "usagi", text: "「いいな…私ももっと注目されたい」" },{ t: "panda", text: "「いくらかかったか計算しちゃう」" },{ t: "kuma", text: "「私の方がもっと情熱的な式にできる！」" },{ t: "neko", text: "「…ふん、勝手にすれば（本当は羨ましい）」" }]},
-    { q: "誰もいない道で、大金の入った財布を拾った。", a: [{ t: "panda", text: "リスクとリターンを瞬時に計算する" },{ t: "kuma", text: "これを元手に大きな野望を抱く" },{ t: "usagi", text: "誰かが見てないか不安でキョロキョロ" },{ t: "neko", text: "「これで自分へのご褒美買っちゃおうかな」" }]},
-    { q: "嫌いな奴がSNSで大炎上！あなたはどうする？", a: [{ t: "panda", text: "裏でさらに燃料を投下して観察する" },{ t: "neko", text: "「ざまあみろ」と心の中で呟く" },{ t: "kuma", text: "徹底的に叩き潰されるのを期待する" },{ t: "usagi", text: "「私ならあんなことしないのに」と嘆く" }]},
-    { q: "「あなたのため」と説教してくる相手への本音。", a: [{ t: "panda", text: "「はいはい（この人、自分の事しか考えてないな）」" },{ t: "neko", text: "「うるさい、私をわかってくれない癖に」" },{ t: "kuma", text: "「あんたに何がわかるんだ！」と内心激怒" },{ t: "usagi", text: "「もっと優しく言ってよ…」と落ち込む" }]},
-    { q: "恋人が別の異性と楽しそうに話している。", a: [{ t: "kuma", text: "嫉妬の炎がメラメラ。独占したくなる" },{ t: "neko", text: "ツンとして無視するが、実は泣きそう" },{ t: "panda", text: "浮気の可能性を冷静にプロファイリング" },{ t: "usagi", text: "「私だけを見て！」と割り込みたい" }]},
-    { q: "目の前の人が、派手に転んで荷物をぶちまけた。", a: [{ t: "panda", text: "助けるメリットがあるか一瞬考える" },{ t: "neko", text: "「あらら…」と思いつつ、素通り" },{ t: "usagi", text: "助けてあげて「良い人」だと思われたい" },{ t: "kuma", text: "情熱的に駆け寄って全力で助ける" }]},
-    { q: "自分より格下の相手が、大成功したと聞いた。", a: [{ t: "panda", text: "どうやって成功したか分析して利用する" },{ t: "kuma", text: "「負けてたまるか！」と燃え上がる" },{ t: "neko", text: "「運がいいだけじゃない」と嫉妬しちゃう" },{ t: "usagi", text: "「私だって頑張ってるのに…」と寂しくなる" }]},
-    { q: "人からもらったプレゼントが、超絶ダサかった。", a: [{ t: "panda", text: "メルカリでいくら売れるかすぐ調べる" },{ t: "neko", text: "笑顔で受け取るが、内心はガッカリ" },{ t: "usagi", text: "「私の好み、分かってないんだな」と悲しい" },{ t: "kuma", text: "「私の事、これっぽっちも考えてないの？」と怒る" }]},
-    { q: "もし自分に絶対バレない魔法の力が宿ったら？", a: [{ t: "panda", text: "世界を裏から操る黒幕になる" },{ t: "kuma", text: "自分の欲しいものを全て手に入れる" },{ t: "usagi", text: "世界中の人を自分に夢中にさせる" },{ t: "neko", text: "大好きな人との甘い時間だけを作る" }]},
-    { q: "最後に。この世で本当に「信じられる」のは？", a: [{ t: "panda", text: "自分の「知略」と「損得感情」" },{ t: "kuma", text: "自分の内なる「情熱」" },{ t: "usagi", text: "誰かがくれる「愛情」" },{ t: "neko", text: "秘めた「乙女心」" }]}
-];
-
-let current = 0;
-let scores = { usagi:0, panda:0, kuma:0, neko:0 };
-
-function showQuestion() {
-    document.getElementById("q-number").innerText = `Scanning Step ${current + 1} / 10`;
-    const data = quizData[current];
-    document.getElementById("question").innerText = data.q;
-    const optsDiv = document.getElementById("options");
-    optsDiv.innerHTML = "";
-    // 回答をランダムに表示
-    [...data.a].sort(() => Math.random() - 0.5).forEach(choice => {
-        const btn = document.createElement("button");
-        btn.innerText = choice.text;
-        btn.onclick = () => { scores[choice.t]++; current++; if(current < 10) showQuestion(); else startLoading(); };
-        optsDiv.appendChild(btn);
-    });
-}
-
-function startLoading() {
-    document.getElementById("quiz").style.display = "none";
-    document.getElementById("loading-screen").style.display = "block";
-    setTimeout(() => { document.getElementById("progress-bar").style.width = "100%"; }, 100);
-    setTimeout(() => { document.getElementById("result-view-btn").style.display = "block"; }, 3000);
-}
-
-function showResult() {
-    document.getElementById("loading-screen").style.display = "none";
-    document.getElementById("result-area").style.display = "block";
-    const mainType = Object.keys(scores).sort((a,b) => scores[b] - scores[a])[0];
-    const final = resultData[mainType];
-    
-    // 画像とテキストをセット
-    document.getElementById("result-img").src = final.img;
-    document.getElementById("result-type").innerText = final.name;
-    document.getElementById("result-comment").innerHTML = `<b>${final.name}</b><br>${final.msg}`;
-}
-showQuestion();
-</script>
-</body>
-</html>
+            <a href="index.html
