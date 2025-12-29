@@ -91,4 +91,72 @@ h1 { font-size:24px; color:#7e57c2; margin-bottom:20px; text-shadow: 2px 2px 0px
 
         <div class="btn-container">
             <button onclick="location.reload();" class="btn-retry">🔄 もう一度スキャンする</button>
-            <a href="index.html
+            <a href="index.html" class="btn-home btn-common">🏠 ぽんっとTOPにもどる</a>
+        </div>
+    </div>
+</div>
+
+<script>
+const resultData = {
+    panda: { name: "実は「計算高い策士」", img: "sakushi.png", msg: "のんびり屋に見えるけど…実はすべてを冷静に観察して損得を考えている裏の顔。あなたの手のひらで、みんな転がされているのかも？" },
+    kuma: { name: "実は「燃え盛る情熱家」", img: "jonetsu.png", msg: "どっしり構えているようで、一度火がつくと誰よりも熱い！好きなものへの独占欲や執着心は、誰にも負けないエネルギーを秘めています。" },
+    neko: { name: "実は「甘えん坊な乙女心」", img: "amae.png", msg: "クールで自由奔放に見えて、本当は誰よりも愛されたくてたまらない素顔。素直になれないだけで、心の中はとってもピュアな乙女心でいっぱいです。" },
+    usagi: { name: "実は「寂しがり屋なかまってちゃん」", img: "kamatte.png", msg: "明るい表の顔の裏に、深い孤独を抱えていたりして…。本当は、24時間誰かに気にかけてほしい、究極の寂しがり屋さんです。" }
+};
+
+const quizData = [
+    { q: "親友が自分より豪華な結婚式を挙げた。本音は？", a: [{ t: "usagi", text: "「いいな…私ももっと注目されたい」" },{ t: "panda", text: "「いくらかかったか計算しちゃう」" },{ t: "kuma", text: "「私の方がもっと情熱的な式にできる！」" },{ t: "neko", text: "「…ふん、勝手にすれば（本当は羨ましい）」" }]},
+    { q: "誰もいない道で、大金の入った財布を拾った。", a: [{ t: "panda", text: "リスクとリターンを瞬時に計算する" },{ t: "kuma", text: "これを元手に大きな野望を抱く" },{ t: "usagi", text: "誰かが見てないか不安でキョロキョロ" },{ t: "neko", text: "「これで自分へのご褒美買っちゃおうかな」" }]},
+    { q: "嫌いな奴がSNSで大炎上！あなたはどうする？", a: [{ t: "panda", text: "裏でさらに燃料を投下して観察する" },{ t: "neko", text: "「ざまあみろ」と心の中で呟く" },{ t: "kuma", text: "徹底的に叩き潰されるのを期待する" },{ t: "usagi", text: "「私ならあんなことしないのに」と嘆く" }]},
+    { q: "「あなたのため」と説教してくる相手への本音。", a: [{ t: "panda", text: "「はいはい（この人、自分の事しか考えてないな）」" },{ t: "neko", text: "「うるさい、私をわかってくれない癖に」" },{ t: "kuma", text: "「あんたに何がわかるんだ！」と内心激怒" },{ t: "usagi", text: "「もっと優しく言ってよ…」と落ち込む" }]},
+    { q: "恋人が別の異性と楽しそうに話している。", a: [{ t: "kuma", text: "嫉妬の炎がメラメラ。独占したくなる" },{ t: "neko", text: "ツンとして無視するが、実は泣きそう" },{ t: "panda", text: "浮気の可能性を冷静にプロファイリング" },{ t: "usagi", text: "「私だけを見て！」と割り込みたい" }]},
+    { q: "目の前の人が、派手に転んで荷物をぶちまけた。", a: [{ t: "panda", text: "助けるメリットがあるか一瞬考える" },{ t: "neko", text: "「あらら…」と思いつつ、素通り" },{ t: "usagi", text: "助けてあげて「良い人」だと思われたい" },{ t: "kuma", text: "情熱的に駆け寄って全力で助ける" }]},
+    { q: "自分より格下の相手が、大成功したと聞いた。", a: [{ t: "panda", text: "どうやって成功したか分析して利用する" },{ t: "kuma", text: "「負けてたまるか！」と燃え上がる" },{ t: "neko", text: "「運がいいだけじゃない」と嫉妬しちゃう" },{ t: "usagi", text: "「私だって頑張ってるのに…」と寂しくなる" }]},
+    { q: "人からもらったプレゼントが、超絶ダサかった。", a: [{ t: "panda", text: "メルカリでいくら売れるかすぐ調べる" },{ t: "neko", text: "笑顔で受け取るが、内心はガッカリ" },{ t: "usagi", text: "「私の好み、分かってないんだな」と悲しい" },{ t: "kuma", text: "「私の事、これっぽっちも考えてないの？」と怒る" }]},
+    { q: "もし自分に絶対バレない魔法の力が宿ったら？", a: [{ t: "panda", text: "世界を裏から操る黒幕になる" },{ t: "kuma", text: "自分の欲しいものを全て手に入れる" },{ t: "usagi", text: "世界中の人を自分に夢中にさせる" },{ t: "neko", text: "大好きな人との甘い時間だけを作る" }]},
+    { q: "最後に。この世で本当に「信じられる」のは？", a: [{ t: "panda", text: "自分の「知略」と「損得感情」" },{ t: "kuma", text: "自分の内なる「情熱」" },{ t: "usagi", text: "誰かがくれる「愛情」" },{ t: "neko", text: "秘めた「乙女心」" }]}
+];
+
+let current = 0;
+let scores = { usagi:0, panda:0, kuma:0, neko:0 };
+
+function showQuestion() {
+    document.getElementById("q-number").innerText = `Scanning Step ${current + 1} / 10`;
+    const data = quizData[current];
+    document.getElementById("question").innerText = data.q;
+    const optsDiv = document.getElementById("options");
+    optsDiv.innerHTML = "";
+    [...data.a].sort(() => Math.random() - 0.5).forEach(choice => {
+        const btn = document.createElement("button");
+        btn.innerText = choice.text;
+        btn.onclick = () => { scores[choice.t]++; current++; if(current < 10) showQuestion(); else startLoading(); };
+        optsDiv.appendChild(btn);
+    });
+}
+
+function startLoading() {
+    document.getElementById("quiz").style.display = "none";
+    document.getElementById("loading-screen").style.display = "block";
+    setTimeout(() => { document.getElementById("progress-bar").style.width = "100%"; }, 100);
+    setTimeout(() => { document.getElementById("result-view-btn").style.display = "block"; }, 3000);
+}
+
+function showResult() {
+    document.getElementById("loading-screen").style.display = "none";
+    document.getElementById("result-area").style.display = "block";
+    const mainType = Object.keys(scores).sort((a,b) => scores[b] - scores[a])[0];
+    const final = resultData[mainType];
+    
+    document.getElementById("result-img").src = final.img;
+    document.getElementById("result-type").innerText = final.name;
+    document.getElementById("result-comment").innerHTML = `<b>${final.name}</b><br>${final.msg}`;
+
+    const shareText = `私の裏の顔は…【${final.name}】でした！\nみんなも暴かれてみる？👁️\n#裏の顔診断 #ぽんっとラボ\n`;
+    const shareUrl = window.location.href;
+    document.getElementById("share-x").href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+    document.getElementById("share-line").href = `https://line.me/R/msg/text/?${encodeURIComponent(shareText + shareUrl)}`;
+}
+showQuestion();
+</script>
+</body>
+</html>
