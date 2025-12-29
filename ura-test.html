@@ -5,53 +5,56 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>👁️ あなたの【裏の顔】診断 | ぽんっとラボ</title>
 <style>
-/* 闇かわ配色・基本設定 */
+/* 闇かわ・スクショ最適化スタイル */
 body { font-family:'ヒラギノ丸ゴ Pro','Arial Rounded MT Bold',sans-serif; background:#f5f0ff; margin:0; padding:0; text-align:center; color: #4a4a4a; }
-.wrapper { max-width:420px; margin:0 auto; padding:15px 10px; } /* 全体を少しスリムに */
+.wrapper { max-width:420px; margin:0 auto; padding:15px 10px; }
 
-h1 { font-size:20px; color:#7e57c2; margin-bottom:10px; }
+h1 { font-size:18px; color:#7e57c2; margin-bottom:10px; }
 
-/* 診断中カード */
 #quiz, #loading-screen, #result-area { background: #fff; padding: 15px; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-.question { font-size:17px; font-weight:bold; min-height:3em; display:flex; align-items:center; justify-content:center; color: #5e35b1; }
-.options { display:flex; flex-direction:column; gap:10px; margin-top: 10px; }
-.options button { padding:14px; border-radius:12px; border:2px solid #e1bee7; background:#fff; cursor:pointer; font-weight: bold; font-size: 14px; color: #5e35b1; }
 
-/* 🌟 スクショ最適化：結果表示エリア */
-#result-area { display:none; border: 3px double #d1c4e9; padding: 15px; } /* 余白を削減 */
+/* 診断中 */
+.question { font-size:16px; font-weight:bold; min-height:3em; display:flex; align-items:center; justify-content:center; color: #5e35b1; }
+.options { display:flex; flex-direction:column; gap:8px; margin-top: 10px; }
+.options button { padding:12px; border-radius:12px; border:2px solid #e1bee7; background:#fff; cursor:pointer; font-weight: bold; font-size: 14px; color: #5e35b1; transition: 0.2s; }
 
-.result-header { font-size: 13px; color: #9575cd; margin-bottom: 5px; }
+/* 🌟 結果表示（スクショ特化） */
+#result-area { display:none; border: 3px double #d1c4e9; padding: 12px; }
+.result-header { font-size: 12px; color: #9575cd; margin-bottom: 5px; }
 
-/* イラストをキラキラさせつつサイズを調整 */
-.result-img-container { position: relative; width: 100%; max-width: 260px; margin: 0 auto 10px; }
+.result-img-container { position: relative; width: 100%; max-width: 250px; margin: 0 auto 8px; }
 #result-img { width: 100%; height: auto; border-radius: 15px; animation: shineEffect 2s infinite alternate; }
-
 @keyframes shineEffect {
   0% { filter: drop-shadow(0 0 5px #fff) brightness(1); transform: scale(1); }
   100% { filter: drop-shadow(0 0 15px #ffd700) brightness(1.05); transform: scale(1.01); }
 }
 
-.result-type { font-size: 18px; font-weight: bold; color: #ff1493; margin: 5px 0; }
-.result-comment { font-size: 14px; line-height: 1.5; color: #444; background: #faf5ff; padding: 10px; border-radius: 12px; text-align: left; }
+.result-type { font-size: 17px; font-weight: bold; color: #ff1493; margin: 5px 0; }
+.result-comment { font-size: 13px; line-height: 1.5; color: #444; background: #faf5ff; padding: 10px; border-radius: 12px; text-align: left; }
 
-/* シェアボタンを横並びにして高さを節約 */
-.share-container { display: flex; justify-content: center; gap: 8px; margin: 15px 0; }
-.btn-share { flex: 1; padding: 10px; border-radius: 20px; font-weight: bold; text-decoration: none; color: white; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 5px; }
+/* 📱 前世診断風シェアボタン（3列） */
+.share-container { margin: 15px 0; }
+.share-title { font-size: 11px; color: #7e57c2; margin-bottom: 8px; font-weight: bold; }
+.share-buttons { display: flex; justify-content: center; gap: 5px; }
+.btn-share { flex: 1; padding: 10px 2px; border-radius: 10px; font-weight: bold; text-decoration: none; color: white; font-size: 11px; display: flex; align-items: center; justify-content: center; gap: 3px; }
 .btn-x { background-color: #000; }
 .btn-line { background-color: #06C755; }
+.btn-insta { background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); }
+
+.insta-guide { font-size: 10px; color: #888; margin-top: 8px; }
 
 /* 下部ボタン */
-.btn-container { display: flex; flex-direction: column; gap: 8px; align-items: center; }
-.btn-common { padding: 8px 30px; border-radius: 20px; font-weight: bold; text-decoration: none; font-size: 14px; width: 70%; }
-.btn-retry { color: #ff69b4; cursor: pointer; border: none; background: none; font-size: 13px; text-decoration: underline; }
+.btn-container { margin-top: 15px; display: flex; flex-direction: column; gap: 8px; align-items: center; }
+.btn-common { padding: 10px 0; border-radius: 20px; font-weight: bold; text-decoration: none; font-size: 14px; width: 80%; }
+.btn-retry { color: #ff69b4; cursor: pointer; border: none; background: none; font-size: 12px; text-decoration: underline; }
 .btn-home { background-color: #fce4ec; color: #ba68c8; border: 1px solid #ffc1e3; }
 
 /* ロード画面 */
 #loading-screen { display:none; }
 .progress-container { width: 100%; background: #eee; height: 10px; border-radius: 10px; margin: 10px 0; overflow: hidden; }
 #progress-bar { width: 0%; background: #ba68c8; height: 100%; transition: width 3s linear; }
-#result-view-btn { display: none; width: 100%; padding: 12px; background: #ba68c8; color: white; border: none; border-radius: 25px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-.ad-box { margin: 10px 0; padding: 8px; border: 1px dashed #ba68c8; border-radius: 10px; background: #fdfbff; }
+#result-view-btn { display: none; width: 100%; padding: 12px; background: #ba68c8; color: white; border: none; border-radius: 25px; font-weight: bold; cursor: pointer; }
+.ad-box { margin: 10px 0; padding: 5px; border: 1px dashed #ba68c8; border-radius: 10px; background: #fdfbff; }
 </style>
 </head>
 <body>
@@ -83,19 +86,24 @@ h1 { font-size:20px; color:#7e57c2; margin-bottom:10px; }
         <div id="result-comment" class="result-comment"></div>
         
         <div class="share-container">
-            <a id="share-x" href="" target="_blank" class="btn-share btn-x">𝕏 ポスト</a>
-            <a id="share-line" href="" target="_blank" class="btn-share btn-line">LINE送る</a>
+            <p class="share-title">＼ 診断結果をシェアする ／</p>
+            <div class="share-buttons">
+                <a id="share-x" href="" target="_blank" class="btn-share btn-x">𝕏 ポスト</a>
+                <a id="share-line" href="" target="_blank" class="btn-share btn-line">LINE送る</a>
+                <a href="https://www.instagram.com/" target="_blank" class="btn-share btn-insta">Instagram</a>
+            </div>
+            <p class="insta-guide">※インスタは画像を保存して投稿してね！</p>
         </div>
 
         <div class="btn-container">
             <button onclick="location.reload();" class="btn-retry">🔄 もう一度スキャン</button>
-            <a href="index.html" class="btn-home btn-common">🏠 TOPへ</a>
+            <a href="index.html" class="btn-home btn-common">🏠 ぽんっとTOP</a>
         </div>
     </div>
 </div>
 
 <script>
-// データとロジック（画像名や内容はそのまま継承）
+// データとロジック（画像名などは以前のものを継承）
 const resultData = {
     panda: { name: "実は「計算高い策士」", img: "sakushi.png", msg: "のんびり屋に見えて実は超冷静。すべてを損得で計算して立ち回る、最強の戦略家タイプです。" },
     kuma: { name: "実は「燃え盛る情熱家」", img: "jonetsu.png", msg: "一度火がつくと誰よりも熱い！好きなものへの独占欲は誰にも負けないエネルギーを秘めています。" },
@@ -104,16 +112,16 @@ const resultData = {
 };
 
 const quizData = [
-    { q: "親友が自分より豪華な結婚式を挙げた。本音は？", a: [{ t: "usagi", text: "「いいな…私ももっと注目されたい」" },{ t: "panda", text: "「いくらかかったか計算しちゃう」" },{ t: "kuma", text: "「私の方がもっと情熱的な式にできる！」" },{ t: "neko", text: "「…ふん、勝手にすれば（本当は羨ましい）」" }]},
-    { q: "誰もいない道で、大金の入った財布を拾った。", a: [{ t: "panda", text: "リスクとリターンを瞬時に計算する" },{ t: "kuma", text: "これを元手に大きな野望を抱く" },{ t: "usagi", text: "誰かが見てないか不安でキョロキョロ" },{ t: "neko", text: "「これで自分へのご褒美買っちゃおうかな」" }]},
-    { q: "嫌いな奴がSNSで大炎上！あなたはどうする？", a: [{ t: "panda", text: "裏でさらに燃料を投下して観察する" },{ t: "neko", text: "「ざまあみろ」と心の中で呟く" },{ t: "kuma", text: "徹底的に叩き潰されるのを期待する" },{ t: "usagi", text: "「私ならあんなことしないのに」と嘆く" }]},
-    { q: "「あなたのため」と説教してくる相手への本音。", a: [{ t: "panda", text: "「はいはい（この人、自分の事しか考えてないな）」" },{ t: "neko", text: "「うるさい、私をわかってくれない癖に」" },{ t: "kuma", text: "「あんたに何がわかるんだ！」と内心激怒" },{ t: "usagi", text: "「もっと優しく言ってよ…」と落ち込む" }]},
-    { q: "恋人が別の異性と楽しそうに話している。", a: [{ t: "kuma", text: "嫉妬の炎がメラメラ。独占したくなる" },{ t: "neko", text: "ツンとして無視するが、実は泣きそう" },{ t: "panda", text: "浮気の可能性を冷静にプロファイリング" },{ t: "usagi", text: "「私だけを見て！」と割り込みたい" }]},
-    { q: "目の前の人が、派手に転んで荷物をぶちまけた。", a: [{ t: "panda", text: "助けるメリットがあるか一瞬考える" },{ t: "neko", text: "「あらら…」と思いつつ、素通り" },{ t: "usagi", text: "助けてあげて「良い人」だと思われたい" },{ t: "kuma", text: "情熱的に駆け寄って全力で助ける" }]},
-    { q: "自分より格下の相手が、大成功したと聞いた。", a: [{ t: "panda", text: "どうやって成功したか分析して利用する" },{ t: "kuma", text: "「負けてたまるか！」と燃え上がる" },{ t: "neko", text: "「運がいいだけじゃない」と嫉妬しちゃう" },{ t: "usagi", text: "「私だって頑張ってるのに…」と寂しくなる" }]},
-    { q: "人からもらったプレゼントが、超絶ダサかった。", a: [{ t: "panda", text: "メルカリでいくら売れるかすぐ調べる" },{ t: "neko", text: "笑顔で受け取るが、内心はガッカリ" },{ t: "usagi", text: "「私の好み、分かってないんだな」と悲しい" },{ t: "kuma", text: "「私の事、これっぽっちも考えてないの？」と怒る" }]},
-    { q: "もし自分に絶対バレない魔法の力が宿ったら？", a: [{ t: "panda", text: "世界を裏から操る黒幕になる" },{ t: "kuma", text: "自分の欲しいものを全て手に入れる" },{ t: "usagi", text: "世界中の人を自分に夢中にさせる" },{ t: "neko", text: "大好きな人との甘い時間だけを作る" }]},
-    { q: "最後に。この世で本当に「信じられる」のは？", a: [{ t: "panda", text: "自分の「知略」と「損得感情」" },{ t: "kuma", text: "自分の内なる「情熱」" },{ t: "usagi", text: "誰かがくれる「愛情」" },{ t: "neko", text: "秘めた「乙女心」" }]}
+    { q: "親友が自分より豪華な結婚式を挙げた。本音は？", a: [{ t: "usagi", text: "「いいな…」" },{ t: "panda", text: "「いくらかかったかな」" },{ t: "kuma", text: "「私の方が熱い式に！」" },{ t: "neko", text: "「…ふん、勝手にすれば」" }]},
+    { q: "誰もいない道で、大金の入った財布を拾った。", a: [{ t: "panda", text: "リスクとリターンを計算" },{ t: "kuma", text: "これを元手に野望を抱く" },{ t: "usagi", text: "不安でキョロキョロ" },{ t: "neko", text: "「自分へのご褒美かな」" }]},
+    { q: "嫌いな奴がSNSで大炎上！あなたはどうする？", a: [{ t: "panda", text: "裏でさらに燃料を投下" },{ t: "neko", text: "「ざまあみろ」" },{ t: "kuma", text: "徹底的に叩かれるのを期待" },{ t: "usagi", text: "「私ならあんな事しない」" }]},
+    { q: "「あなたのため」と説教してくる相手への本音。", a: [{ t: "panda", text: "「はいはい（無能だな）」" },{ t: "neko", text: "「うるさい、わかってない」" },{ t: "kuma", text: "「あんたに何がわかる！」" },{ t: "usagi", text: "「もっと優しくしてよ」" }]},
+    { q: "恋人が別の異性と楽しそうに話している。", a: [{ t: "kuma", text: "嫉妬の炎がメラメラ" },{ t: "neko", text: "ツンとして無視する" },{ t: "panda", text: "浮気率をプロファイリング" },{ t: "usagi", text: "「私だけを見て！」" }]},
+    { q: "目の前の人が、派手に転んで荷物をぶちまけた。", a: [{ t: "panda", text: "メリットがあるか考える" },{ t: "neko", text: "「あらら」と心で思い通過" },{ t: "usagi", text: "助けて「良い人」に見せる" },{ t: "kuma", text: "情熱的に駆け寄り助ける" }]},
+    { q: "自分より格下の相手が、大成功したと聞いた。", a: [{ t: "panda", text: "分析して利用してやる" },{ t: "kuma", text: "「負けてたまるか！」" },{ t: "neko", text: "「運がいいだけ」と嫉妬" },{ t: "usagi", text: "「私だって頑張ってるのに」" }]},
+    { q: "人からもらったプレゼントが、超絶ダサかった。", a: [{ t: "panda", text: "メルカリの相場を調べる" },{ t: "neko", text: "笑顔で受け取り、放置" },{ t: "usagi", text: "「好み、分かってない」" },{ t: "kuma", text: "「私をバカにしてる？」" }]},
+    { q: "もし自分に絶対バレない魔法の力が宿ったら？", a: [{ t: "panda", text: "世界を裏から操る黒幕" },{ t: "kuma", text: "欲しいものを全て奪う" },{ t: "usagi", text: "全員を自分に夢中にさせる" },{ t: "neko", text: "大好きな人と二人きり" }]},
+    { q: "最後に。この世で本当に「信じられる」のは？", a: [{ t: "panda", text: "自分の「知略」と「損得」" },{ t: "kuma", text: "自分の内なる「情熱」" },{ t: "usagi", text: "誰かがくれる「愛情」" },{ t: "neko", text: "秘めた「乙女心」" }]}
 ];
 
 let current = 0;
