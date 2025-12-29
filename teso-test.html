@@ -5,36 +5,54 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>✋ 🔎手相で見る2026年の運勢 | ぽんっとラボ</title>
 <style>
-/* 闇かわ・ミステリアスな配色 */
-body { font-family:'ヒラギノ丸ゴ Pro','sans-serif'; background:#1a0b2e; color:#fff; text-align:center; margin:0; padding:20px; }
+/* 闇かわ・ミステリアス配色 */
+body { font-family:'ヒラギノ丸ゴ Pro','sans-serif'; background:#1a0b2e; color:#fff; text-align:center; margin:0; padding:15px; }
 .wrapper { max-width:420px; margin:0 auto; }
 
-h1 { font-size:18px; color:#e1bee7; margin-bottom:20px; }
+h1 { font-size:18px; color:#e1bee7; margin-bottom:15px; }
 
 /* 📸 カメラ・スキャンエリア */
-#upload-area { background:#2e1a4a; padding:30px 20px; border-radius:20px; border:2px dashed #ba68c8; }
-#preview-container { position:relative; display:none; width:100%; max-width:280px; margin:20px auto; overflow:hidden; border-radius:15px; }
+#upload-area { background:#2e1a4a; padding:20px; border-radius:20px; border:2px dashed #ba68c8; }
+#preview-container { position:relative; display:none; width:100%; max-width:280px; margin:15px auto; overflow:hidden; border-radius:15px; }
 #user-photo { width:100%; height:auto; display:block; }
 
 /* 🌟 スキャンアニメーション */
 .scan-line {
     position: absolute; top:0; left:0; width:100%; height:4px;
     background:rgba(0, 255, 255, 0.7); box-shadow:0 0 15px #0ff;
-    animation: scanMove 2s linear infinite; display:none;
+    animation: scanMove 2.3s linear infinite; display:none;
 }
 @keyframes scanMove { 0% { top:0%; } 100% { top:100%; } }
 
-.btn-upload { background:#ba68c8; color:#fff; padding:15px 30px; border-radius:30px; font-weight:bold; cursor:pointer; display:inline-block; margin-top:10px; }
+.btn-upload { background:#ba68c8; color:#fff; padding:15px 25px; border-radius:30px; font-weight:bold; cursor:pointer; display:inline-block; margin:10px 0; font-size:16px; }
 input[type="file"] { display:none; }
 
-/* ローディング */
-#status-msg { margin-top:15px; font-size:14px; color:#e1bee7; min-height:1.5em; }
+#status-msg { margin-top:10px; font-size:13px; color:#e1bee7; min-height:1.5em; font-weight:bold; }
 
-/* 結果エリア（前回同様スクショ最適化） */
-#result-area { display:none; background:#fff; color:#333; padding:15px; border-radius:20px; }
-.result-img { width:100%; max-width:260px; border-radius:15px; margin-bottom:10px; }
-.rare-tag { background:#ff1493; color:#fff; padding:2px 10px; border-radius:10px; font-size:12px; display:inline-block; margin-bottom:5px; animation: flash 1s infinite; }
-@keyframes flash { 0%,100% {opacity:1;} 50% {opacity:0.5;} }
+/* 🎁 結果エリア（スクショ最適化） */
+#result-area { display:none; background:#fff; color:#333; padding:15px; border-radius:20px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+.result-header { font-size: 11px; color: #9575cd; margin-bottom: 5px; }
+.result-img { width:100%; max-width:240px; border-radius:15px; margin: 5px 0; display:none; } /* 画像完成まで非表示 */
+.result-name { font-size: 18px; font-weight: bold; color: #ff1493; margin: 8px 0; }
+.result-desc { font-size: 13px; line-height: 1.5; color: #444; background: #f5f0ff; padding: 12px; border-radius: 12px; text-align: left; }
+
+.rare-tag { background:#ff1493; color:#fff; padding:3px 12px; border-radius:12px; font-size:11px; font-weight:bold; display:inline-block; margin-bottom:8px; animation: flash 0.8s infinite; }
+@keyframes flash { 0%,100% {opacity:1;} 50% {opacity:0.6;} }
+
+/* SNSシェアボタン（裏の顔診断と同じスタイル） */
+.share-container { margin: 15px 0; padding-top:10px; border-top: 1px solid #eee; }
+.share-buttons { display: flex; justify-content: center; gap: 5px; }
+.btn-share { flex: 1; padding: 10px 2px; border-radius: 10px; font-weight: bold; text-decoration: none; color: white; font-size: 11px; display: flex; align-items: center; justify-content: center; gap: 3px; }
+.btn-x { background-color: #000; }
+.btn-line { background-color: #06C755; }
+.btn-insta { background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); }
+
+/* 🛒 楽天・開運アイテムエリア */
+.ad-box { background:#fff9ff; border:1px solid #e1bee7; border-radius:12px; padding:10px; margin-top:15px; }
+.ad-box a { text-decoration:none; color:#ba68c8; font-weight:bold; font-size:11px; display:block; }
+.ad-box img { border-radius:8px; margin-bottom:5px; }
+
+.btn-retry { margin-top:15px; color:#9575cd; cursor:pointer; background:none; border:none; font-size:12px; text-decoration:underline; }
 </style>
 </head>
 <body>
@@ -42,7 +60,8 @@ input[type="file"] { display:none; }
     <h1>🔎 手相で見る2026年の運勢 ✋</h1>
 
     <div id="upload-area">
-        <p style="font-size:14px;">あなたの「左手」をスキャンします</p>
+        <p style="font-size:14px; margin-bottom:5px;">あなたの「左手」をスキャンします</p>
+        <p style="font-size:11px; color:#b39ddb;">※撮影した写真は解析後に消去されます</p>
         <label class="btn-upload">
             📸 手のひらを撮影する
             <input type="file" accept="image/*" onchange="handleFile(event)">
@@ -56,32 +75,51 @@ input[type="file"] { display:none; }
     </div>
 
     <div id="result-area">
+        <div class="result-header">2026年 あなたの手相鑑定書</div>
         <div id="rare-banner"></div>
         <img id="result-image" class="result-img" src="">
-        <h2 id="result-name" style="color:#ff1493; font-size:20px; margin:10px 0;"></h2>
-        <p id="result-desc" style="font-size:14px; text-align:left; background:#f5f0ff; padding:10px; border-radius:10px;"></p>
+        <div id="result-name" class="result-name"></div>
+        <div id="result-desc" class="result-desc"></div>
         
-        <div id="ad-space" style="margin-top:15px;"></div>
+        <div id="ad-space" class="ad-box"></div>
         
-        <button onclick="location.reload()" style="margin-top:15px; background:none; border:none; color:#ba68c8; text-decoration:underline; font-weight:bold;">🔄 もう一度占う</button>
+        <div class="share-container">
+            <div class="share-buttons">
+                <a id="share-x" href="" target="_blank" class="btn-share btn-x">𝕏 ポスト</a>
+                <a id="share-line" href="" target="_blank" class="btn-share btn-line">LINE</a>
+                <a href="https://www.instagram.com/" target="_blank" class="btn-share btn-insta">Instagram</a>
+            </div>
+            <p style="font-size:9px; color:#999; margin-top:5px;">※インスタは保存してシェアしてね！</p>
+        </div>
+
+        <button onclick="location.reload()" class="btn-retry">🔄 もう一度占う</button>
+        <br>
+        <a href="index.html" style="font-size:12px; color:#ba68c8; text-decoration:none;">🏠 TOPへ戻る</a>
     </div>
 </div>
 
 <script>
+// 🔮 手相データと楽天リンクの紐付け
 const handsData = [
-    { id: "hao", name: "最強の覇王線", desc: "2026年は仕事・金運・成功すべてを手に入れる無双の年！迷わず突き進んで。" },
-    { id: "nari", name: "成り上がり線", desc: "努力が大爆発！どん底からの一発逆転が始まる、最高のミラクルイヤーになります。" },
-    { id: "shin", name: "神秘十字線", desc: "直感が神がかる年。不思議とピンチを回避して、幸運の波に乗れちゃいます。" },
-    { id: "taiyo", name: "太陽線（キラキラ運）", desc: "あなたが世界の主役！周りから愛され、光り輝く最高の1年になるでしょう。" },
-    { id: "fish", name: "フィッシュ（魚紋）", desc: "予期せぬ幸運が跳ね込んでくる！棚ぼた的なラッキーが止まらない1年です。" }
-    // あと5つ追加して10個にする予定！
+    { id: "hao", name: "最強の覇王線", desc: "2026年は仕事・金運・成功すべてを手に入れる無双の年！大きな勝負も今のあなたなら勝てます。迷わず突き進んで。", 
+      ad: '<a href="//af.moshimo.com/af/c/click?a_id=5322069&p_id=54&pc_id=54&pl_id=616&url=https%3A%2F%2Fitem.rakuten.co.jp%2Fishino-kura%2Fcharm-saikyo-kaiun%2F&m=http%3A%2F%2Fm.rakuten.co.jp%2Fishino-kura%2Fi%2F10040990%2F" rel="nofollow" referrerpolicy="no-referrer-when-downgrade"><img src="//thumbnail.image.rakuten.co.jp/@0_mall/ishino-kura/cabinet/01567012/04218277/imgrc0093453173.jpg?_ex=100x100"><br>最強開運！金運のお守りチャーム</a>' },
+    
+    { id: "nari", name: "成り上がり線", desc: "努力が爆発する1年！どん底だと思っていたことも最高の形で報われます。一発逆転のミラクルを信じて。", 
+      ad: '<a href="//af.moshimo.com/af/c/click?a_id=5322069&p_id=54&pc_id=54&pl_id=616&url=https%3A%2F%2Fitem.rakuten.co.jp%2Fkirakiralumiere%2Fornament-6%2F&m=http%3A%2F%2Fm.rakuten.co.jp%2Fkirakiralumiere%2Fi%2F10004360%2F" rel="nofollow" referrerpolicy="no-referrer-when-downgrade"><img src="//thumbnail.image.rakuten.co.jp/@0_mall/kirakiralumiere/cabinet/3/ornament-6ss.jpg?_ex=100x100"><br>運気上昇！黄金のリンゴ</a>' },
+    
+    { id: "mote", name: "モテ期到来線", desc: "2026年は人生最大のモテ期！あなたの魅力が周囲を惹きつけ、素敵な出会いや深い愛に包まれる1年になります。", 
+      ad: '<a href="//af.moshimo.com/af/c/click?a_id=5322069&p_id=54&pc_id=54&pl_id=616&url=https%3A%2F%2Fitem.rakuten.co.jp%2Fcocoluck%2F10000489%2F&m=http%3A%2F%2Fm.rakuten.co.jp%2Fcocoluck%2Fi%2F10000774%2F" rel="nofollow" referrerpolicy="no-referrer-when-downgrade"><img src="//thumbnail.image.rakuten.co.jp/@0_mall/cocoluck/cabinet/biiino/item/s-image-3/imgrc0107601008.jpg?_ex=100x100"><br>モテ力覚醒！恋炎ペンダント</a>' },
+    
+    { id: "shin", name: "神秘十字線", desc: "直感が神がかる年。不思議な力に守られ、ピンチをチャンスに変えていけます。自分の「なんとなく」を信じて吉。", 
+      ad: '<a href="//af.moshimo.com/af/c/click?a_id=5322069&p_id=54&pc_id=54&pl_id=616&url=https%3A%2F%2Fitem.rakuten.co.jp%2Fcenote-online%2Fp0622%2F&m=http%3A%2F%2Fm.rakuten.co.jp%2Fcenote-online%2Fi%2F10005052%2F" rel="nofollow" referrerpolicy="no-referrer-when-downgrade"><img src="//thumbnail.image.rakuten.co.jp/@0_mall/cenote-online/cabinet/pend1/p0622-1.jpg?_ex=100x100"><br>魔除け・幸運のガーディアンベル</a>' },
+
+    { id: "life", name: "強運の生命線", desc: "とにかくバイタリティがすごい1年！疲れを知らずに、やりたいことを全部こなせるはず。健康がさらなる福を呼びます。", 
+      ad: '<a href="//af.moshimo.com/af/c/click?a_id=5322069&p_id=54&pc_id=54&pl_id=616&url=https%3A%2F%2Fitem.rakuten.co.jp%2Fspeed-addict%2Fp100156-trc%2F&m=http%3A%2F%2Fm.rakuten.co.jp%2Fspeed-addict%2Fi%2F10024585%2F" rel="nofollow" referrerpolicy="no-referrer-when-downgrade"><img src="//thumbnail.image.rakuten.co.jp/@0_mall/speed-addict/cabinet/pa/other/p100156-trc.jpg?_ex=100x100"><br>交通安全・守護キーホルダー</a>' }
 ];
 
 function handleFile(event) {
     const file = event.target.files[0];
     if (!file) return;
-
-    // プレビュー表示
     const reader = new FileReader();
     reader.onload = function(e) {
         document.getElementById('user-photo').src = e.target.result;
@@ -94,37 +132,41 @@ function handleFile(event) {
 function startScanning() {
     const status = document.getElementById('status-msg');
     const scanLine = document.getElementById('scan-line');
-    
     scanLine.style.display = 'block';
     status.innerText = "運命の線を解析中...";
-
-    setTimeout(() => { status.innerText = "2026年のバイオリズムを計算中..."; }, 1500);
-    setTimeout(() => { status.innerText = "深層心理とリンク完了。"; }, 3000);
-    
-    setTimeout(() => {
-        showResult();
-    }, 4500);
+    setTimeout(() => { status.innerText = "2026年のバイオリズムを計算中..."; }, 1200);
+    setTimeout(() => { status.innerText = "深層心理とリンク完了。"; }, 2500);
+    setTimeout(() => { showResult(); }, 4000);
 }
 
 function showResult() {
     document.getElementById('upload-area').style.display = 'none';
     document.getElementById('result-area').style.display = 'block';
     
-    // 🎲 レア判定（15%の確率で重複レアにする）
+    // 🎲 15%の確率でレア判定
     const isRare = Math.random() < 0.15;
     const res = handsData[Math.floor(Math.random() * handsData.length)];
     
     if(isRare) {
         document.getElementById('rare-banner').innerHTML = '<span class="rare-tag">⭐ 超激レア・運気重複モード ⭐</span>';
         document.getElementById('result-name').innerText = "【神域】" + res.name + " × 龍神の加護";
-        document.getElementById('result-desc').innerText = "おめでとう！複数の幸運線が重なり合っています。2026年はもはや敵なし。望むもの全てが手に入る異次元の運気です！";
+        document.getElementById('result-desc').innerText = "おめでとう！複数の幸運線が重なっています。2026年はもはや敵なし。望むもの全てが手に入る、異次元の強運があなたを包んでいます！";
     } else {
+        document.getElementById('rare-banner').innerHTML = "";
         document.getElementById('result-name').innerText = res.name;
         document.getElementById('result-desc').innerText = res.desc;
     }
     
-    // ここにイラスト画像を設定（例：hao.pngなど）
-    // document.getElementById('result-image').src = res.id + ".png";
+    document.getElementById('ad-space').innerHTML = `
+        <p style="font-size:10px; font-weight:bold; color:#ba68c8; margin-bottom:8px;">💖 2026年の運気を爆上げするおすすめ 💖</p>
+        ${res.ad}
+    `;
+
+    // SNSシェア設定
+    const shareText = `私の2026年の手相は…【${res.name}】でした！✋✨\nみんなも占ってみて！👁️\n#手相診断 #2026年の運勢 #ぽんっとラボ\n`;
+    const shareUrl = window.location.href;
+    document.getElementById("share-x").href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+    document.getElementById("share-line").href = `https://line.me/R/msg/text/?${encodeURIComponent(shareText + shareUrl)}`;
 }
 </script>
 </body>
