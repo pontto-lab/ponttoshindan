@@ -1,117 +1,81 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>👼 前世のあなたは何だった？ | ぽんっとラボ</title>
-<style>
-body { font-family:'ヒラギノ丸ゴ Pro','Arial Rounded MT Bold',sans-serif; background:#fff; margin:0; padding:0; text-align:center; }
-.wrapper { max-width:480px; margin:0 auto; padding:24px 16px; text-align:center; }
-h1 { font-size:26px; margin-bottom:12px; color:#e67e22; }
-
-/* 質問エリア */
-#quiz { background: #fffdf0; padding: 20px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-.question { font-size:17px; margin:20px 0; font-weight: bold; min-height: 3.5em; display: flex; align-items: center; justify-content: center; color: #d35400; }
-
-.options { display:flex; flex-direction:column; gap:10px; }
-.options button { padding:14px; border-radius:18px; border:none; background:#fff9c4; box-shadow:0 4px 10px rgba(0,0,0,0.06); font-size:15px; cursor:pointer; transition:0.2s; color: #333; font-weight: bold; }
-.options button:hover { transform: scale(1.02); background: #fff59d; }
-
-/* 🌟 収益化ロード画面（神秘的なゴールド仕様） */
-#loading-screen { display:none; padding: 20px; background: #fffdf0; border-radius: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.05); }
-.progress-container { width: 100%; background: #eee; height: 15px; border-radius: 10px; margin: 15px 0; overflow: hidden; }
-#progress-bar { width: 0%; background: #ffca28; height: 100%; transition: width 3s linear; }
-
-.ad-box { 
-    margin: 20px 0; 
-    padding: 10px; 
-    background: #fff; 
-    border: 2px dashed #ffca28; 
-    border-radius: 15px;
-}
-
-#result-view-btn {
-    display: none; 
-    width: 100%;
-    padding: 16px;
-    background: #e67e22;
-    color: white;
-    border: none;
-    border-radius: 30px;
-    font-size: 18px;
-    font-weight: bold;
-    cursor: pointer;
-    box-shadow: 0 4px 0 #d35400;
-    animation: pulse 1.5s infinite;
-}
-
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.02); }
-    100% { transform: scale(1); }
-}
-
-/* 結果表示エリア */
-#result-area { display:none; margin-top:20px; }
-.result-name { font-size: 24px; color: #ff8f00; margin: 10px 0; font-weight: bold; }
-.result-desc { line-height: 1.6; color: #555; font-size: 16px; margin-bottom: 30px; }
-
-/* ボタン類 */
-.btn-container { display: flex; flex-direction: column; gap: 15px; align-items: center; }
-.btn-home { display:inline-block; padding:12px 40px; border-radius:25px; background:#e1f5fe; text-decoration:none; color:#333; font-weight: bold; border: 2px solid #81d4fa; transition: 0.3s; }
-.btn-home:hover { background: #b3e5fc; }
-.btn-retry { color: #e67e22; font-size: 14px; text-decoration: underline; cursor: pointer; border: none; background: none; font-weight: bold; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>👼 前世のあなたは何だった？ | ぽんっとラボ</title>
+    <style>
+        body { font-family: 'ヒラギノ丸ゴ Pro','Arial Rounded MT Bold',sans-serif; background: #fffacd; text-align: center; margin: 0; padding: 20px; color: #333; }
+        .container { max-width: 480px; margin: 0 auto; background: white; padding: 20px; border-radius: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1 { font-size: 22px; color: #ff69b4; margin-bottom: 20px; }
+        .question { font-size: 18px; font-weight: bold; margin-bottom: 20px; display: none; }
+        .btn { display: block; width: 100%; margin: 10px 0; padding: 15px; border-radius: 50px; border: none; background: #d8bfe6; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .btn:hover { transform: scale(1.02); background: #cdafe0; }
+        #result { display: none; }
+        .result-title { font-size: 24px; color: #ff69b4; margin: 20px 0; font-weight: bold; }
+        .result-desc { font-size: 16px; line-height: 1.6; margin-bottom: 20px; }
+        .home-btn { background: #ffb6c1; text-decoration: none; color: white; display: inline-block; padding: 15px 30px; border-radius: 50px; margin-top: 20px; font-weight: bold; }
+    </style>
 </head>
 <body>
-<div class="wrapper">
-    <h1>👼 前世のあなたは何だった？</h1>
-
-    <div id="quiz">
-        <p id="q-number" style="color:#e67e22; font-size:12px; margin:0;"></p>
-        <p class="question" id="question"></p>
-        <div class="options" id="options"></div>
-    </div>
-
-    <div id="loading-screen">
-        <h2 style="color: #e67e22; font-size: 20px;">⏳ 時空をさかのぼり中…✨</h2>
-        <div class="progress-container">
-            <div id="progress-bar"></div>
-        </div>
+    <div class="container">
+        <h1>👼 前世診断</h1>
         
-        <div class="ad-box">
-            <p style="font-size: 11px; color: #e67e22; margin-bottom: 8px;">記憶が戻るまであと少し。広告をチェック 👇</p>
-            <a href="//af.moshimo.com/af/c/click?a_id=5322069&p_id=54&pc_id=54&pl_id=1220" rel="nofollow" referrerpolicy="no-referrer-when-downgrade" attributionsrc><img src="//image.moshimo.com/af-img/0032/000000001220.gif" width="100%" height="auto" style="border:none; max-width: 468px;"></a><img src="//i.moshimo.com/af/i/impression?a_id=5322069&p_id=54&pc_id=54&pl_id=1220" width="1" height="1" style="border:none;" loading="lazy">
+        <div id="q1" class="question" style="display: block;">
+            <p>Q1. 直感で選んで！今の気分は？</p>
+            <button class="btn" onclick="next(1, 'A')">ふわふわ浮きたい</button>
+            <button class="btn" onclick="next(1, 'B')">じっと動きたくない</button>
         </div>
 
-        <button id="result-view-btn" onclick="showResult()">前世の記憶を見る✨</button>
-    </div>
+        <div id="q2" class="question">
+            <p>Q2. 昔からなぜか「懐かしい」と思う場所は？</p>
+            <button class="btn" onclick="next(2, 'A')">静かなお城や神殿</button>
+            <button class="btn" onclick="next(2, 'B')">大自然の森の中</button>
+        </div>
 
-    <div id="result-area">
-        <p style="font-size: 18px; color: #888;">あなたの魂の記憶を呼び覚ましました…</p>
-        <div id="result-name" class="result-name"></div>
-        <div id="result-desc" class="result-desc"></div>
-        
-        <div class="btn-container">
-            <button onclick="location.reload();" class="btn-retry">🔄 もう一度診断する</button>
-            <a href="index.html" class="btn-home">🏠 ぽんっとTOPにもどる</a>
+        <div id="q3" class="question">
+            <p>Q3. あなたの得意なことは？</p>
+            <button class="btn" onclick="next(3, 'A')">人を癒してあげること</button>
+            <button class="btn" onclick="next(3, 'B')">黙々と作業すること</button>
+        </div>
+
+        <div id="result">
+            <p>あなたの前世は...</p>
+            <div id="result-text" class="result-title"></div>
+            <p id="result-desc" class="result-desc"></p>
+            <a href="index.html" class="home-btn">トップに戻る</a>
         </div>
     </div>
-</div>
 
-<script>
-const quizData = [
-    { q: "森の奥で古い扉を見つけたよ。どうする？", a: [ { t: "royal", text: "迷わず開けて中を確認する" }, { t: "magic", text: "呪文を唱えて開けてみる" }, { t: "free",  text: "風の向くままに通り過ぎる" }, { t: "unique",text: "とりあえずノックして挨拶" } ]},
-    { q: "夜空にひときわ輝く星が。あれは何だと思う？", a: [ { t: "royal", text: "未来を導く王国の道しるべ" }, { t: "magic", text: "伝説の魔力が宿る結晶" }, { t: "free",  text: "自由な旅人を見守る瞳" }, { t: "unique",text: "誰かが落とした光るアメ玉" } ]},
-    { q: "目の前に不思議な宝石が。何色を選びたい？", a: [ { t: "royal", text: "気品あふれる純金の色" }, { t: "magic", text: "神秘的な深い紫色" }, { t: "free",  text: "澄み渡る空のような青色" }, { t: "unique",text: "キラキラ光る虹色" } ]},
-    { q: "旅の途中で動物が話しかけてきたよ。何て言った？", a: [ { t: "royal", text: "「お城への道を教えましょう」" }, { t: "magic", text: "「不思議な力が目覚めています」" }, { t: "free",  text: "「一緒に広い世界を見に行こう」" }, { t: "unique",text: "「お腹すいたからパンちょうだい」" } ]},
-    { q: "もし魔法がひとつだけ使えるなら？", a: [ { t: "royal", text: "国を豊かにする魔法" }, { t: "magic", text: "空を自在に飛ぶ魔法" }, { t: "free",  text: "動物と心が通じる魔法" }, { t: "unique",text: "一生お腹が空かない魔法" } ]},
-    { q: "一番落ち着く場所はどこ？", a: [ { t: "royal", text: "豪華なシャンデリアのある部屋" }, { t: "magic", text: "古びた書物が並ぶ図書室" }, { t: "free",  text: "波の音が聞こえる海辺" }, { t: "unique",text: "お日様が当たる縁側" } ]},
-    { q: "あなたの性格をひと言で言うと？", a: [ { t: "royal", text: "責任感が強いリーダータイプ" }, { t: "magic", text: "ひとり時間を愛する追求者" }, { t: "free",  text: "好奇心旺盛な自由人" }, { t: "unique",text: "みんなを笑顔にする癒やし系" } ]},
-    { q: "夢の中で、あなたは誰かから贈り物をもらったよ。それは？", a: [ { t: "royal", text: "装飾が美しい豪華な剣" }, { t: "magic", text: "予言が書かれた古い巻物" }, { t: "free",  text: "どこまでも歩ける丈夫な靴" }, { t: "unique",text: "なでると温かい不思議なタマゴ" } ]},
-    { q: "朝、目が覚めて一番にしたいことは？", a: [ { t: "royal", text: "今日の予定を完璧に立てる" }, { t: "magic", text: "昨日見た夢の続きを分析する" }, { t: "free",  text: "とりあえず外の空気を吸いに行く" }, { t: "unique",text: "美味しいごはんを食べる" } ]},
-    { q: "生まれ変わるなら、何になりたい？", a: [ { t: "royal", text: "歴史に名を残す偉人" }, { t: "magic", text: "時空を超える魔術師" }, { t: "free",  text: "世界中を旅する鳥" }, { t: "unique",text: "誰からも愛されるマスコット" } ]}
-];
+    <script>
+        let score = "";
+        function next(qNum, choice) {
+            score += choice;
+            document.getElementById('q' + qNum).style.display = 'none';
+            let nextQ = document.getElementById('q' + (qNum + 1));
+            if (nextQ) {
+                nextQ.style.display = 'block';
+            } else {
+                showResult();
+            }
+        }
 
-const results = [
-    { id: "royal", name:"誇り高き伝説の騎士⚔️", desc:"前世のあなたは、多くの人を守った英雄でした。その勇気と責任感は今も魂に刻まれています
+        function showResult() {
+            document.getElementById('result').style.display = 'block';
+            const resTitle = document.getElementById('result-text');
+            const resDesc = document.getElementById('result-desc');
+
+            if (score.includes("AAA")) {
+                resTitle.innerText = "高貴な国の「お姫様・王子様」";
+                resDesc.innerText = "あなたは前世、美しいお城でたくさんの人に愛されていました。今でも気品があるのはその名残かも！";
+            } else if (score.includes("BBB")) {
+                resTitle.innerText = "伝説の「守り神のキツネ」";
+                resDesc.innerText = "あなたは前世、森を守る神秘的な存在でした。直感力が鋭いのは、神様と繋がっていたからかも！";
+            } else {
+                resTitle.innerText = "不思議な力を持つ「魔法使い」";
+                resDesc.innerText = "あなたは前世、薬草や魔法で人を助けていました。今の優しい性格は、前世から受け継がれたものです。";
+            }
+        }
+    </script>
+</body>
+</html>
