@@ -7,8 +7,9 @@
     <style>
         body { font-family: 'ヒラギノ丸ゴ Pro','Arial Rounded MT Bold',sans-serif; background: #fff; text-align: center; margin: 0; padding: 20px; }
         .container { max-width: 480px; margin: 0 auto; }
-        .logo { max-width: 100%; height: auto; margin-bottom: 20px; }
-        .message { font-size: 16px; line-height: 1.8; color: #555; margin-bottom: 30px; }
+        /* ロゴを少し大きく、可愛く表示する設定 */
+        .logo { max-width: 100%; height: auto; margin-bottom: 10px; border-radius: 20px; }
+        .message { font-size: 16px; line-height: 1.8; color: #555; margin-bottom: 30px; font-weight: bold; }
         .button { 
             display: block; 
             margin: 15px 0; 
@@ -23,6 +24,7 @@
             transition: transform 0.2s;
         }
         .button:active { transform: scale(0.95); }
+        .share-text { color: #ff69b4; font-weight: bold; margin-top: 20px; }
     </style>
 </head>
 <body>
@@ -37,14 +39,16 @@
         </div>
 
         <a href="pontto.html" class="button">💉 ぽんっと性格診断</a>
+        
         <a href="ura-test.html" class="button" style="background: #e6e6fa;">👁 あなたの【裏の顔】診断</a>
+        
         <a href="iq-test.html" class="button">🧠 ぽんっとIQ診断</a>
         
         <a href="zense-test.html" class="button" style="background: #fffacd;">👶 前世のあなたは何だった？</a>
         
         <a href="nounai-test.html" class="button" style="background: #e0ffff;">🧠 あなたの脳内メーカー</a>
 
-        <p>スクショしてシェアしてね💖</p>
+        <p class="share-text">スクショしてシェアしてね💖</p>
     </div>
 </body>
 </html>
