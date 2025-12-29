@@ -9,6 +9,7 @@
         .container { max-width: 480px; margin: 0 auto; background: white; padding: 20px; border-radius: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         h1 { font-size: 22px; color: #ff69b4; margin-bottom: 20px; }
         .question { font-size: 18px; font-weight: bold; margin-bottom: 20px; display: none; }
+        /* 4択ボタンのスタイル */
         .btn { display: block; width: 100%; margin: 10px 0; padding: 15px; border-radius: 50px; border: none; background: #d8bfe6; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s; }
         .btn:hover { transform: scale(1.02); background: #cdafe0; }
         #result { display: none; }
@@ -22,21 +23,27 @@
         <h1>👼 前世診断</h1>
         
         <div id="q1" class="question" style="display: block;">
-            <p>Q1. 直感で選んで！今の気分は？</p>
-            <button class="btn" onclick="next(1, 'A')">ふわふわ浮きたい</button>
-            <button class="btn" onclick="next(1, 'B')">じっと動きたくない</button>
+            <p>Q1. 目の前に不思議な扉が。何色？</p>
+            <button class="btn" onclick="next(1, 'A')">キラキラ輝く黄金色</button>
+            <button class="btn" onclick="next(1, 'B')">深い森のような緑色</button>
+            <button class="btn" onclick="next(1, 'C')">吸い込まれそうな青色</button>
+            <button class="btn" onclick="next(1, 'D')">可愛らしいパステルピンク</button>
         </div>
 
         <div id="q2" class="question">
-            <p>Q2. 昔からなぜか「懐かしい」と思う場所は？</p>
-            <button class="btn" onclick="next(2, 'A')">静かなお城や神殿</button>
-            <button class="btn" onclick="next(2, 'B')">大自然の森の中</button>
+            <p>Q2. 昔からなぜか「落ち着く」場所は？</p>
+            <button class="btn" onclick="next(2, 'A')">にぎやかなお祭り会場</button>
+            <button class="btn" onclick="next(2, 'B')">静かな図書館や教会</button>
+            <button class="btn" onclick="next(2, 'C')">波の音が聞こえる海岸</button>
+            <button class="btn" onclick="next(2, 'D')">お花がいっぱいの庭園</button>
         </div>
 
         <div id="q3" class="question">
-            <p>Q3. あなたの得意なことは？</p>
-            <button class="btn" onclick="next(3, 'A')">人を癒してあげること</button>
-            <button class="btn" onclick="next(3, 'B')">黙々と作業すること</button>
+            <p>Q3. 直感で選んで！今のあなたの武器は？</p>
+            <button class="btn" onclick="next(3, 'A')">みんなを導くリーダーシップ</button>
+            <button class="btn" onclick="next(3, 'B')">誰にも負けない集中力</button>
+            <button class="btn" onclick="next(3, 'C')">自由を愛するフットワーク</button>
+            <button class="btn" onclick="next(3, 'D')">人を笑顔にする不思議な魅力</button>
         </div>
 
         <div id="result">
@@ -48,9 +55,10 @@
     </div>
 
     <script>
-        let score = "";
+        let resultCounts = { A: 0, B: 0, C: 0, D: 0 };
+        
         function next(qNum, choice) {
-            score += choice;
+            resultCounts[choice]++;
             document.getElementById('q' + qNum).style.display = 'none';
             let nextQ = document.getElementById('q' + (qNum + 1));
             if (nextQ) {
@@ -65,15 +73,21 @@
             const resTitle = document.getElementById('result-text');
             const resDesc = document.getElementById('result-desc');
 
-            if (score.includes("AAA")) {
-                resTitle.innerText = "高貴な国の「お姫様・王子様」";
-                resDesc.innerText = "あなたは前世、美しいお城でたくさんの人に愛されていました。今でも気品があるのはその名残かも！";
-            } else if (score.includes("BBB")) {
-                resTitle.innerText = "伝説の「守り神のキツネ」";
-                resDesc.innerText = "あなたは前世、森を守る神秘的な存在でした。直感力が鋭いのは、神様と繋がっていたからかも！";
+            // 一番多かった選択肢で判定
+            let maxChoice = Object.keys(resultCounts).reduce((a, b) => resultCounts[a] > resultCounts[b] ? a : b);
+
+            if (maxChoice === 'A') {
+                resTitle.innerText = "伝説の王国の「若き王・女王」";
+                resDesc.innerText = "あなたは前世、多くの民に慕われる立派なリーダーでした。今の堂々とした雰囲気は、王家の血筋の名残かもしれません！";
+            } else if (maxChoice === 'B') {
+                resTitle.innerText = "歴史を変えた「天才天文学者」";
+                resDesc.innerText = "あなたは前世、夜空を見上げて宇宙の真理を探求していました。分析が得意なのは、星のメッセージを読んでいたからかも。";
+            } else if (maxChoice === 'C') {
+                resTitle.innerText = "七つの海を旅した「伝説の航海士」";
+                resDesc.innerText = "あなたは前世、自由を求めて世界中の海を渡り歩いていました。冒険心が強いのは、まだ見ぬ景色を探している証拠です。";
             } else {
-                resTitle.innerText = "不思議な力を持つ「魔法使い」";
-                resDesc.innerText = "あなたは前世、薬草や魔法で人を助けていました。今の優しい性格は、前世から受け継がれたものです。";
+                resTitle.innerText = "人々に愛された「宮廷の踊り子」";
+                resDesc.innerText = "あなたは前世、その美しさと表現力で国中の人々を虜にしていました。今のあなたの華やかさは、当時のステージの輝きです！";
             }
         }
     </script>
