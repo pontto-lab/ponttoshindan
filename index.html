@@ -7,10 +7,13 @@
     <style>
         body { font-family: 'ヒラギノ丸ゴ Pro','Arial Rounded MT Bold',sans-serif; background: #fff; text-align: center; margin: 0; padding: 20px; }
         .container { max-width: 480px; margin: 0 auto; }
-        .logo { max-width: 100%; height: auto; margin-bottom: 10px; border-radius: 20px; }
-        .message { font-size: 16px; line-height: 1.8; color: #555; margin-bottom: 30px; font-weight: bold; }
         
-        /* ボタン基本 */
+        /* ロゴ設定 */
+        .logo { max-width: 100%; height: auto; margin-bottom: 10px; border-radius: 20px; }
+        
+        .message { font-size: 16px; line-height: 1.8; color: #555; margin-bottom: 30px; font-weight: bold; }
+
+        /* ボタン基本スタイル */
         .button { 
             display: block; 
             margin: 15px 0; 
@@ -23,16 +26,16 @@
             font-weight: bold;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
             transition: transform 0.2s;
-            position: relative; /* バッジ用 */
+            position: relative;
         }
         .button:active { transform: scale(0.95); }
 
-        /* ✨ Newバッジの演出 */
+        /* ✨ 裏の顔診断：Newバッジ演出 */
         .new-badge::after {
             content: "New!";
             position: absolute;
             top: -5px;
-            right: 10px;
+            right: 15px;
             background: #ff1493;
             color: white;
             font-size: 12px;
@@ -46,13 +49,13 @@
             50% { transform: translateY(-3px); }
         }
 
-        /* 🔒 近日公開ボタン */
-        .coming-soon {
+        /* 🔒 手相診断：テスト中（準備中）スタイル */
+        .btn-teso-test {
             background: #f0f0f0 !important;
-            color: #aaa !important;
+            color: #888 !important;
             border: 2px dashed #ccc;
             box-shadow: none;
-            cursor: default;
+            text-shadow: none;
         }
 
         .share-text { color: #ff69b4; font-weight: bold; margin-top: 20px; }
@@ -71,15 +74,15 @@
 
         <a href="ura-test.html" class="button new-badge" style="background: #e6e6fa;">👁 あなたの【裏の顔】診断</a>
 
+        <a href="teso-test.html" class="button btn-teso-test">
+            🔎 手相で見る2026年の運勢✋✨<br>
+            <span style="font-size: 11px;">（テスト中：ここからチェックしてね🚧）</span>
+        </a>
+
         <a href="pontto.html" class="button">💉 ぽんっと性格診断</a>
         <a href="iq-test.html" class="button">🧠 ぽんっとIQ診断</a>
         <a href="zense-test.html" class="button" style="background: #fffacd;">👶 前世のあなたは何だった？</a>
         <a href="nounai-test.html" class="button" style="background: #e0ffff;">🧠 あなたの脳内メーカー</a>
-
-        <div class="button coming-soon">
-            🔎 手相で見る2026年の運勢✋✨<br>
-            <span style="font-size: 12px;">（近日公開！準備中だよ🔮）</span>
-        </div>
 
         <p class="share-text">スクショしてシェアしてね💖</p>
     </div>
