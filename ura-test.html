@@ -19,62 +19,39 @@ h1 { font-size:24px; color:#7e57c2; margin-bottom:20px; text-shadow: 2px 2px 0px
 .options button { padding:16px; border-radius:15px; border:2px solid #e1bee7; background:#fff; cursor:pointer; font-weight: bold; font-size: 15px; transition: 0.3s; color: #5e35b1; outline: none; }
 .options button:hover { background:#f3e5f5; border-color: #ba68c8; transform: translateY(-2px); }
 
-/* 🌟 収益化ロード画面（闇かわ仕様） */
+/* 🌟 収益化ロード画面 */
 #loading-screen { display:none; padding: 20px; background: #fff; border-radius: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.05); }
 .progress-container { width: 100%; background: #eee; height: 15px; border-radius: 10px; margin: 15px 0; overflow: hidden; }
 #progress-bar { width: 0%; background: #ba68c8; height: 100%; transition: width 3s linear; }
 
-.ad-box { 
-    margin: 20px 0; 
-    padding: 10px; 
-    background: #fdfbff; 
-    border: 1px dashed #ba68c8; 
-    border-radius: 10px;
-}
+.ad-box { margin: 20px 0; padding: 10px; background: #fdfbff; border: 1px dashed #ba68c8; border-radius: 10px; }
 
-#result-view-btn {
-    display: none; 
-    width: 100%;
-    padding: 16px;
-    background: #ba68c8;
-    color: white;
-    border: none;
-    border-radius: 30px;
-    font-size: 18px;
-    font-weight: bold;
-    cursor: pointer;
-    box-shadow: 0 4px 0 #7e57c2;
-    animation: pulse 1.5s infinite;
-}
+#result-view-btn { display: none; width: 100%; padding: 16px; background: #ba68c8; color: white; border: none; border-radius: 30px; font-size: 18px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 0 #7e57c2; animation: pulse 1.5s infinite; }
 
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.02); }
-    100% { transform: scale(1); }
-}
+@keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
 
 /* 結果表示エリア */
-#result-area { display:none; background: #fff; padding: 30px 20px; border-radius: 30px; border: 3px double #d1c4e9; box-shadow: 0 10px 30px rgba(126, 87, 194, 0.1); text-align: left; }
+#result-area { display:none; background: #fff; padding: 30px 20px; border-radius: 30px; border: 3px double #d1c4e9; box-shadow: 0 10px 30px rgba(126, 87, 194, 0.1); text-align: center; }
 
-@keyframes commentFadeIn {
-    0% { opacity: 0; transform: translateY(30px); }
-    100% { opacity: 1; transform: translateY(0); }
+/* ✨ キラキラエフェクトの設定 */
+.result-img-container { position: relative; width: 100%; max-width: 300px; margin: 0 auto 20px; }
+#result-img { width: 100%; height: auto; border-radius: 20px; animation: shineEffect 2s infinite alternate; }
+
+@keyframes shineEffect {
+  0% { filter: drop-shadow(0 0 5px #fff) brightness(1); transform: scale(1); }
+  100% { filter: drop-shadow(0 0 20px #ffd700) brightness(1.1); transform: scale(1.02); }
 }
 
-.result-header { font-size: 16px; color: #9575cd; margin-bottom: 10px; text-align: center; }
-.result-type { font-size: 24px; font-weight: bold; color: #ff1493; margin-bottom: 20px; text-align: center; border-bottom: 2px dashed #fce4ec; padding-bottom: 10px; }
-.result-comment { font-size: 16px; line-height: 1.8; color: #444; opacity: 0; animation: commentFadeIn 1s ease-out forwards; }
-.result-comment b { color: #ba68c8; font-size: 18px; }
+.result-header { font-size: 16px; color: #9575cd; margin-bottom: 10px; }
+.result-type { font-size: 22px; font-weight: bold; color: #ff1493; margin-bottom: 20px; border-bottom: 2px dashed #fce4ec; padding-bottom: 10px; }
+.result-comment { font-size: 15px; line-height: 1.8; color: #444; text-align: left; animation: commentFadeIn 1s ease-out forwards; }
 
-/* ボタンコンテナ */
+@keyframes commentFadeIn { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } }
+
 .btn-container { margin-top: 30px; display: flex; flex-direction: column; gap: 15px; align-items: center; }
-
-/* 共通ボタン形式 */
 .btn-common { display: inline-block; padding: 12px 40px; border-radius: 25px; font-weight: bold; font-size: 16px; text-decoration: none; transition: 0.3s; width: 80%; text-align: center; }
-
 .btn-retry { color: #ff69b4; font-size: 14px; text-decoration: underline; cursor: pointer; border: none; background: none; font-weight: bold; }
 .btn-home { background-color: #fce4ec; color: #ba68c8; border: 1px solid #ffc1e3; }
-.btn-home:hover { background-color: #ffd1e8; }
 </style>
 </head>
 <body>
@@ -92,17 +69,18 @@ h1 { font-size:24px; color:#7e57c2; margin-bottom:20px; text-shadow: 2px 2px 0px
         <div class="progress-container">
             <div id="progress-bar"></div>
         </div>
-        
         <div class="ad-box">
             <p style="font-size: 11px; color: #ba68c8; margin-bottom: 8px;">スキャン完了まであと少し。広告をチェック 👇</p>
-            <a href="//af.moshimo.com/af/c/click?a_id=5322069&p_id=54&pc_id=54&pl_id=1220" rel="nofollow" referrerpolicy="no-referrer-when-downgrade" attributionsrc><img src="//image.moshimo.com/af-img/0032/000000001220.gif" width="100%" height="auto" style="border:none; max-width: 468px;"></a><img src="//i.moshimo.com/af/i/impression?a_id=5322069&p_id=54&pc_id=54&pl_id=1220" width="1" height="1" style="border:none;" loading="lazy">
+            <a href="#"><img src="//image.moshimo.com/af-img/0032/000000001220.gif" width="100%" style="max-width:468px;"></a>
         </div>
-
         <button id="result-view-btn" onclick="showResult()">本当の姿を見る👁️</button>
     </div>
 
     <div id="result-area">
         <div class="result-header">スキャン完了。あなたの正体は…</div>
+        <div class="result-img-container">
+            <img id="result-img" src="" alt="結果画像">
+        </div>
         <div id="result-type" class="result-type"></div>
         <div id="result-comment" class="result-comment"></div>
         
@@ -114,30 +92,29 @@ h1 { font-size:24px; color:#7e57c2; margin-bottom:20px; text-shadow: 2px 2px 0px
 </div>
 
 <script>
+// キャラクターと画像の紐付け
 const resultData = {
-    work: { name: "【冷徹な完璧主義・毒蜘蛛】", msg: "表向きは真面目な努力家。でも裏の顔は、<b>他人のミスを心のノートに書き溜める毒蜘蛛</b>タイプ。周囲がバタバタと倒れていくのを眺めながら、自分だけが最上階に昇り詰める瞬間に最高の快感を覚えるはず。情けなんて無用、最後に笑うのは自分だけでしょ？" },
-    love: { name: "【愛という名の依存・ヤンデレ】", msg: "一見、尽くすタイプ。でもその裏側は、<b>相手の全てを監禁したい執着の塊</b>。優しさの皮を被った重い愛で、相手の自由を少しずつ奪うのが得意。嫌いな相手には、一生消えない呪いの言葉を心の中で吐き続ける…そんなドロドロの純愛こそがあなたの本質。" },
-    sleep: { name: "【現実拒絶・夢の中の迷子】", msg: "「疲れちゃった」が口癖のあなた。裏の顔は、<b>この汚い世界を1ミリも信じていない絶望の住人</b>。人間関係のしがらみも、将来への不安も、全部布団の中に持ち込んでシャットアウト。寝ている時だけが、誰にも傷つけられない唯一の聖域。現実はもう、いらないよね？" },
-    sex: { name: "【本能全開・深夜のモンスター】", msg: "昼間は常識人のフリ。でも裏の顔は、<b>道徳なんてゴミ箱に捨てた本能の怪物</b>。抑えられない欲望や、人には言えないマニアックな妄想で脳内を汚染されているはず。綺麗事はもう聞き飽きた。もっと刺激を、もっと快楽を。深夜のあなたは、もう誰にも止められない。" },
-    money: { name: "【強欲な守銭奴・銭ゲバブラック】", msg: "「お金より大事なものがある」なんて、心の中で鼻で笑ってるでしょ？裏の顔は、<b>全ての人間関係を『損か得か』で測る計算機</b>。友情も愛情も、結局は数字。誰かの不幸でさえ、お財布が潤うチャンスなら喜んで受け入れる。だって、最後に守ってくれるのはお金だけでしょ？" },
-    none: { name: "【虚無に潜む・冷ややかな傍観者】", msg: "一番ヤバいのはこのタイプ。裏の顔は、<b>人間という生き物を完全に見限った『無』の境地</b>。誰が泣こうが喚こうが、心の底では1ミリも動じない。世界の終わりをポップコーン食べながら眺めていられるような、圧倒的な冷たさ。あなたにとって、他人は全員ただの風景なの。" }
+    panda: { name: "実は「計算高い策士」", img: "sakushi.png", msg: "のんびり屋に見えるけど…実はすべてを冷静に観察して損得を考えている裏の顔。あなたの手のひらで、みんな転がされているのかも？" },
+    kuma: { name: "実は「燃え盛る情熱家」", img: "jonetsu.png", msg: "どっしり構えているようで、一度火がつくと誰よりも熱い！好きなものへの独占欲や執着心は、誰にも負けないエネルギーを秘めています。" },
+    neko: { name: "実は「甘えん坊な乙女心」", img: "amae.png", msg: "クールで自由奔放に見えて、本当は誰よりも愛されたくてたまらない素顔。素直になれないだけで、心の中はとってもピュアな乙女心でいっぱいです。" },
+    usagi: { name: "実は「寂しがり屋なかまってちゃん」", img: "kamatte.png", msg: "明るい表の顔の裏に、深い孤独を抱えていたりして…。本当は、24時間誰かに気にかけてほしい、究極の寂しがり屋さんです。" }
 };
 
 const quizData = [
-    { q: "親友が自分より豪華な結婚式を挙げた。本音は？", a: [{ t: "none", text: "「ふーん、無駄遣いだね」と鼻で笑う" },{ t: "money", text: "「ご祝儀代、回収できるかな？」" },{ t: "love", text: "「私より先に幸せになるなんて呪う」" },{ t: "work", text: "「スペック差を見せつけられて不快」" }]},
-    { q: "誰もいない道で、大金の入った財布を拾った。", a: [{ t: "money", text: "神に感謝して懐に入れる" },{ t: "none", text: "面倒だからそのまま蹴っ飛ばす" },{ t: "sex", text: "この金で今夜遊び明かす" },{ t: "sleep", text: "一旦寝て、夢じゃなかったら奪う" }]},
-    { q: "嫌いな奴がSNSで大炎上！あなたはどうする？", a: [{ t: "sex", text: "匿名掲示板にガセネタを投下する" },{ t: "none", text: "スクショを撮って永久保存する" },{ t: "work", text: "「因果応報だね」と冷淡に見下す" },{ t: "love", text: "「可哀想にｗ」と最高の笑顔になる" }]},
-    { q: "「あなたのため」と説教してくる相手への本音。", a: [{ t: "work", text: "「自分の価値観を押し付けるな無能」" },{ t: "love", text: "「重い、消えろ、死ね」" },{ t: "none", text: "何一つ言葉が耳に入らない" },{ t: "money", text: "「で、いくら得するの？」" }]},
-    { q: "恋人が別の異性と楽しそうに話している。", a: [{ t: "love", text: "その異性を社会的に抹殺したくなる" },{ t: "sex", text: "浮気の証拠を掴んで弱みを握りたい" },{ t: "none", text: "「ハイ終了」と急に興味が消える" },{ t: "sleep", text: "考えるのもだるいから寝る" }]},
-    { q: "目の前の人が、派手に転んで荷物をぶちまけた。", a: [{ t: "work", text: "「邪魔だな」と思って避けて通る" },{ t: "none", text: "不幸の様子を脳内再生して楽しむ" },{ t: "money", text: "高価なものが落ちてないかチラ見" },{ t: "sex", text: "みっともない姿を見て優越感に浸る" }]},
-    { q: "自分より格下の相手が、大成功したと聞いた。", a: [{ t: "sex", text: "「どうせ裏で何かやってんだろ」と疑う" },{ t: "love", text: "「不幸になれ、不幸になれ…」と願う" },{ t: "none", text: "「運が良かっただけ」と見なす" },{ t: "money", text: "こびを売って金に繋げられないか考える" }]},
-    { q: "人からもらったプレゼントが、超絶ダサかった。", a: [{ t: "money", text: "その場で値段を調べてフリマへ" },{ t: "work", text: "「これを選ぶ脳みそを疑う」と失望" },{ t: "love", text: "「私の価値を低く見てる証拠」と恨む" },{ t: "none", text: "とりあえず即ゴミ箱" }]},
-    { q: "もし自分に絶対バレない殺人の力が宿ったら？", a: [{ t: "work", text: "出世を阻む上層部を消す" },{ t: "money", text: "金持ちを消して遺産を奪う" },{ t: "sex", text: "嫌いな奴を苦しめてから消す" },{ t: "love", text: "恋人の周囲の異性を全員消す" }]},
-    { q: "最後に。この世で本当に「信じられる」のは？", a: [{ t: "money", text: "裏切らない「お金」だけ" },{ t: "love", text: "自分が信じたい「自分の感情」" },{ t: "work", text: "「自分の利用価値」だけ" },{ t: "none", text: "「誰もいない」のが真実" }]}
+    { q: "親友が自分より豪華な結婚式を挙げた。本音は？", a: [{ t: "usagi", text: "「いいな…私ももっと注目されたい」" },{ t: "panda", text: "「いくらかかったか計算しちゃう」" },{ t: "kuma", text: "「私の方がもっと情熱的な式にできる！」" },{ t: "neko", text: "「…ふん、勝手にすれば（本当は羨ましい）」" }]},
+    { q: "誰もいない道で、大金の入った財布を拾った。", a: [{ t: "panda", text: "リスクとリターンを瞬時に計算する" },{ t: "kuma", text: "これを元手に大きな野望を抱く" },{ t: "usagi", text: "誰かが見てないか不安でキョロキョロ" },{ t: "neko", text: "「これで自分へのご褒美買っちゃおうかな」" }]},
+    { q: "嫌いな奴がSNSで大炎上！あなたはどうする？", a: [{ t: "panda", text: "裏でさらに燃料を投下して観察する" },{ t: "neko", text: "「ざまあみろ」と心の中で呟く" },{ t: "kuma", text: "徹底的に叩き潰されるのを期待する" },{ t: "usagi", text: "「私ならあんなことしないのに」と嘆く" }]},
+    { q: "「あなたのため」と説教してくる相手への本音。", a: [{ t: "panda", text: "「はいはい（この人、自分の事しか考えてないな）」" },{ t: "neko", text: "「うるさい、私をわかってくれない癖に」" },{ t: "kuma", text: "「あんたに何がわかるんだ！」と内心激怒" },{ t: "usagi", text: "「もっと優しく言ってよ…」と落ち込む" }]},
+    { q: "恋人が別の異性と楽しそうに話している。", a: [{ t: "kuma", text: "嫉妬の炎がメラメラ。独占したくなる" },{ t: "neko", text: "ツンとして無視するが、実は泣きそう" },{ t: "panda", text: "浮気の可能性を冷静にプロファイリング" },{ t: "usagi", text: "「私だけを見て！」と割り込みたい" }]},
+    { q: "目の前の人が、派手に転んで荷物をぶちまけた。", a: [{ t: "panda", text: "助けるメリットがあるか一瞬考える" },{ t: "neko", text: "「あらら…」と思いつつ、素通り" },{ t: "usagi", text: "助けてあげて「良い人」だと思われたい" },{ t: "kuma", text: "情熱的に駆け寄って全力で助ける" }]},
+    { q: "自分より格下の相手が、大成功したと聞いた。", a: [{ t: "panda", text: "どうやって成功したか分析して利用する" },{ t: "kuma", text: "「負けてたまるか！」と燃え上がる" },{ t: "neko", text: "「運がいいだけじゃない」と嫉妬しちゃう" },{ t: "usagi", text: "「私だって頑張ってるのに…」と寂しくなる" }]},
+    { q: "人からもらったプレゼントが、超絶ダサかった。", a: [{ t: "panda", text: "メルカリでいくら売れるかすぐ調べる" },{ t: "neko", text: "笑顔で受け取るが、内心はガッカリ" },{ t: "usagi", text: "「私の好み、分かってないんだな」と悲しい" },{ t: "kuma", text: "「私の事、これっぽっちも考えてないの？」と怒る" }]},
+    { q: "もし自分に絶対バレない魔法の力が宿ったら？", a: [{ t: "panda", text: "世界を裏から操る黒幕になる" },{ t: "kuma", text: "自分の欲しいものを全て手に入れる" },{ t: "usagi", text: "世界中の人を自分に夢中にさせる" },{ t: "neko", text: "大好きな人との甘い時間だけを作る" }]},
+    { q: "最後に。この世で本当に「信じられる」のは？", a: [{ t: "panda", text: "自分の「知略」と「損得感情」" },{ t: "kuma", text: "自分の内なる「情熱」" },{ t: "usagi", text: "誰かがくれる「愛情」" },{ t: "neko", text: "秘めた「乙女心」" }]}
 ];
 
 let current = 0;
-let scores = { love:0, money:0, sleep:0, sex:0, work:0, none:0 };
+let scores = { usagi:0, panda:0, kuma:0, neko:0 };
 
 function showQuestion() {
     document.getElementById("q-number").innerText = `Scanning Step ${current + 1} / 10`;
@@ -145,6 +122,7 @@ function showQuestion() {
     document.getElementById("question").innerText = data.q;
     const optsDiv = document.getElementById("options");
     optsDiv.innerHTML = "";
+    // 回答をランダムに表示
     [...data.a].sort(() => Math.random() - 0.5).forEach(choice => {
         const btn = document.createElement("button");
         btn.innerText = choice.text;
@@ -165,8 +143,11 @@ function showResult() {
     document.getElementById("result-area").style.display = "block";
     const mainType = Object.keys(scores).sort((a,b) => scores[b] - scores[a])[0];
     const final = resultData[mainType];
+    
+    // 画像とテキストをセット
+    document.getElementById("result-img").src = final.img;
     document.getElementById("result-type").innerText = final.name;
-    document.getElementById("result-comment").innerHTML = final.msg;
+    document.getElementById("result-comment").innerHTML = `<b>${final.name}</b><br>${final.msg}`;
 }
 showQuestion();
 </script>
