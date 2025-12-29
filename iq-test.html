@@ -9,7 +9,26 @@
         .container { max-width: 480px; margin: 0 auto; }
         .button { display: inline-block; margin: 10px; padding: 15px; border-radius: 20px; background: #d8bfe6; color: #333; text-decoration: none; font-size: 18px; border: none; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         .button:active { transform: scale(0.95); }
-        .ad-box { background: #fff0f5; padding: 30px; border: 3px dashed #ffb6c1; margin: 20px 0; border-radius: 20px; }
+        
+        /* 収益化用ロード画面のデザイン */
+        .ad-box { background: #fffafb; padding: 20px; border: 3px dashed #ffb6c1; margin: 20px 0; border-radius: 20px; }
+        .progress-container { width: 100%; background: #eee; height: 15px; border-radius: 10px; margin: 15px 0; overflow: hidden; }
+        #progress-bar { width: 0%; background: #ff69b4; height: 100%; transition: width 3s linear; }
+        
+        /* 結果を見るボタン（最初は隠す＆動く演出） */
+        #result-view-btn {
+            display: none; 
+            width: 100%;
+            background: #ff69b4;
+            color: white;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
         img { max-width: 100%; height: auto; }
         #question-number { font-weight: bold; color: #ff69b2; font-size: 1.2rem; margin-bottom: 10px; }
     </style>
@@ -25,12 +44,18 @@
 
         <div id="ad-screen" style="display: none;">
             <h2 style="color: #ff1493;">採点が終わったよ！✨</h2>
-            <div class="ad-box">
-                <p style="font-size: 14px; color: #999;">【PR】結果を見る準備はいい？</p>
-                <button class="button" onclick="showFinalResult()" style="font-size: 20px; padding: 15px 30px;">
-                    💓 結果を見る 💓
-                </button>
+            <div class="progress-container">
+                <div id="progress-bar"></div>
             </div>
+            
+            <div class="ad-box">
+                <p style="font-size: 11px; color: #ff69b4; font-weight: bold; margin-bottom: 10px;">あなたのIQを算出中...広告をチェック！👇</p>
+                <a href="//af.moshimo.com/af/c/click?a_id=5322069&p_id=54&pc_id=54&pl_id=1220" rel="nofollow" referrerpolicy="no-referrer-when-downgrade" attributionsrc><img src="//image.moshimo.com/af-img/0032/000000001220.gif" width="100%" height="auto" style="border:none; max-width: 468px;"></a><img src="//i.moshimo.com/af/i/impression?a_id=5322069&p_id=54&pc_id=54&pl_id=1220" width="1" height="1" style="border:none;" loading="lazy">
+            </div>
+
+            <button id="result-view-btn" class="button" onclick="showFinalResult()">
+                💓 結果を見る 💓
+            </button>
         </div>
 
         <div id="result-screen" style="display: none;">
@@ -45,30 +70,17 @@
     <script>
         let currentStep = 1;
         let score = 0;
-        let perfectSpeedBonus = true; // 5問連続スピードボーナスの旗
+        let perfectSpeedBonus = true;
         let startTime; 
         const totalQuestions = 5; 
 
+        // （中略：質問データなどはそのまま）
         const questions = {
             1: { img: "question1.png", choices: [{img:"choice-a.png", ok:false}, {img:"choice-b.png", ok:true}, {img:"choice-c.png", ok:false}] },
             2: { img: "question2.png", choices: [{img:"choice-d.png", ok:false}, {img:"choice-f.png", ok:true}, {img:"choice-e.png", ok:false}] },
             3: { img: "question3.png", choices: [{img:"choice-g.png", ok:true}, {img:"choice-h.png", ok:false}, {img:"choice-i.png", ok:false}] },
-            4: {
-                img: "question4.png", 
-                choices: [
-                    { img: "choice-k.png", ok: false }, 
-                    { img: "choice-l.png", ok: false }, 
-                    { img: "choice-j.png", ok: true }
-                ]
-            },
-            5: {
-                img: "question5.png", 
-                choices: [
-                    { img: "choice-m.png", ok: true },
-                    { img: "choice-n.png", ok: false },
-                    { img: "choice-o.png", ok: false }
-                ]
-            }
+            4: { img: "question4.png", choices: [{img: "choice-k.png", ok: false }, { img: "choice-l.png", ok: false }, { img: "choice-j.png", ok: true }] },
+            5: { img: "question5.png", choices: [{ img: "choice-m.png", ok: true }, { img: "choice-n.png", ok: false }, { img: "choice-o.png", ok: false }] }
         };
 
         function shuffle(array) {
@@ -82,14 +94,10 @@
         function showQuestion() {
             const q = questions[currentStep];
             if (!q || currentStep > totalQuestions) { showAd(); return; }
-
             document.getElementById('question-number').innerText = `第 ${currentStep} 問 / ${totalQuestions}`;
-
             const shuffledChoices = shuffle([...q.choices]);
-
             let html = `<img src="${q.img}" style="width: 100%; max-width: 400px; border-radius: 15px; margin-bottom: 25px; border: 3px solid #eee;">`;
             html += `<div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">`;
-            
             shuffledChoices.forEach(c => {
                 html += `
                     <button onclick="nextQuestion(${c.ok})" class="button" style="padding: 10px; background: white; border: 2px solid #ffb6c1;">
@@ -98,24 +106,17 @@
             });
             html += `</div>`;
             document.getElementById('quiz-area').innerHTML = html;
-            
             startTime = Date.now();
         }
 
         function nextQuestion(isCorrect) {
             const timeTaken = (Date.now() - startTime) / 1000;
-            
             if (isCorrect) { 
                 score++; 
-                // 一回でも5秒を超えたらフラグを下ろす
-                if (timeTaken > 5) {
-                    perfectSpeedBonus = false;
-                }
+                if (timeTaken > 5) perfectSpeedBonus = false;
             } else {
-                // 間違えた時点でスピードボーナスは無効
                 perfectSpeedBonus = false;
             }
-            
             currentStep++;
             setTimeout(() => { showQuestion(); }, 300);
         }
@@ -123,6 +124,16 @@
         function showAd() {
             document.getElementById('game-screen').style.display = "none";
             document.getElementById('ad-screen').style.display = "block";
+            
+            // プログレスバー開始
+            setTimeout(() => {
+                document.getElementById("progress-bar").style.width = "100%";
+            }, 100);
+
+            // 3秒後にボタンを表示
+            setTimeout(() => {
+                document.getElementById("result-view-btn").style.display = "block";
+            }, 3000);
         }
 
         function showFinalResult() {
@@ -132,9 +143,7 @@
             const iqComm = document.getElementById('iq-comment');
             
             let finalIQ;
-
             if (score === 5) {
-                // 全問正解かつ、全問5秒以内の場合のみ140
                 finalIQ = perfectSpeedBonus ? 140 : 130;
             } else if (score === 4) {
                 finalIQ = 115;
@@ -148,18 +157,10 @@
 
             iqDisp.innerText = "IQ " + finalIQ;
 
-            if (finalIQ === 140) { 
-                iqComm.innerText = "超天才！✨\n全問正解＆神速の判断力！\n現代のアインシュタインは君だね💓"; 
-            }
-            else if (finalIQ === 130) { 
-                iqComm.innerText = "天才！👀\n全問正解おめでとう！\nじっくり考えて確実に正解する、\n高い論理思考の持ち主だね！"; 
-            }
-            else if (finalIQ >= 100) { 
-                iqComm.innerText = "優秀！💪\nひらめき力が鋭いね！\n自信を持っていいよ✨"; 
-            }
-            else { 
-                iqComm.innerText = "伸びしろたっぷり！🌱\n今日は脳がお疲れかも？\nゆっくり休んでまた挑戦してね！"; 
-            }
+            if (finalIQ === 140) { iqComm.innerText = "超天才！✨\n全問正解＆神速の判断力！\n現代のアインシュタインは君だね💓"; }
+            else if (finalIQ === 130) { iqComm.innerText = "天才！👀\n全問正解おめでとう！\nじっくり考えて確実に正解する、\n高い論理思考の持ち主だね！"; }
+            else if (finalIQ >= 100) { iqComm.innerText = "優秀！💪\nひらめき力が鋭いね！\n自信を持っていいよ✨"; }
+            else { iqComm.innerText = "伸びしろたっぷり！🌱\n今日は脳がお疲れかも？\nゆっくり休んでまた挑戦してね！"; }
         }
 
         showQuestion();
