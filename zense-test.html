@@ -5,62 +5,59 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>👼 前世のあなたは何だった？ | ぽんっとラボ</title>
     <style>
-        body { font-family: 'ヒラギノ丸ゴ Pro','Arial Rounded MT Bold',sans-serif; background: #fffacd; text-align: center; margin: 0; padding: 20px; color: #333; }
-        .container { max-width: 480px; margin: 0 auto; background: white; padding: 25px; border-radius: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); perspective: 1000px; }
-        h1 { font-size: 22px; color: #ff69b4; margin-bottom: 20px; }
-        .progress { font-size: 14px; color: #999; margin-bottom: 15px; }
-        .question { font-size: 19px; font-weight: bold; margin-bottom: 25px; display: none; line-height: 1.6; }
+        /* 全体の基本設定 */
+        body { font-family: 'ヒラギノ丸ゴ Pro','Arial Rounded MT Bold',sans-serif; background: #fffacd; text-align: center; margin: 0; padding: 10px; color: #333; }
+        .container { max-width: 450px; margin: 0 auto; background: white; padding: 20px; border-radius: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); perspective: 1000px; }
+        
+        h1 { font-size: 20px; color: #ff69b4; margin: 10px 0; }
+        .progress { font-size: 13px; color: #999; margin-bottom: 10px; }
+        .question { font-size: 18px; font-weight: bold; margin-bottom: 20px; display: none; line-height: 1.5; }
 
-        /* ボタンを縦並びにする設定 */
-        .btn-container { display: flex; flex-direction: column; gap: 12px; }
+        /* ボタンのスタイル */
+        .btn-container { display: flex; flex-direction: column; gap: 10px; }
         .btn { 
-            display: block; 
-            width: 100%; 
-            padding: 18px 10px; 
-            border-radius: 50px; 
-            border: none; 
-            background: #d8bfe6; 
-            font-size: 16px; 
-            font-weight: bold; 
-            cursor: pointer; 
-            transition: 0.2s; 
-            color: #333; 
-            box-shadow: 0 4px 0 #c2a6d1;
-            -webkit-tap-highlight-color: transparent;
+            display: block; width: 100%; padding: 15px 10px; border-radius: 50px; border: none; 
+            background: #d8bfe6; font-size: 15px; font-weight: bold; cursor: pointer; color: #333; 
+            box-shadow: 0 4px 0 #c2a6d1; -webkit-tap-highlight-color: transparent;
         }
-        .btn:active { transform: translateY(3px); box-shadow: none; }
+        .btn:active { transform: translateY(2px); box-shadow: none; }
 
-        /* くるくるアニメーション */
-        @keyframes flipVertical {
-            0% { transform: rotateY(0deg) scale(0.3); opacity: 0; }
-            50% { transform: rotateY(1800deg) scale(1.1); opacity: 0.8; }
-            100% { transform: rotateY(3600deg) scale(1); opacity: 1; }
-        }
+        /* --- 診断結果・スクショ用最適化 --- */
+        #result { display: none; padding-top: 5px; }
+        
+        /* カード画像のサイズをスマホ1画面に収まるよう制限 */
         .card-animation {
             display: block;
-            margin: 0 auto 20px;
-            max-width: 100%;
+            margin: 0 auto 10px;
+            width: auto;
+            max-width: 85%; /* 横幅を少し抑える */
+            max-height: 55vh; /* スマホ画面の高さ55%以内に抑える */
             height: auto;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
             transform-style: preserve-3d;
             animation: flipVertical 2.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
         }
 
-        #loading-text { font-size: 20px; color: #ff69b4; font-weight: bold; margin: 40px 0; display: none; }
-        #result { display: none; }
-        .result-title { font-size: 24px; color: #ff69b4; margin: 20px 0; font-weight: bold; }
-        .result-desc { font-size: 16px; line-height: 1.6; margin-bottom: 20px; text-align: center; }
-        .home-btn { background: #ffb6c1; text-decoration: none; color: white; display: inline-block; padding: 15px 30px; border-radius: 50px; margin-top: 20px; font-weight: bold; }
+        @keyframes flipVertical {
+            0% { transform: rotateY(0deg) scale(0.3); opacity: 0; }
+            50% { transform: rotateY(1800deg) scale(1.05); opacity: 0.8; }
+            100% { transform: rotateY(3600deg) scale(1); opacity: 1; }
+        }
+
+        .result-title { font-size: 18px; color: #ff69b4; margin: 10px 0 5px; font-weight: bold; }
+        .result-desc { font-size: 14px; line-height: 1.4; margin: 0 auto 15px; max-width: 90%; color: #555; }
+        
+        #loading-text { font-size: 18px; color: #ff69b4; font-weight: bold; margin: 40px 0; display: none; }
+        .home-btn { background: #ffb6c1; text-decoration: none; color: white; display: inline-block; padding: 12px 25px; border-radius: 50px; font-weight: bold; font-size: 14px; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>👼 前世診断</h1>
+        <h1 id="main-title">👼 前世診断</h1>
 
         <div id="quiz-area">
-            <div id="q1" class="question" style="display: block;">
-                <p class="progress">1 / 10</p><p>朝起きて一番に食べたいものは？</p>
+            <div id="q1" class="question" style="display: block;"><p class="progress">1 / 10</p><p>朝起きて一番に食べたいものは？</p>
                 <div class="btn-container" id="ans1">
                     <button class="btn" onclick="next(1, 'A')">豪華なフルーツ盛り合わせ</button>
                     <button class="btn" onclick="next(1, 'B')">温かいスープとパン</button>
@@ -144,22 +141,23 @@
         </div>
 
         <div id="result">
-            <p>あなたの前世は...</p>
+            <p style="margin-bottom: 5px; font-size: 14px;">あなたの前世は...</p>
             <div id="result-text" class="result-title"></div>
             <div id="result-desc" class="result-desc"></div>
-            <a href="index.html" class="home-btn">トップに戻る</a>
+            <a href="index.html" class="home-btn">もう一度診断する</a>
         </div>
     </div>
 
     <script>
         let resultCounts = { A: 0, B: 0, C: 0, D: 0 };
 
-        // ページ読み込み時にボタンをシャッフルするおまじない
         window.onload = function() {
             for (let i = 1; i <= 10; i++) {
                 let container = document.getElementById('ans' + i);
-                for (let j = container.children.length; j >= 0; j--) {
-                    container.appendChild(container.children[Math.random() * j | 0]);
+                if(container) {
+                    for (let j = container.children.length; j >= 0; j--) {
+                        container.appendChild(container.children[Math.random() * j | 0]);
+                    }
                 }
             }
         };
@@ -183,9 +181,11 @@
         function showResult() {
             document.getElementById('quiz-area').style.display = 'none';
             document.getElementById('result').style.display = 'block';
+            document.getElementById('main-title').style.display = 'none'; // タイトルを隠してスペース確保
             const resTitle = document.getElementById('result-text');
             const resDesc = document.getElementById('result-desc');
             let resImg = document.getElementById('result-image');
+            
             if (!resImg) {
                 resImg = document.createElement('img');
                 resImg.id = 'result-image';
@@ -197,19 +197,19 @@
 
             if (maxChoice === 'A') {
                 resTitle.innerText = "伝説の王国の「若き王・女王」";
-                resDesc.innerText = "あなたは前世、多くの民に慕われる誇り高いリーダーでした。強い信念を持ち、自分の力で運命を切り拓いてきたあなた。今でもどこかオーラがあるのは、王家の魂が眠っているからかも！";
+                resDesc.innerText = "あなたは誇り高いリーダーでした。強い信念で運命を切り拓いてきた証です！";
                 resImg.src = "kingqueen.png";
             } else if (maxChoice === 'B') {
-                resTitle.innerText = "星の動きを読んだ「天才天文学者」";
-                resDesc.innerText = "あなたは前世、高い塔の上から宇宙の真理を探求していました。静寂を愛し、知的な好奇心に溢れていたあなた。今の冷静な判断力や、不思議な直感は、星々から教わった知識の名残です。";
+                resTitle.innerText = "星を読んだ「天才天文学者」";
+                resDesc.innerText = "あなたは宇宙の真理を探求していました。今の直感は星々からの贈り物です。";
                 resImg.src = "tenmon.png";
             } else if (maxChoice === 'C') {
                 resTitle.innerText = "風を味方にした「伝説の航海士」";
-                resDesc.innerText = "あなたは前世、自由だけを求めて広い世界を駆け巡る冒険家でした。どんな嵐も恐れず、常に新しい景色を探していたあなた。今のフットワークの軽さは、世界中の海を見てきた証拠です。";
+                resDesc.innerText = "あなたは自由を求め世界を駆け巡る冒険家でした。その勇気は今も健在です！";
                 resImg.src = "koukaishi.png";
             } else {
-                resTitle.innerText = "花と歌に愛された「宮廷の踊り子」";
-                resDesc.innerText = "あなたは前世、その存在だけで周りを幸せにする不思議な魅力を持った表現者でした。人々に癒やしと笑顔を届けていたあなた。今のあなたの愛されキャラは、前世からの贈り物かもしれません！";
+                resTitle.innerText = "花に愛された「宮廷の踊り子」";
+                resDesc.innerText = "あなたは周りを幸せにする魅力的な表現者でした。今の愛され力はその名残かも！";
                 resImg.src = "odoriko.png";
             }
         }
