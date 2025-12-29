@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>✋ 🔎手相で見る2026年の運勢 | ぽんっとラボ</title>
+<style>
+/* 闇かわ・ミステリアスな配色 */
+body { font-family:'ヒラギノ丸ゴ Pro','sans-serif'; background:#1a0b2e; color:#fff; text-align:center; margin:0; padding:20px; }
+.wrapper { max-width:420px; margin:0 auto; }
+
+h1 { font-size:18px; color:#e1bee7; margin-bottom:20px; }
+
+/* 📸 カメラ・スキャンエリア */
+#upload-area { background:#2e1a4a; padding:30px 20px; border-radius:20px; border:2px dashed #ba68c8; }
+#preview-container { position:relative; display:none; width:100%; max-width:280px; margin:20px auto; overflow:hidden; border-radius:15px; }
+#user-photo { width:100%; height:auto; display:block; }
+
+/* 🌟 スキャンアニメーション */
+.scan-line {
+    position: absolute; top:0; left:0; width:100%; height:4px;
+    background:rgba(0, 255, 255, 0.7); box-shadow:0 0 15px #0ff;
+    animation: scanMove 2s linear infinite; display:none;
+}
+@keyframes scanMove { 0% { top:0%; } 100% { top:100%; } }
+
+.btn-upload { background:#ba68c8; color:#fff; padding:15px 30px; border-radius:30px; font-weight:bold; cursor:pointer; display:inline-block; margin-top:10px; }
+input[type="file"] { display:none; }
+
+/* ローディング */
+#status-msg { margin-top:15px; font-size:14px; color:#e1bee7; min-height:1.5em; }
+
+/* 結果エリア（前回同様スクショ最適化） */
+#result-area { display:none; background:#fff; color:#333; padding:15px; border-radius:20px; }
+.result-img { width:100%; max-width:260px; border-radius:15px; margin-bottom:10px; }
+.rare-tag { background:#ff1493; color:#fff; padding:2px 10px; border-radius:10px; font-size:12px; display:inline-block; margin-bottom:5px; animation: flash 1s infinite; }
+@keyframes flash { 0%,100% {opacity:1;} 50% {opacity:0.5;} }
+</style>
+</head>
+<body>
+<div class="wrapper">
+    <h1>🔎 手相で見る2026年の運勢 ✋</h1>
+
+    <div id="upload-area">
+        <p style="font-size:14px;">あなたの「左手」をスキャンします</p>
+        <label class="btn-upload">
+            📸 手のひらを撮影する
+            <input type="file" accept="image/*" onchange="handleFile(event)">
+        </label>
+        
+        <div id="preview-container">
+            <img id="user-photo" src="">
+            <div id="scan-line" class="scan-line"></div>
+        </div>
+        <div id="status-msg"></div>
+    </div>
+
+    <div id="result-area">
+        <div id="rare-banner"></div>
+        <img id="result-image" class="result-img" src="">
+        <h2 id="result-name" style="color:#ff1493; font-size:20px; margin:10px 0;"></h2>
+        <p id="result-desc" style="font-size:14px; text-align:left; background:#f5f0ff; padding:10px; border-radius:10px;"></p>
+        
+        <div id="ad-space" style="margin-top:15px;"></div>
+        
+        <button onclick="location.reload()" style="margin-top:15px; background:none; border:none; color:#ba68c8; text-decoration:underline; font-weight:bold;">🔄 もう一度占う</button>
+    </div>
+</div>
+
+<script>
+const handsData = [
+    { id: "hao", name: "最強の覇王線", desc: "2026年は仕事・金運・成功すべてを手に入れる無双の年！迷わず突き進んで。" },
+    { id: "nari", name: "成り上がり線", desc: "努力が大爆発！どん底からの一発逆転が始まる、最高のミラクルイヤーになります。" },
+    { id: "shin", name: "神秘十字線", desc: "直感が神がかる年。不思議とピンチを回避して、幸運の波に乗れちゃいます。" },
+    { id: "taiyo", name: "太陽線（キラキラ運）", desc: "あなたが世界の主役！周りから愛され、光り輝く最高の1年になるでしょう。" },
+    { id: "fish", name: "フィッシュ（魚紋）", desc: "予期せぬ幸運が跳ね込んでくる！棚ぼた的なラッキーが止まらない1年です。" }
+    // あと5つ追加して10個にする予定！
+];
+
+function handleFile(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    // プレビュー表示
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        document.getElementById('user-photo').src = e.target.result;
+        document.getElementById('preview-container').style.display = 'block';
+        startScanning();
+    };
+    reader.readAsDataURL(file);
+}
+
+function startScanning() {
+    const status = document.getElementById('status-msg');
+    const scanLine = document.getElementById('scan-line');
+    
+    scanLine.style.display = 'block';
+    status.innerText = "運命の線を解析中...";
+
+    setTimeout(() => { status.innerText = "2026年のバイオリズムを計算中..."; }, 1500);
+    setTimeout(() => { status.innerText = "深層心理とリンク完了。"; }, 3000);
+    
+    setTimeout(() => {
+        showResult();
+    }, 4500);
+}
+
+function showResult() {
+    document.getElementById('upload-area').style.display = 'none';
+    document.getElementById('result-area').style.display = 'block';
+    
+    // 🎲 レア判定（15%の確率で重複レアにする）
+    const isRare = Math.random() < 0.15;
+    const res = handsData[Math.floor(Math.random() * handsData.length)];
+    
+    if(isRare) {
+        document.getElementById('rare-banner').innerHTML = '<span class="rare-tag">⭐ 超激レア・運気重複モード ⭐</span>';
+        document.getElementById('result-name').innerText = "【神域】" + res.name + " × 龍神の加護";
+        document.getElementById('result-desc').innerText = "おめでとう！複数の幸運線が重なり合っています。2026年はもはや敵なし。望むもの全てが手に入る異次元の運気です！";
+    } else {
+        document.getElementById('result-name').innerText = res.name;
+        document.getElementById('result-desc').innerText = res.desc;
+    }
+    
+    // ここにイラスト画像を設定（例：hao.pngなど）
+    // document.getElementById('result-image').src = res.id + ".png";
+}
+</script>
+</body>
+</html>
