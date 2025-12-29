@@ -5,16 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>✋ 🔎手相で見る2026年の運勢 | ぽんっとラボ</title>
 <style>
+/* スタイルは前回のデザインを継承 */
 body { font-family:'ヒラギノ丸ゴ Pro','sans-serif'; background:#1a0b2e; color:#fff; text-align:center; margin:0; padding:15px; }
 .wrapper { max-width:420px; margin:0 auto; }
 h1 { font-size:18px; color:#e1bee7; margin-bottom:15px; }
 
-/* 📸 撮影エリア */
 #upload-area { background:#2e1a4a; padding:20px; border-radius:20px; border:2px dashed #ba68c8; }
 #preview-container { position:relative; display:none; width:100%; max-width:280px; margin:15px auto; overflow:hidden; border-radius:15px; }
 #user-photo { width:100%; height:auto; display:block; }
 
-/* 🌟 スキャンアニメーション（30%低速化：3.3秒周期） */
+/* 低速スキャン */
 .scan-line {
     position: absolute; top:0; left:0; width:100%; height:4px;
     background:rgba(0, 255, 255, 0.7); box-shadow:0 0 15px #0ff;
@@ -26,74 +26,80 @@ h1 { font-size:18px; color:#e1bee7; margin-bottom:15px; }
 input[type="file"] { display:none; }
 #status-msg { margin-top:10px; font-size:13px; color:#e1bee7; min-height:1.5em; font-weight:bold; }
 
-/* 🎁 結果エリア（重ね合わせ演出） */
 #result-area { display:none; background:#fff; color:#333; padding:15px; border-radius:20px; }
-.result-header { font-size: 11px; color: #9575cd; margin-bottom: 5px; }
-
-/* 手のひら写真と手相線を重ねるコンテナ */
-.hand-overlay-container { position: relative; width: 100%; max-width: 260px; margin: 0 auto 10px; border-radius: 15px; overflow: hidden; }
-#result-hand-bg { width: 100%; display: block; filter: brightness(0.8); }
-#teso-line-img { 
-    position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-    object-fit: contain; opacity: 0; transition: opacity 2s ease-in; 
-}
+.hand-overlay-container { position: relative; width: 100%; max-width: 260px; margin: 0 auto 10px; border-radius: 15px; overflow: hidden; background: #000; }
+#result-hand-bg { width: 100%; display: block; filter: brightness(0.7); }
+#teso-line-img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; opacity: 0; transition: opacity 2s ease-in; }
 
 .result-name { font-size: 18px; font-weight: bold; color: #ff1493; margin: 8px 0; }
 .result-desc { font-size: 13px; line-height: 1.5; color: #444; background: #f5f0ff; padding: 12px; border-radius: 12px; text-align: left; }
-.rare-tag { background:#ff1493; color:#fff; padding:3px 12px; border-radius:12px; font-size:11px; font-weight:bold; display:inline-block; margin-bottom:8px; animation: flash 0.8s infinite; }
-@keyframes flash { 0%,100% {opacity:1;} 50% {opacity:0.6;} }
 
-/* SNS & 広告 */
-.share-container { margin: 15px 0; border-top: 1px solid #eee; padding-top:10px; }
-.share-buttons { display: flex; justify-content: center; gap: 5px; }
-.btn-share { flex: 1; padding: 10px 2px; border-radius: 10px; font-weight: bold; text-decoration: none; color: white; font-size: 11px; display: flex; align-items: center; justify-content: center; gap: 3px; }
-.btn-x { background-color: #000; }
-.btn-line { background-color: #06C755; }
-.btn-insta { background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); }
-.ad-box { background:#fff9ff; border:1px solid #e1bee7; border-radius:12px; padding:10px; margin-top:10px; }
-.ad-box a { text-decoration:none; color:#ba68c8; font-weight:bold; font-size:11px; }
+/* アフィリエイト枠 */
+.ad-box { background:#fffcf5; border:1px solid #ffd700; border-radius:12px; padding:10px; margin-top:15px; }
+.ad-box a { text-decoration:none; color:#d2691e; font-weight:bold; font-size:11px; display: block; line-height: 1.2; }
+.ad-box img { width: 90px; height: 90px; border-radius: 8px; margin-bottom: 5px; }
+
+.share-buttons { display: flex; justify-content: center; gap: 5px; margin-top: 15px; }
+.btn-share { flex: 1; padding: 10px; border-radius: 10px; color: white; font-size: 11px; text-decoration: none; font-weight: bold; }
+.btn-x { background:#000; } .btn-line { background:#06C755; }
 .btn-retry { margin-top:10px; color:#9575cd; cursor:pointer; background:none; border:none; font-size:12px; text-decoration:underline; }
 </style>
 </head>
 <body>
 <div class="wrapper">
     <h1>🔎 手相で見る2026年の運勢 ✋</h1>
-
     <div id="upload-area">
-        <p style="font-size:14px; margin-bottom:5px;">あなたの「左手」をスキャンします</p>
-        <label class="btn-upload">📸 撮影する<input type="file" accept="image/*" onchange="handleFile(event)"></label>
+        <label class="btn-upload">📸 手を撮影する<input type="file" accept="image/*" onchange="handleFile(event)"></label>
         <div id="preview-container"><img id="user-photo" src=""><div id="scan-line" class="scan-line"></div></div>
         <div id="status-msg"></div>
     </div>
-
     <div id="result-area">
-        <div class="result-header">2026年 あなたの手相鑑定書</div>
-        <div class="hand-overlay-container">
-            <img id="result-hand-bg" src=""> <img id="teso-line-img" src="">   </div>
-        <div id="rare-banner"></div>
+        <div class="hand-overlay-container"><img id="result-hand-bg" src=""><img id="teso-line-img" src=""></div>
         <div id="result-name" class="result-name"></div>
         <div id="result-desc" class="result-desc"></div>
         <div id="ad-space" class="ad-box"></div>
-        <div class="share-container">
-            <div class="share-buttons">
-                <a id="share-x" href="" target="_blank" class="btn-share btn-x">𝕏 ポスト</a>
-                <a id="share-line" href="" target="_blank" class="btn-share btn-line">LINE</a>
-                <a href="https://www.instagram.com/" target="_blank" class="btn-share btn-insta">Instagram</a>
-            </div>
+        <div class="share-buttons">
+            <a id="share-x" href="" target="_blank" class="btn-share btn-x">𝕏 ポスト</a>
+            <a id="share-line" href="" target="_blank" class="btn-share btn-line">LINE</a>
         </div>
         <button onclick="location.reload()" class="btn-retry">🔄 もう一度占う</button>
     </div>
 </div>
 
 <script>
+// 🛒 カテゴリ別アフィリエイト・プール
+const adPool = {
+    money: [
+        '<a href="//af.moshimo.com/af/c/click?a_id=5322069&p_id=54&pc_id=54&pl_id=616&url=https%3A%2F%2Fitem.rakuten.co.jp%2Fnep-mens%2Ftaka-100154%2F" rel="nofollow"><img src="//thumbnail.image.rakuten.co.jp/@0_mall/nep-mens/cabinet/takasago/100154w.jpg?_ex=128x128"><br>金運招福 パイソン長財布</a>',
+        '<a href="//af.moshimo.com/af/c/click?a_id=5322069&p_id=54&pc_id=54&pl_id=616&url=https%3A%2F%2Fitem.rakuten.co.jp%2Fsaifuland%2Fbysa011025%2F" rel="nofollow"><img src="//thumbnail.image.rakuten.co.jp/@0_mall/saifuland/cabinet/bysa011/bysa011025.jpg?_ex=128x128"><br>3Dレーザー彫 神龍 水晶玉</a>',
+        '<a href="//af.moshimo.com/af/c/click?a_id=5322069&p_id=54&pc_id=54&pl_id=616&url=https%3A%2F%2Fitem.rakuten.co.jp%2Fparkerofficial%2F10000241%2F" rel="nofollow"><img src="//thumbnail.image.rakuten.co.jp/@0_mall/parkerofficial/cabinet/07474156/11881629/imgrc0187445337.jpg?_ex=128x128"><br>成功者の筆記具 PARKER ソネット</a>'
+    ],
+    love: [
+        '<a href="//af.moshimo.com/af/c/click?a_id=5322069&p_id=54&pc_id=54&pl_id=616&url=https%3A%2F%2Fitem.rakuten.co.jp%2Fapeacefulworld%2Fapw-003%2F" rel="nofollow"><img src="//thumbnail.image.rakuten.co.jp/@0_mall/apeacefulworld/cabinet/apw-003/apw-003-01.jpg?_ex=128x128"><br>LOVE フレグランスミスト</a>',
+        '<a href="//af.moshimo.com/af/c/click?a_id=5322069&p_id=54&pc_id=54&pl_id=616&url=https%3A%2F%2Fitem.rakuten.co.jp%2Ftrendicon%2F026iuhat%2F" rel="nofollow"><img src="//thumbnail.image.rakuten.co.jp/@0_mall/trendicon/cabinet/03717280/03719930/03736352/026iuhat-01.jpg?_ex=128x128"><br>恋が叶う スワロフスキーネックレス</a>',
+        '<a href="//af.moshimo.com/af/c/click?a_id=5322069&p_id=54&pc_id=54&pl_id=616&url=https%3A%2F%2Fitem.rakuten.co.jp%2Fizumokantenkobo%2Fizumokantenkobo-0047%2F" rel="nofollow"><img src="//thumbnail.image.rakuten.co.jp/@0_mall/izumokantenkobo/cabinet/srk20.jpg?_ex=128x128"><br>いづも寒天工房 紅白「縁結びかん」</a>'
+    ],
+    reset: [
+        '<a href="//af.moshimo.com/af/c/click?a_id=5322069&p_id=54&pc_id=54&pl_id=616&url=https%3A%2F%2Fitem.rakuten.co.jp%2Flucas%2Flucas-pocket%2F" rel="nofollow"><img src="//thumbnail.image.rakuten.co.jp/@0_mall/lucas/cabinet/lucas2/pocket4_top.jpg?_ex=128x128"><br>ホワイトセージ 浄化スプレー</a>',
+        '<a href="//af.moshimo.com/af/c/click?a_id=5322069&p_id=54&pc_id=54&pl_id=616&url=https%3A%2F%2Fitem.rakuten.co.jp%2Fnplanning%2Fnp-cl-2026-ct-588%2F" rel="nofollow"><img src="//thumbnail.image.rakuten.co.jp/@0_mall/nplanning/cabinet/11177680/11177721/imgrc0136083393.jpg?_ex=128x128"><br>2026年 吉日カレンダー【天赦日入り】</a>',
+        '<a href="//af.moshimo.com/af/c/click?a_id=5322069&p_id=54&pc_id=54&pl_id=616&url=https%3A%2F%2Fitem.rakuten.co.jp%2Ffreelife%2Fzk-snb02-all%2F" rel="nofollow"><img src="//thumbnail.image.rakuten.co.jp/@0_mall/freelife/cabinet/zk-snb02/s-box_72offwh2.jpg?_ex=128x128"><br>運気を整理！折りたたみ収納ボックス</a>'
+    ],
+    health: [
+        '<a href="//af.moshimo.com/af/c/click?a_id=5322069&p_id=54&pc_id=54&pl_id=616&url=https%3A%2F%2Fitem.rakuten.co.jp%2Fnissoplus%2Fnp-fx21wt-2s%2F" rel="nofollow"><img src="//thumbnail.image.rakuten.co.jp/@0_mall/nissoplus/cabinet/item/2s2/main/230713_2s01.jpg?_ex=128x128"><br>超軽量 筋膜リリースガン</a>',
+        '<a href="//af.moshimo.com/af/c/click?a_id=5322069&p_id=54&pc_id=54&pl_id=616&url=https%3A%2F%2Fitem.rakuten.co.jp%2Ff082350-tsukubamirai%2Fag196-nt%2F" rel="nofollow"><img src="//thumbnail.image.rakuten.co.jp/@0_mall/f082350-tsukubamirai/cabinet/08025774/08040433/181/ag196-nt-r-1-1.jpg?_ex=128x128"><br>EMS スカルプヘッドスパ</a>'
+    ]
+};
+
 const handsData = [
-    { id: "hao", name: "最強の覇王線", desc: "2026年は仕事・金運・成功すべてを手に入れる無双の年！", ad: '<a href="//af.moshimo.com/af/c/click?a_id=5322069&p_id=54&pc_id=54&pl_id=616&url=https%3A%2F%2Fitem.rakuten.co.jp%2Fishino-kura%2Fcharm-saikyo-kaiun%2F&m=http%3A%2F%2Fm.rakuten.co.jp%2Fishino-kura%2Fi%2F10040990%2F" rel="nofollow"><img src="//thumbnail.image.rakuten.co.jp/@0_mall/ishino-kura/cabinet/01567012/04218277/imgrc0093453173.jpg?_ex=100x100"><br>金運のお守り</a>' },
-    { id: "nari", name: "成り上がり線", desc: "努力が大爆発！どん底からの一発逆転が始まる、最高のミラクルイヤー。", ad: '<a href="//af.moshimo.com/af/c/click?a_id=5322069&p_id=54&pc_id=54&pl_id=616&url=https%3A%2F%2Fitem.rakuten.co.jp%2Fkirakiralumiere%2Fornament-6%2F&m=http%3A%2F%2Fm.rakuten.co.jp%2Fkirakiralumiere%2Fi%2F10004360%2F" rel="nofollow"><img src="//thumbnail.image.rakuten.co.jp/@0_mall/kirakiralumiere/cabinet/3/ornament-6ss.jpg?_ex=100x100"><br>黄金のリンゴ</a>' }
-    // ※他のデータも同様に追加...
+    { id: "hao", name: "最強の覇王線", category: "money", desc: "仕事・金運すべてを掴む年。最強の相応しいアイテムを。" },
+    { id: "mote", name: "モテ期到来線", category: "love", desc: "愛が溢れる1年。素敵なご縁を逃さない準備を。" },
+    { id: "life", name: "二重生命線", category: "health", desc: "活力が湧く年！体のケアがさらなる福を呼びます。" },
+    { id: "shin", name: "神秘十字線", category: "reset", desc: "直感が冴える時。空間を浄化して運気を安定させて。" },
+    { id: "solo", name: "ソロモンの環", category: "reset", desc: "知恵が冴える年。吉日を知ることで好機を逃しません。" }
+    // ... 必要に応じて増やしてね
 ];
 
 let userImgData = "";
-
 function handleFile(event) {
     const file = event.target.files[0];
     if (!file) return;
@@ -111,34 +117,35 @@ function startScanning() {
     const status = document.getElementById('status-msg');
     const scanLine = document.getElementById('scan-line');
     scanLine.style.display = 'block';
-    
-    // ロード時間を合計約7秒に延長
-    status.innerText = "手のひらの紋様をスキャン中...";
-    setTimeout(() => { status.innerText = "2026年の運命線を抽出しています..."; }, 2000);
-    setTimeout(() => { status.innerText = "銀河系バイオリズムと照合中..."; }, 4000);
-    setTimeout(() => { status.innerText = "鑑定完了！本当の運命を導き出しました。"; }, 6000);
-    setTimeout(() => { showResult(); }, 7500);
+    status.innerText = "手のひらをスキャン中...";
+    setTimeout(() => { status.innerText = "2026年の運命線を抽出中..."; }, 3000);
+    setTimeout(() => { status.innerText = "バイオリズム照合完了。"; }, 6000);
+    setTimeout(() => { showResult(); }, 8000);
 }
 
 function showResult() {
     document.getElementById('upload-area').style.display = 'none';
     document.getElementById('result-area').style.display = 'block';
-    
     const res = handsData[Math.floor(Math.random() * handsData.length)];
     
-    // 写真を背景にセット
+    // 画像合成
     document.getElementById('result-hand-bg').src = userImgData;
-    
-    // 手相の線を重ねる（res.id + "_line.png" というファイル名でトモちゃんが透過画像を作ればOK！）
     const lineImg = document.getElementById('teso-line-img');
     lineImg.src = res.id + "_line.png"; 
-    setTimeout(() => { lineImg.style.opacity = "1"; }, 500); // じわっと表示
+    setTimeout(() => { lineImg.style.opacity = "1"; }, 500);
 
+    // テキスト反映
     document.getElementById('result-name').innerText = res.name;
     document.getElementById('result-desc').innerText = res.desc;
-    document.getElementById('ad-space').innerHTML = res.ad;
 
-    // シェア設定
+    // 🎯 カテゴリからランダムに1つ広告を出す
+    const ads = adPool[res.category];
+    document.getElementById('ad-space').innerHTML = `
+        <p style="font-size:10px; font-weight:bold; color:#ba68c8; margin-bottom:5px;">✨ あなたへの開運アドバイス ✨</p>
+        ${ads[Math.floor(Math.random() * ads.length)]}
+    `;
+
+    // SNSシェア
     const shareText = `私の2026年の手相は…【${res.name}】！✋✨\n#手相診断 #2026年の運勢 #ぽんっとラボ\n`;
     document.getElementById("share-x").href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(window.location.href)}`;
 }
