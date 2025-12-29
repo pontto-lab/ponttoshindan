@@ -6,57 +6,94 @@
     <title>👼 前世のあなたは何だった？ | ぽんっとラボ</title>
     <style>
         body { font-family: 'ヒラギノ丸ゴ Pro','Arial Rounded MT Bold',sans-serif; background: #fffacd; text-align: center; margin: 0; padding: 20px; color: #333; }
-        .container { max-width: 480px; margin: 0 auto; background: white; padding: 20px; border-radius: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .container { max-width: 480px; margin: 0 auto; background: white; padding: 25px; border-radius: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         h1 { font-size: 22px; color: #ff69b4; margin-bottom: 20px; }
-        .question { font-size: 18px; font-weight: bold; margin-bottom: 20px; display: none; }
-        /* 4択ボタンのスタイル */
-        .btn { display: block; width: 100%; margin: 10px 0; padding: 15px; border-radius: 50px; border: none; background: #d8bfe6; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .progress { font-size: 14px; color: #999; margin-bottom: 10px; }
+        .question { font-size: 18px; font-weight: bold; margin-bottom: 20px; display: none; line-height: 1.5; }
+        .btn { display: block; width: 100%; margin: 10px 0; padding: 15px; border-radius: 50px; border: none; background: #d8bfe6; font-size: 15px; font-weight: bold; cursor: pointer; transition: 0.2s; color: #333; }
         .btn:hover { transform: scale(1.02); background: #cdafe0; }
         #result { display: none; }
         .result-title { font-size: 24px; color: #ff69b4; margin: 20px 0; font-weight: bold; }
-        .result-desc { font-size: 16px; line-height: 1.6; margin-bottom: 20px; }
+        .result-desc { font-size: 16px; line-height: 1.6; margin-bottom: 20px; text-align: left; }
         .home-btn { background: #ffb6c1; text-decoration: none; color: white; display: inline-block; padding: 15px 30px; border-radius: 50px; margin-top: 20px; font-weight: bold; }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>👼 前世診断</h1>
-        
-        <div id="q1" class="question" style="display: block;">
-            <p>Q1. 目の前に不思議な扉が。何色？</p>
-            <button class="btn" onclick="next(1, 'A')">キラキラ輝く黄金色</button>
-            <button class="btn" onclick="next(1, 'B')">深い森のような緑色</button>
-            <button class="btn" onclick="next(1, 'C')">吸い込まれそうな青色</button>
-            <button class="btn" onclick="next(1, 'D')">可愛らしいパステルピンク</button>
-        </div>
-
-        <div id="q2" class="question">
-            <p>Q2. 昔からなぜか「落ち着く」場所は？</p>
-            <button class="btn" onclick="next(2, 'A')">にぎやかなお祭り会場</button>
-            <button class="btn" onclick="next(2, 'B')">静かな図書館や教会</button>
-            <button class="btn" onclick="next(2, 'C')">波の音が聞こえる海岸</button>
-            <button class="btn" onclick="next(2, 'D')">お花がいっぱいの庭園</button>
-        </div>
-
-        <div id="q3" class="question">
-            <p>Q3. 直感で選んで！今のあなたの武器は？</p>
-            <button class="btn" onclick="next(3, 'A')">みんなを導くリーダーシップ</button>
-            <button class="btn" onclick="next(3, 'B')">誰にも負けない集中力</button>
-            <button class="btn" onclick="next(3, 'C')">自由を愛するフットワーク</button>
-            <button class="btn" onclick="next(3, 'D')">人を笑顔にする不思議な魅力</button>
+        <div id="quiz-area">
+            <div id="q1" class="question" style="display: block;"><p class="progress">1 / 10</p><p>朝起きて一番に食べたいものは？</p>
+                <button class="btn" onclick="next(1, 'A')">豪華なフルーツ盛り合わせ</button>
+                <button class="btn" onclick="next(1, 'B')">温かいスープとパン</button>
+                <button class="btn" onclick="next(1, 'C')">珍しい外国のお菓子</button>
+                <button class="btn" onclick="next(1, 'D')">甘いハチミツたっぷりのトースト</button>
+            </div>
+            <div id="q2" class="question"><p class="progress">2 / 10</p><p>ふと空を見上げると、そこには何が見える？</p>
+                <button class="btn" onclick="next(2, 'A')">眩しいほどの太陽</button>
+                <button class="btn" onclick="next(2, 'B')">静かに光る満月</button>
+                <button class="btn" onclick="next(2, 'C')">流れ星の群れ</button>
+                <button class="btn" onclick="next(2, 'D')">七色の大きな虹</button>
+            </div>
+            <div id="q3" class="question"><p class="progress">3 / 10</p><p>道端にキラキラ光る石が。どうする？</p>
+                <button class="btn" onclick="next(3, 'A')">宝物として大切に持ち帰る</button>
+                <button class="btn" onclick="next(3, 'B')">じっくり観察して理由を考える</button>
+                <button class="btn" onclick="next(3, 'C')">遠くまで投げて飛ばしてみる</button>
+                <button class="btn" onclick="next(3, 'D')">誰かにプレゼントしようと思う</button>
+            </div>
+            <div id="q4" class="question"><p class="progress">4 / 10</p><p>あなたの性格をひとことで言うと？</p>
+                <button class="btn" onclick="next(4, 'A')">自分に自信がある</button>
+                <button class="btn" onclick="next(4, 'B')">一人の時間が好き</button>
+                <button class="btn" onclick="next(4, 'C')">好奇心が止まらない</button>
+                <button class="btn" onclick="next(4, 'D')">みんなを笑顔にしたい</button>
+            </div>
+            <div id="q5" class="question"><p class="progress">5 / 10</p><p>夢の中で、あなたは広い庭にいます。何が咲いてる？</p>
+                <button class="btn" onclick="next(5, 'A')">真っ赤なバラ</button>
+                <button class="btn" onclick="next(5, 'B')">知的な白いユリ</button>
+                <button class="btn" onclick="next(5, 'C')">自由な野草や多肉植物</button>
+                <button class="btn" onclick="next(5, 'D')">可愛いパステルカラーの小花</button>
+            </div>
+            <div id="q6" class="question"><p class="progress">6 / 10</p><p>もし魔法が使えるなら、どんな魔法がいい？</p>
+                <button class="btn" onclick="next(6, 'A')">人を動かすカリスマ魔法</button>
+                <button class="btn" onclick="next(6, 'B')">過去や未来が見える魔法</button>
+                <button class="btn" onclick="next(6, 'C')">鳥のように空を飛ぶ魔法</button>
+                <button class="btn" onclick="next(6, 'D')">一瞬で場を明るくする魔法</button>
+            </div>
+            <div id="q7" class="question"><p class="progress">7 / 10</p><p>古いお城の図書室。どの本を手に取る？</p>
+                <button class="btn" onclick="next(7, 'A')">王家の歴史書</button>
+                <button class="btn" onclick="next(7, 'B')">難しい星占いの本</button>
+                <button class="btn" onclick="next(7, 'C')">未知の島への航海日誌</button>
+                <button class="btn" onclick="next(7, 'D')">美しい舞台の脚本</button>
+            </div>
+            <div id="q8" class="question"><p class="progress">8 / 10</p><p>あなたが好きな季節はどれ？</p>
+                <button class="btn" onclick="next(8, 'A')">生命力あふれる「夏」</button>
+                <button class="btn" onclick="next(8, 'B')">静かで落ち着く「冬」</button>
+                <button class="btn" onclick="next(8, 'C')">変化を感じる「秋」</button>
+                <button class="btn" onclick="next(8, 'D')">ウキウキする「春」</button>
+            </div>
+            <div id="q9" class="question"><p class="progress">9 / 10</p><p>ピンチの時、あなたはどう行動する？</p>
+                <button class="btn" onclick="next(9, 'A')">真っ先に立ち向かう</button>
+                <button class="btn" onclick="next(9, 'B')">冷静に作戦を練る</button>
+                <button class="btn" onclick="next(9, 'C')">とりあえず逃げて別の道を探す</button>
+                <button class="btn" onclick="next(9, 'D')">周りに助けを求めて乗り越える</button>
+            </div>
+            <div id="q10" class="question"><p class="progress">10 / 10</p><p>最後に、前世の自分に声をかけるなら？</p>
+                <button class="btn" onclick="next(10, 'A')">お疲れ様、立派だったよ</button>
+                <button class="btn" onclick="next(10, 'B')">その答え、見つかった？</button>
+                <button class="btn" onclick="next(10, 'C')">もっと自由に遊んでいいよ</button>
+                <button class="btn" onclick="next(10, 'D')">たくさんの人を幸せにしたね</button>
+            </div>
         </div>
 
         <div id="result">
             <p>あなたの前世は...</p>
             <div id="result-text" class="result-title"></div>
-            <p id="result-desc" class="result-desc"></p>
+            <div id="result-desc" class="result-desc"></div>
             <a href="index.html" class="home-btn">トップに戻る</a>
         </div>
     </div>
 
     <script>
         let resultCounts = { A: 0, B: 0, C: 0, D: 0 };
-        
         function next(qNum, choice) {
             resultCounts[choice]++;
             document.getElementById('q' + qNum).style.display = 'none';
@@ -67,27 +104,24 @@
                 showResult();
             }
         }
-
         function showResult() {
             document.getElementById('result').style.display = 'block';
             const resTitle = document.getElementById('result-text');
             const resDesc = document.getElementById('result-desc');
-
-            // 一番多かった選択肢で判定
             let maxChoice = Object.keys(resultCounts).reduce((a, b) => resultCounts[a] > resultCounts[b] ? a : b);
 
             if (maxChoice === 'A') {
                 resTitle.innerText = "伝説の王国の「若き王・女王」";
-                resDesc.innerText = "あなたは前世、多くの民に慕われる立派なリーダーでした。今の堂々とした雰囲気は、王家の血筋の名残かもしれません！";
+                resDesc.innerText = "あなたは前世、多くの民に慕われる誇り高いリーダーでした。強い信念を持ち、自分の力で運命を切り拓いてきたあなた。今でもどこかオーラがあるのは、王家の魂が眠っているからかも！";
             } else if (maxChoice === 'B') {
-                resTitle.innerText = "歴史を変えた「天才天文学者」";
-                resDesc.innerText = "あなたは前世、夜空を見上げて宇宙の真理を探求していました。分析が得意なのは、星のメッセージを読んでいたからかも。";
+                resTitle.innerText = "星の動きを読んだ「天才天文学者」";
+                resDesc.innerText = "あなたは前世、高い塔の上から宇宙の真理を探求していました。静寂を愛し、知的な好奇心に溢れていたあなた。今の冷静な判断力や、不思議な直感は、星々から教わった知識の名残です。";
             } else if (maxChoice === 'C') {
-                resTitle.innerText = "七つの海を旅した「伝説の航海士」";
-                resDesc.innerText = "あなたは前世、自由を求めて世界中の海を渡り歩いていました。冒険心が強いのは、まだ見ぬ景色を探している証拠です。";
+                resTitle.innerText = "風を味方にした「伝説の航海士」";
+                resDesc.innerText = "あなたは前世、自由だけを求めて広い世界を駆け巡る冒険家でした。どんな嵐も恐れず、常に新しい景色を探していたあなた。今のフットワークの軽さは、世界中の海を見てきた証拠です。";
             } else {
-                resTitle.innerText = "人々に愛された「宮廷の踊り子」";
-                resDesc.innerText = "あなたは前世、その美しさと表現力で国中の人々を虜にしていました。今のあなたの華やかさは、当時のステージの輝きです！";
+                resTitle.innerText = "花と歌に愛された「宮廷の踊り子」";
+                resDesc.innerText = "あなたは前世、その存在だけで周りを幸せにする不思議な魅力を持った表現者でした。人々に癒やしと笑顔を届けていたあなた。今のあなたの愛されキャラは、前世からの贈り物かもしれません！";
             }
         }
     </script>
