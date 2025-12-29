@@ -17,8 +17,39 @@ h1 { font-size:26px; margin-bottom:12px; color:#e67e22; }
 .options button { padding:14px; border-radius:18px; border:none; background:#fff9c4; box-shadow:0 4px 10px rgba(0,0,0,0.06); font-size:15px; cursor:pointer; transition:0.2s; color: #333; font-weight: bold; }
 .options button:hover { transform: scale(1.02); background: #fff59d; }
 
-/* ローディング */
-#loading { font-size:24px; margin-top:32px; color:#e67e22; font-weight:bold; display:none; }
+/* 🌟 収益化ロード画面（神秘的なゴールド仕様） */
+#loading-screen { display:none; padding: 20px; background: #fffdf0; border-radius: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.05); }
+.progress-container { width: 100%; background: #eee; height: 15px; border-radius: 10px; margin: 15px 0; overflow: hidden; }
+#progress-bar { width: 0%; background: #ffca28; height: 100%; transition: width 3s linear; }
+
+.ad-box { 
+    margin: 20px 0; 
+    padding: 10px; 
+    background: #fff; 
+    border: 2px dashed #ffca28; 
+    border-radius: 15px;
+}
+
+#result-view-btn {
+    display: none; 
+    width: 100%;
+    padding: 16px;
+    background: #e67e22;
+    color: white;
+    border: none;
+    border-radius: 30px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 0 #d35400;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+    100% { transform: scale(1); }
+}
 
 /* 結果表示エリア */
 #result-area { display:none; margin-top:20px; }
@@ -39,10 +70,22 @@ h1 { font-size:26px; margin-bottom:12px; color:#e67e22; }
     <div id="quiz">
         <p id="q-number" style="color:#e67e22; font-size:12px; margin:0;"></p>
         <p class="question" id="question"></p>
-        <div id="options" class="options"></div>
+        <div class="options" id="options"></div>
     </div>
 
-    <div id="loading">時空をさかのぼり中…⏳✨</div>
+    <div id="loading-screen">
+        <h2 style="color: #e67e22; font-size: 20px;">⏳ 時空をさかのぼり中…✨</h2>
+        <div class="progress-container">
+            <div id="progress-bar"></div>
+        </div>
+        
+        <div class="ad-box">
+            <p style="font-size: 11px; color: #e67e22; margin-bottom: 8px;">記憶が戻るまであと少し。広告をチェック 👇</p>
+            <a href="//af.moshimo.com/af/c/click?a_id=5322069&p_id=54&pc_id=54&pl_id=1220" rel="nofollow" referrerpolicy="no-referrer-when-downgrade" attributionsrc><img src="//image.moshimo.com/af-img/0032/000000001220.gif" width="100%" height="auto" style="border:none; max-width: 468px;"></a><img src="//i.moshimo.com/af/i/impression?a_id=5322069&p_id=54&pc_id=54&pl_id=1220" width="1" height="1" style="border:none;" loading="lazy">
+        </div>
+
+        <button id="result-view-btn" onclick="showResult()">前世の記憶を見る✨</button>
+    </div>
 
     <div id="result-area">
         <p style="font-size: 18px; color: #888;">あなたの魂の記憶を呼び覚ましました…</p>
@@ -58,112 +101,17 @@ h1 { font-size:26px; margin-bottom:12px; color:#e67e22; }
 
 <script>
 const quizData = [
-    { q: "森の奥で古い扉を見つけたよ。どうする？", a: [
-        { t: "royal", text: "迷わず開けて中を確認する" },
-        { t: "magic", text: "呪文を唱えて開けてみる" },
-        { t: "free",  text: "風の向くままに通り過ぎる" },
-        { t: "unique",text: "とりあえずノックして挨拶" }
-    ]},
-    { q: "夜空にひときわ輝く星が。あれは何だと思う？", a: [
-        { t: "royal", text: "未来を導く王国の道しるべ" },
-        { t: "magic", text: "伝説の魔力が宿る結晶" },
-        { t: "free",  text: "自由な旅人を見守る瞳" },
-        { t: "unique",text: "誰かが落とした光るアメ玉" }
-    ]},
-    { q: "目の前に不思議な宝石が。何色を選びたい？", a: [
-        { t: "royal", text: "気品あふれる純金の色" },
-        { t: "magic", text: "神秘的な深い紫色" },
-        { t: "free",  text: "澄み渡る空のような青色" },
-        { t: "unique",text: "キラキラ光る虹色" }
-    ]},
-    { q: "旅の途中で動物が話しかけてきたよ。何て言った？", a: [
-        { t: "royal", text: "「お城への道を教えましょう」" },
-        { t: "magic", text: "「不思議な力が目覚めています」" },
-        { t: "free",  text: "「一緒に広い世界を見に行こう」" },
-        { t: "unique",text: "「お腹すいたからパンちょうだい」" }
-    ]},
-    { q: "もし魔法がひとつだけ使えるなら？", a: [
-        { t: "royal", text: "国を豊かにする魔法" },
-        { t: "magic", text: "空を自在に飛ぶ魔法" },
-        { t: "free",  text: "動物と心が通じる魔法" },
-        { t: "unique",text: "一生お腹が空かない魔法" }
-    ]},
-    { q: "一番落ち着く場所はどこ？", a: [
-        { t: "royal", text: "豪華なシャンデリアのある部屋" },
-        { t: "magic", text: "古びた書物が並ぶ図書室" },
-        { t: "free",  text: "波の音が聞こえる海辺" },
-        { t: "unique",text: "お日様が当たる縁側" }
-    ]},
-    { q: "あなたの性格をひと言で言うと？", a: [
-        { t: "royal", text: "責任感が強いリーダータイプ" },
-        { t: "magic", text: "ひとり時間を愛する追求者" },
-        { t: "free",  text: "好奇心旺盛な自由人" },
-        { t: "unique",text: "みんなを笑顔にする癒やし系" }
-    ]},
-    { q: "夢の中で、あなたは誰かから贈り物をもらったよ。それは？", a: [
-        { t: "royal", text: "装飾が美しい豪華な剣" },
-        { t: "magic", text: "予言が書かれた古い巻物" },
-        { t: "free",  text: "どこまでも歩ける丈夫な靴" },
-        { t: "unique",text: "なでると温かい不思議なタマゴ" }
-    ]},
-    { q: "朝、目が覚めて一番にしたいことは？", a: [
-        { t: "royal", text: "今日の予定を完璧に立てる" },
-        { t: "magic", text: "昨日見た夢の続きを分析する" },
-        { t: "free",  text: "とりあえず外の空気を吸いに行く" },
-        { t: "unique",text: "美味しいごはんを食べる" }
-    ]},
-    { q: "生まれ変わるなら、何になりたい？", a: [
-        { t: "royal", text: "歴史に名を残す偉人" },
-        { t: "magic", text: "時空を超える魔術師" },
-        { t: "free",  text: "世界中を旅する鳥" },
-        { t: "unique",text: "誰からも愛されるマスコット" }
-    ]}
+    { q: "森の奥で古い扉を見つけたよ。どうする？", a: [ { t: "royal", text: "迷わず開けて中を確認する" }, { t: "magic", text: "呪文を唱えて開けてみる" }, { t: "free",  text: "風の向くままに通り過ぎる" }, { t: "unique",text: "とりあえずノックして挨拶" } ]},
+    { q: "夜空にひときわ輝く星が。あれは何だと思う？", a: [ { t: "royal", text: "未来を導く王国の道しるべ" }, { t: "magic", text: "伝説の魔力が宿る結晶" }, { t: "free",  text: "自由な旅人を見守る瞳" }, { t: "unique",text: "誰かが落とした光るアメ玉" } ]},
+    { q: "目の前に不思議な宝石が。何色を選びたい？", a: [ { t: "royal", text: "気品あふれる純金の色" }, { t: "magic", text: "神秘的な深い紫色" }, { t: "free",  text: "澄み渡る空のような青色" }, { t: "unique",text: "キラキラ光る虹色" } ]},
+    { q: "旅の途中で動物が話しかけてきたよ。何て言った？", a: [ { t: "royal", text: "「お城への道を教えましょう」" }, { t: "magic", text: "「不思議な力が目覚めています」" }, { t: "free",  text: "「一緒に広い世界を見に行こう」" }, { t: "unique",text: "「お腹すいたからパンちょうだい」" } ]},
+    { q: "もし魔法がひとつだけ使えるなら？", a: [ { t: "royal", text: "国を豊かにする魔法" }, { t: "magic", text: "空を自在に飛ぶ魔法" }, { t: "free",  text: "動物と心が通じる魔法" }, { t: "unique",text: "一生お腹が空かない魔法" } ]},
+    { q: "一番落ち着く場所はどこ？", a: [ { t: "royal", text: "豪華なシャンデリアのある部屋" }, { t: "magic", text: "古びた書物が並ぶ図書室" }, { t: "free",  text: "波の音が聞こえる海辺" }, { t: "unique",text: "お日様が当たる縁側" } ]},
+    { q: "あなたの性格をひと言で言うと？", a: [ { t: "royal", text: "責任感が強いリーダータイプ" }, { t: "magic", text: "ひとり時間を愛する追求者" }, { t: "free",  text: "好奇心旺盛な自由人" }, { t: "unique",text: "みんなを笑顔にする癒やし系" } ]},
+    { q: "夢の中で、あなたは誰かから贈り物をもらったよ。それは？", a: [ { t: "royal", text: "装飾が美しい豪華な剣" }, { t: "magic", text: "予言が書かれた古い巻物" }, { t: "free",  text: "どこまでも歩ける丈夫な靴" }, { t: "unique",text: "なでると温かい不思議なタマゴ" } ]},
+    { q: "朝、目が覚めて一番にしたいことは？", a: [ { t: "royal", text: "今日の予定を完璧に立てる" }, { t: "magic", text: "昨日見た夢の続きを分析する" }, { t: "free",  text: "とりあえず外の空気を吸いに行く" }, { t: "unique",text: "美味しいごはんを食べる" } ]},
+    { q: "生まれ変わるなら、何になりたい？", a: [ { t: "royal", text: "歴史に名を残す偉人" }, { t: "magic", text: "時空を超える魔術師" }, { t: "free",  text: "世界中を旅する鳥" }, { t: "unique",text: "誰からも愛されるマスコット" } ]}
 ];
 
 const results = [
-    { id: "royal", name:"誇り高き伝説の騎士⚔️", desc:"前世のあなたは、多くの人を守った英雄でした。その勇気と責任感は今も魂に刻まれています。今世でも、困っている人を放っておけないリーダーシップを発揮するはず！" },
-    { id: "magic", name:"月夜に踊る大魔法使い🧙‍♀️", desc:"不思議な力を操り、世界の真理を追求していたあなた。今の直感の鋭さや集中力は、その時の名残かも。目に見えないものを大切にする心が、今のあなたを支えています。" },
-    { id: "free",  name:"風と旅した自由な吟遊詩人🎶", desc:"どこにも縛られず、歌と共に世界中を旅したあなた。あなたの持つ明るさと適応力は、周りの人を自然と幸せにします。自由に生きることこそが、あなたの魂の願いです。" },
-    { id: "unique",name:"実は…とっても愛された子犬🐶", desc:"前世はみんなに可愛がられていたワンちゃんでした。あなたの愛嬌と、なぜか放っておけない魅力は、当時の「愛され力」そのもの。今世でもみんなのアイドルです！" }
-];
-
-let current = 0;
-let scores = { royal:0, magic:0, free:0, unique:0 };
-
-function showQuestion() {
-    document.getElementById("q-number").innerText = `記憶の断片 ${current + 1} / 10`;
-    const data = quizData[current];
-    document.getElementById("question").innerText = data.q;
-
-    const optionsDiv = document.getElementById("options");
-    optionsDiv.innerHTML = "";
-    [...data.a].sort(() => Math.random() - 0.5).forEach(choice => {
-        const btn = document.createElement("button");
-        btn.innerText = choice.text;
-        btn.onclick = () => { scores[choice.t]++; current++; if(current < 10) showQuestion(); else showLoading(); };
-        optionsDiv.appendChild(btn);
-    });
-}
-
-function showLoading() {
-    document.getElementById("quiz").style.display = "none";
-    document.getElementById("loading").style.display = "block";
-    setTimeout(showResult, 2000);
-}
-
-function showResult() {
-    document.getElementById("loading").style.display = "none";
-    document.getElementById("result-area").style.display = "block";
-    
-    let maxType = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
-    const final = results.find(r => r.id === maxType);
-
-    document.getElementById("result-name").innerText = final.name;
-    document.getElementById("result-desc").innerText = final.desc;
-    document.getElementById("back").style.display = "inline-block";
-}
-
-showQuestion();
-</script>
-</body>
-</html>
+    { id: "royal", name:"誇り高き伝説の騎士⚔️", desc:"前世のあなたは、多くの人を守った英雄でした。その勇気と責任感は今も魂に刻まれています
