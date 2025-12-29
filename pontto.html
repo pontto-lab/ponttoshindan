@@ -18,48 +18,26 @@ h1 { font-size:26px; margin-bottom:12px; color:#8e44ad; text-shadow: 1px 1px 0 #
 .options button { padding:16px; border-radius:20px; border:2px solid #e3d0f2; background:#fff; font-size:15px; cursor:pointer; transition:0.2s; color: #555; font-weight: bold; }
 .options button:hover { background: #f3e5f5; transform: translateY(-2px); border-color: #8e44ad; }
 
-/* 🌟 収益化ロード画面（リニューアル！） */
+/* 🌟 収益化ロード画面 */
 #loading-screen { display:none; padding: 20px; background: #fff; border-radius: 30px; box-shadow: 0 8px 20px rgba(0,0,0,0.05); }
 .progress-container { width: 100%; background: #eee; height: 15px; border-radius: 10px; margin: 15px 0; overflow: hidden; }
 #progress-bar { width: 0%; background: #8e44ad; height: 100%; transition: width 3s linear; }
 
-.ad-box { 
-    margin: 20px 0; 
-    padding: 10px; 
-    background: #fdfbff; 
-    border: 1px dashed #d8bfe6; 
-    border-radius: 10px;
-}
+.ad-box { margin: 20px 0; padding: 10px; background: #fdfbff; border: 1px dashed #d8bfe6; border-radius: 10px; }
 
 #result-view-btn {
-    display: none; 
-    width: 100%;
-    padding: 16px;
-    background: #8e44ad;
-    color: white;
-    border: none;
-    border-radius: 30px;
-    font-size: 18px;
-    font-weight: bold;
-    cursor: pointer;
-    box-shadow: 0 4px 0 #6d2192;
-    animation: pulse 1.5s infinite;
+    display: none; width: 100%; padding: 16px; background: #8e44ad; color: white; border: none; border-radius: 30px;
+    font-size: 18px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 0 #6d2192; animation: pulse 1.5s infinite;
 }
-
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.02); }
-    100% { transform: scale(1); }
-}
+@keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
 
 /* 結果表示 */
 #result-area { display:none; background: #fff; padding: 30px 20px; border-radius: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
 .result-name { font-size: 26px; color: #8e44ad; margin: 15px 0; font-weight: bold; }
 .result-desc { line-height: 1.8; color: #666; font-size: 16px; margin-bottom: 30px; text-align: left; }
 
-/* ボタン類 */
 .btn-container { display: flex; flex-direction: column; gap: 15px; align-items: center; }
-.btn-home { display:inline-block; padding:12px 40px; border-radius:25px; background:#ffe6ef; text-decoration:none; color:#333; font-weight: bold; border: 1px solid #ffb6c1; transition: 0.3s; }
+.btn-home { display:inline-block; padding:12px 40px; border-radius:25px; background:#ffe6ef; text-decoration:none; color:#333; font-weight: bold; border: 1px solid #ffb6c1; }
 .btn-retry { color: #8e44ad; font-size: 14px; text-decoration: underline; cursor: pointer; border: none; background: none; font-weight: bold; }
 </style>
 </head>
@@ -75,15 +53,11 @@ h1 { font-size:26px; margin-bottom:12px; color:#8e44ad; text-shadow: 1px 1px 0 #
 
     <div id="loading-screen">
         <h2 style="color: #8e44ad; font-size: 20px;">🧪 成分を抽出中…✨</h2>
-        <div class="progress-container">
-            <div id="progress-bar"></div>
-        </div>
-        
+        <div class="progress-container"><div id="progress-bar"></div></div>
         <div class="ad-box">
             <p style="font-size: 11px; color: #8e44ad; margin-bottom: 8px;">抽出完了まであと少し！広告をチェック👇</p>
             <a href="//af.moshimo.com/af/c/click?a_id=5322069&p_id=54&pc_id=54&pl_id=1220" rel="nofollow" referrerpolicy="no-referrer-when-downgrade" attributionsrc><img src="//image.moshimo.com/af-img/0032/000000001220.gif" width="100%" height="auto" style="border:none; max-width: 468px;"></a><img src="//i.moshimo.com/af/i/impression?a_id=5322069&p_id=54&pc_id=54&pl_id=1220" width="1" height="1" style="border:none;" loading="lazy">
         </div>
-
         <button id="result-view-btn" onclick="showResult()">診断結果を受け取る✨</button>
     </div>
 
@@ -91,7 +65,6 @@ h1 { font-size:26px; margin-bottom:12px; color:#8e44ad; text-shadow: 1px 1px 0 #
         <p style="font-size: 18px; color: #888;">あなたの成分が判明しました！</p>
         <div id="result-name" class="result-name"></div>
         <div id="result-desc" class="result-desc"></div>
-        
         <div class="btn-container">
             <button onclick="location.reload();" class="btn-retry">🔄 もう一度診断する</button>
             <a href="index.html" class="btn-home">🏠 ぽんっとTOPにもどる</a>
@@ -109,12 +82,52 @@ const results = {
 };
 
 const questions = [
-    { q: "朝起きて、一番に感じることは？", a: [ { t: "heal",  text: "「あと5分…」とお布団を堪能" }, { t: "active",text: "「よし、今日は何しよう！」とワクワク" }, { t: "cool",  text: "カーテンを開けて空気の入れ替え" }, { t: "trust", text: "今日のやることを冷静に確認" } ]},
-    { q: "カフェで注文するなら、どっちの気分？", a: [ { t: "heal",  text: "ホイップたっぷりの甘いラテ" }, { t: "active",text: "季節限定の派手なフラペチーノ" }, { t: "cool",  text: "さっぱりしたハーブティー" }, { t: "logic", text: "こだわりのブラックコーヒー" } ]},
-    { q: "友達が落ち込んでいたら、どう接する？", a: [ { t: "heal",  text: "何も言わずに隣にいてあげる" }, { t: "active",text: "「美味しいものでも食べに行こう！」と誘う" }, { t: "trust", text: "「何かできることある？」と優しく聞く" }, { t: "logic", text: "何が原因かじっくり話を聞く" } ]},
-    { q: "旅行の計画を立てる時は？", a: [ { t: "active",text: "予定をギッシリ詰めて遊び尽くす！" }, { t: "logic", text: "口コミや地図を完璧に下調べする" }, { t: "heal",  text: "ホテルでゆっくりするのがメイン" }, { t: "cool",  text: "行き先だけ決めて、あとは現地で決める" } ]},
-    { q: "自分へのご褒美に買うなら？", a: [ { t: "logic", text: "ずっと欲しかった質の良い道具や本" }, { t: "heal",  text: "ちょっと高級な入浴剤やキャンドル" }, { t: "active",text: "新作の洋服やスニーカー" }, { t: "cool",  text: "話題の美味しいスイーツ" } ]},
-    { q: "トラブルが起きた時のあなたの反応は？", a: [ { t: "trust", text: "「大丈夫、なんとかなる」と落ち着かせる" }, { t: "logic", text: "「なぜこうなった？」と原因を分析する" }, { t: "active",text: "「解決策はこれだ！」とすぐ動く" }, { t: "heal",  text: "「困ったね…」と誰かの助けを待つ" } ]},
-    { q: "映画を観るなら、どんなジャンル？", a: [ { t: "active",text: "ハラハラするアクション映画" }, { t: "heal",  text: "心が温まるヒューマンドラマ" }, { t: "logic", text: "伏線だらけのミステリー映画" }, { t: "cool",  text: "映像がきれいなドキュメンタリー" } ]},
-    { q: "SNSの使い方、あなたはどっち派？", a: [ { t: "cool",  text: "情報は見る専門。たまにいい写真を投稿" }, { t: "active",text: "今の出来事をどんどんアップする" }, { t: "trust", text: "仲の良い友達と密にやり取りする" }, { t: "logic", text: "自分の趣味を深く発信する" } ]},
-    { q: "もし1つだけ才能が手に入るなら？", a: [ { t: "active",text: "世界を驚
+    { q: "朝起きて、一番に感じることは？", a: [ { t: "heal", text: "「あと5分…」とお布団を堪能" }, { t: "active", text: "「よし、今日は何しよう！」とワクワク" }, { t: "cool", text: "カーテンを開けて空気の入れ替え" }, { t: "trust", text: "今日のやることを冷静に確認" } ]},
+    { q: "カフェで注文するなら、どっちの気分？", a: [ { t: "heal", text: "ホイップたっぷりの甘いラテ" }, { t: "active", text: "季節限定の派手なフラペチーノ" }, { t: "cool", text: "さっぱりしたハーブティー" }, { t: "logic", text: "こだわりのブラックコーヒー" } ]},
+    { q: "友達が落ち込んでいたら、どう接する？", a: [ { t: "heal", text: "何も言わずに隣にいてあげる" }, { t: "active", text: "「美味しいものでも食べに行こう！」と誘う" }, { t: "trust", text: "「何かできることある？」と優しく聞く" }, { t: "logic", text: "何が原因かじっくり話を聞く" } ]},
+    { q: "旅行の計画を立てる時は？", a: [ { t: "active", text: "予定をギッシリ詰めて遊び尽くす！" }, { t: "logic", text: "口コミや地図を完璧に下調べする" }, { t: "heal", text: "ホテルでゆっくりするのがメイン" }, { t: "cool", text: "行き先だけ決めて、あとは現地で決める" } ]},
+    { q: "自分へのご褒美に買うなら？", a: [ { t: "logic", text: "ずっと欲しかった質の良い道具や本" }, { t: "heal", text: "ちょっと高級な入浴剤やキャンドル" }, { t: "active", text: "新作の洋服やスニーカー" }, { t: "cool", text: "話題の美味しいスイーツ" } ]},
+    { q: "トラブルが起きた時のあなたの反応は？", a: [ { t: "trust", text: "「大丈夫、なんとかなる」と落ち着かせる" }, { t: "logic", text: "「なぜこうなった？」と原因を分析する" }, { t: "active", text: "「解決策はこれだ！」とすぐ動く" }, { t: "heal", text: "「困ったね…」と誰かの助けを待つ" } ]},
+    { q: "映画を観るなら、どんなジャンル？", a: [ { t: "active", text: "ハラハラするアクション映画" }, { t: "heal", text: "心が温まるヒューマンドラマ" }, { t: "logic", text: "伏線だらけのミステリー映画" }, { t: "cool", text: "映像がきれいなドキュメンタリー" } ]},
+    { q: "SNSの使い方、あなたはどっち派？", a: [ { t: "cool", text: "情報は見る専門。たまにいい写真を投稿" }, { t: "active", text: "今の出来事をどんどんアップする" }, { t: "trust", text: "仲の良い友達と密にやり取りする" }, { t: "logic", text: "自分の趣味を深く発信する" } ]},
+    { q: "もし1つだけ才能が手に入るなら？", a: [ { t: "active", text: "世界を驚かせるカリスマ性" }, { t: "logic", text: "一度見たものは忘れない記憶力" }, { t: "heal", text: "みんなを癒やす最高の笑顔" }, { t: "cool", text: "どんな場でも物怖じしない度胸" } ]},
+    { q: "あなたの考える「幸せな時間」とは？", a: [ { t: "heal", text: "大好きな場所でのんびりすること" }, { t: "active", text: "新しいことに挑戦してるとき" }, { t: "trust", text: "大切な人と穏やかに過ごすとき" }, { t: "logic", text: "ひとりで何かに没頭してるとき" } ]}
+];
+
+let current = 0;
+let scores = { heal:0, active:0, cool:0, trust:0, logic:0 };
+
+function showQuestion() {
+    if (current >= questions.length) { startLoading(); return; }
+    document.getElementById("q-number").innerText = `Analysis ${current + 1} / 10`;
+    const data = questions[current];
+    document.getElementById("question").innerText = data.q;
+    const optionsDiv = document.getElementById("options");
+    optionsDiv.innerHTML = "";
+    data.a.forEach(choice => {
+        const btn = document.createElement("button");
+        btn.innerText = choice.text;
+        btn.onclick = () => { scores[choice.t]++; current++; showQuestion(); };
+        optionsDiv.appendChild(btn);
+    });
+}
+
+function startLoading() {
+    document.getElementById("quiz").style.display = "none";
+    document.getElementById("loading-screen").style.display = "block";
+    setTimeout(() => { document.getElementById("progress-bar").style.width = "100%"; }, 100);
+    setTimeout(() => { document.getElementById("result-view-btn").style.display = "block"; }, 3000);
+}
+
+function showResult() {
+    document.getElementById("loading-screen").style.display = "none";
+    document.getElementById("result-area").style.display = "block";
+    const maxType = Object.keys(scores).sort((a,b) => scores[b] - scores[a])[0];
+    const final = results[maxType];
+    document.getElementById("result-name").innerText = final.name;
+    document.getElementById("result-desc").innerText = final.desc;
+}
+showQuestion();
+</script>
+</body>
+</html>
