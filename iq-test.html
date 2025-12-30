@@ -6,7 +6,6 @@
     <title>ぽんっとIQ診断 - ぽんっとラボ</title>
     <script src="ads-list.js"></script>
     <style>
-        /* スタイル設定 */
         body { font-family: 'ヒラギノ丸ゴ Pro','Arial Rounded MT Bold',sans-serif; background: #fff; text-align: center; margin: 0; padding: 20px; }
         .container { max-width: 480px; margin: 0 auto; }
         .button { display: inline-block; margin: 10px; padding: 15px; border-radius: 20px; background: #d8bfe6; color: #333; text-decoration: none; font-size: 18px; border: none; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
@@ -70,13 +69,15 @@
         let startTime; 
         const totalQuestions = 6; 
 
+        // 🌟 ここで問題と選択肢を定義
         const questions = {
             1: { img: "question1.png", choices: [{img:"choice-a.png", ok:false}, {img:"choice-b.png", ok:true}, {img:"choice-c.png", ok:false}] },
             2: { img: "question2.png", choices: [{img:"choice-d.png", ok:false}, {img:"choice-f.png", ok:true}, {img:"choice-e.png", ok:false}] },
             3: { img: "question3.png", choices: [{img:"choice-g.png", ok:true}, {img:"choice-h.png", ok:false}, {img:"choice-i.png", ok:false}] },
             4: { img: "question4.png", choices: [{img: "choice-k.png", ok: false }, { img: "choice-l.png", ok: false }, { img: "choice-j.png", ok: true }] },
             5: { img: "question5.png", choices: [{ img: "choice-m.png", ok: true }, { img: "choice-n.png", ok: false }, { img: "choice-o.png", ok: false }] },
-            6: { img: "question6.png", choices: [{ img: "choice-p.png", ok: true }, { img: "choice-q.png", ok: false }, { img: "choice-r.png", ok: false }] }
+            6: { img: "question6.png", choices: [{ img: "choice-p.png", ok: false }, { img: "choice-q.png", ok: false }, { img: "choice-r.png", ok: true }] } 
+            // ↑ 第6問の画像に合わせて正解ボタン(choice-r.pngが15の場合)を調整してね
         };
 
         function shuffle(array) {
@@ -93,7 +94,12 @@
             document.getElementById('question-number').innerText = `第 ${currentStep} 問 / ${totalQuestions}`;
             const shuffledChoices = shuffle([...q.choices]);
             let html = `<img src="${q.img}" style="width: 100%; max-width: 400px; border-radius: 15px; margin-bottom: 25px; border: 3px solid #eee;">`;
-            if (currentStep === 6) { html += `<div class="hint-text">💡ヒント：3文字のことばを連想して考えてね！</div>`; }
+            
+            // 💡 第6問のヒントを新しい画像に合わせて変更
+            if (currentStep === 6) { 
+                html += `<div class="hint-text">💡ヒント：数字のふえ方に注目して考えてね！</div>`; 
+            }
+            
             html += `<div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">`;
             shuffledChoices.forEach(c => {
                 html += `<button onclick="nextQuestion(${c.ok})" class="button" style="padding: 10px; background: white; border: 2px solid #ffb6c1;"><img src="${c.img}" width="90" style="display: block;"></button>`;
@@ -105,7 +111,7 @@
 
         function nextQuestion(isCorrect) {
             const timeTaken = (Date.now() - startTime) / 1000;
-            if (isCorrect) { score++; if (timeTaken > 10) perfectSpeedBonus = false; }
+            if (isCorrect) { score++; if (timeTaken > 15) perfectSpeedBonus = false; }
             else { perfectSpeedBonus = false; }
             currentStep++;
             setTimeout(() => { showQuestion(); }, 300);
@@ -130,26 +136,25 @@
             let resultImgFile = "";
             let adCategory = 'health';
 
-            // 👑 スコア判定ロジック
             if (score === 6) { 
                 if (perfectSpeedBonus) {
-                    finalIQ = 140; resultImgFile = "iq140.png";
+                    finalIQ = 140; resultImgFile = "iq140.jpg";
                 } else {
-                    finalIQ = 130; resultImgFile = "iq130.png";
+                    finalIQ = 130; resultImgFile = "iq130.jpg";
                 }
                 adCategory = 'money'; 
             }
             else if (score === 5) { 
-                finalIQ = 115; resultImgFile = "iq115.png";
+                finalIQ = 115; resultImgFile = "iq115.jpg";
                 adCategory = 'money'; 
             }
             else if (score === 4) { 
-                finalIQ = 100; resultImgFile = "iq100.png"; // ★新キャラ！
+                finalIQ = 100; resultImgFile = "iq100.jpg";
                 adCategory = 'love'; 
             }
             else { 
                 finalIQ = score === 3 ? 85 : 70;
-                resultImgFile = "iq80.png";
+                resultImgFile = "iq80.jpg";
                 adCategory = 'health'; 
             }
 
