@@ -6,13 +6,12 @@
     <title>ぽんっとIQ診断 - ぽんっとラボ</title>
     <script src="ads-list.js"></script>
     <style>
-        /* 既存のスタイルを継承 */
+        /* スタイル設定 */
         body { font-family: 'ヒラギノ丸ゴ Pro','Arial Rounded MT Bold',sans-serif; background: #fff; text-align: center; margin: 0; padding: 20px; }
         .container { max-width: 480px; margin: 0 auto; }
         .button { display: inline-block; margin: 10px; padding: 15px; border-radius: 20px; background: #d8bfe6; color: #333; text-decoration: none; font-size: 18px; border: none; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         .button:active { transform: scale(0.95); }
         
-        /* 広告枠のスタイル微調整 */
         .ad-box { background: #fffafb; padding: 10px; border: 3px dashed #ffb6c1; margin: 20px 0; border-radius: 20px; min-height: 150px; }
         .ad-box img { width: 120px !important; height: 120px !important; border-radius: 10px; margin-bottom: 5px; }
         .ad-box a { text-decoration: none; color: #d2691e; font-size: 12px; font-weight: bold; }
@@ -26,6 +25,8 @@
         img { max-width: 100%; height: auto; }
         #question-number { font-weight: bold; color: #ff69b2; font-size: 1.2rem; margin-bottom: 10px; }
         .hint-text { color: #ff69b4; font-size: 15px; font-weight: bold; background: #fff0f5; padding: 12px; border-radius: 15px; margin: -10px 20px 20px 20px; border: 1px solid #ffb6c1; line-height: 1.4; }
+
+        #result-image { max-width: 100%; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); margin-bottom: 15px; }
     </style>
 </head>
 <body>
@@ -40,26 +41,29 @@
         <div id="ad-screen" style="display: none;">
             <h2 style="color: #ff1493;">採点が終わったよ！✨</h2>
             <div class="progress-container"><div id="progress-bar"></div></div>
-            
             <div id="loading-ad-area" class="ad-box"></div>
-            
             <button id="result-view-btn" class="button" onclick="showFinalResult()">💓 結果を見る 💓</button>
         </div>
 
         <div id="result-screen" style="display: none;">
             <h2 style="color: #ff1493;">診断結果発表！</h2>
-            <div id="iq-display" style="font-size: 44px; font-weight: bold; margin: 20px 0; background: white; padding: 30px; border-radius: 20px; border: 5px solid #ffb6c1;"></div>
+            
+            <img id="result-image" src="" alt="診断結果イラスト">
+
+            <div id="iq-display" style="font-size: 44px; font-weight: bold; margin: 10px 0; background: white; padding: 20px; border-radius: 20px; border: 5px solid #ffb6c1;"></div>
             <p id="iq-comment" style="font-size: 20px; color: #555; line-height: 1.6; white-space: pre-wrap;"></p>
             
             <div id="result-ad-area"></div>
 
             <br>
-            <a href="index.html" class="button">ホームへ戻る</a>
+            <div style="display: flex; flex-direction: column; gap: 10px; align-items: center;">
+                <a href="javascript:location.reload();" style="color:#ff69b4; text-decoration:none; font-weight:bold; font-size:16px;">🔄 もう一度診断する</a>
+                <a href="index.html" class="button">🏠 ホームへ戻る</a>
+            </div>
         </div>
     </div>
 
     <script>
-        // --- 既存のゲームロジック（そのまま） ---
         let currentStep = 1;
         let score = 0;
         let perfectSpeedBonus = true;
@@ -107,14 +111,10 @@
             setTimeout(() => { showQuestion(); }, 300);
         }
 
-        // --- 修正：広告表示のタイミング ---
         function showAd() {
             document.getElementById('game-screen').style.display = "none";
             document.getElementById('ad-screen').style.display = "block";
-            
-            // 🎯 採点画面に「ランダム」カテゴリから広告を表示！
             showRandomAd('random', 'loading-ad-area');
-
             setTimeout(() => { document.getElementById("progress-bar").style.width = "100%"; }, 100);
             setTimeout(() => { document.getElementById("result-view-btn").style.display = "block"; }, 3000);
         }
@@ -124,26 +124,42 @@
             document.getElementById('result-screen').style.display = "block";
             const iqDisp = document.getElementById('iq-display');
             const iqComm = document.getElementById('iq-comment');
+            const iqImg = document.getElementById('result-image');
             
             let finalIQ;
-            let adCategory = 'health'; // デフォルトは癒やし
+            let resultImgFile = "";
+            let adCategory = 'health';
 
+            // 👑 スコア判定ロジック
             if (score === 6) { 
-                finalIQ = perfectSpeedBonus ? 140 : 130; 
-                adCategory = 'money'; // 天才には成功・金運系！
+                if (perfectSpeedBonus) {
+                    finalIQ = 140; resultImgFile = "iq140.png";
+                } else {
+                    finalIQ = 130; resultImgFile = "iq130.png";
+                }
+                adCategory = 'money'; 
             }
-            else if (score === 5) { finalIQ = 115; adCategory = 'money'; }
-            else if (score === 4) { finalIQ = 100; adCategory = 'love'; }
-            else if (score === 3) { finalIQ = 85; adCategory = 'health'; }
-            else { finalIQ = 70; adCategory = 'health'; }
+            else if (score === 5) { 
+                finalIQ = 115; resultImgFile = "iq115.png";
+                adCategory = 'money'; 
+            }
+            else if (score === 4) { 
+                finalIQ = 100; resultImgFile = "iq100.png"; // ★新キャラ！
+                adCategory = 'love'; 
+            }
+            else { 
+                finalIQ = score === 3 ? 85 : 70;
+                resultImgFile = "iq80.png";
+                adCategory = 'health'; 
+            }
 
+            iqImg.src = resultImgFile;
             iqDisp.innerText = "IQ " + finalIQ;
 
             if (finalIQ >= 130) { iqComm.innerText = "超天才！✨\n全問正解おめでとう！\nあなたの論理的思考力は、\nプロも驚くレベルだね💓"; }
-            else if (finalIQ >= 100) { iqComm.innerText = "優秀！💪\nひらめき力が鋭いね！\n自信を持っていいレベルだよ✨"; }
-            else { iqComm.innerText = "伸びしろたっぷり！🌱\n今日は脳が少しお疲れかも？\nまた明日挑戦してみてね！"; }
+            else if (finalIQ >= 100) { iqComm.innerText = "標準以上！💪\nバランスの良い思考の持ち主！\n日常の判断力もバッチリだね✨"; }
+            else { iqComm.innerText = "伸びしろたっぷり！🌱\n今日は脳が少しお疲れかも？\nリラックスしてまた挑戦してね！"; }
 
-            // 🎯 結果に合わせたカテゴリの広告を表示！
             showRandomAd(adCategory, 'result-ad-area');
         }
 
