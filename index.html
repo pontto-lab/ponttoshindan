@@ -30,9 +30,9 @@
         }
         .button:active { transform: scale(0.95); }
 
-        /* ✨ 裏の顔診断：Newバッジ演出 */
+        /* ✨ 裏の顔診断：Newバッジ演出（一番目立たせる！） */
         .new-badge::after {
-            content: "New!";
+            content: "人気No.1";
             position: absolute;
             top: -5px;
             right: 15px;
@@ -49,13 +49,15 @@
             50% { transform: translateY(-3px); }
         }
 
-        /* 🔒 手相診断：テスト中（準備中）スタイル */
-        .btn-teso-test {
-            background: #f0f0f0 !important;
-            color: #888 !important;
-            border: 2px dashed #ccc;
+        /* 🔒 手相診断：準備中スタイル（目立たなくする） */
+        .btn-ready {
+            background: #f9f9f9 !important;
+            color: #bbb !important;
+            border: 2px dashed #ddd;
             box-shadow: none;
-            text-shadow: none;
+            font-size: 14px;
+            margin-top: 40px; /* 少し距離を置く */
+            pointer-events: none; /* クリックできないようにする */
         }
 
         .share-text { color: #ff69b4; font-weight: bold; margin-top: 20px; }
@@ -73,16 +75,15 @@
         </div>
 
         <a href="ura-test.html" class="button new-badge" style="background: #e6e6fa;">👁 あなたの【裏の顔】診断</a>
-
-        <a href="teso-test.html" class="button btn-teso-test">
-            🔎 手相で見る2026年の運勢✋✨<br>
-            <span style="font-size: 11px;">（テスト中：ここからチェックしてね🚧）</span>
-        </a>
-
         <a href="pontto.html" class="button">💉 ぽんっと性格診断</a>
         <a href="iq-test.html" class="button">🧠 ぽんっとIQ診断</a>
         <a href="zense-test.html" class="button" style="background: #fffacd;">👶 前世のあなたは何だった？</a>
         <a href="nounai-test.html" class="button" style="background: #e0ffff;">🧠 あなたの脳内メーカー</a>
+
+        <div class="button btn-ready">
+            🚧 手相で見る2026年の運勢<br>
+            <span style="font-size: 11px;">（ただいま準備中です。お楽しみに！）</span>
+        </div>
 
         <p class="share-text">スクショしてシェアしてね💖</p>
     </div>
