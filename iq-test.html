@@ -46,14 +46,10 @@
 
         <div id="result-screen" style="display: none;">
             <h2 style="color: #ff1493;">診断結果発表！</h2>
-            
             <img id="result-image" src="" alt="診断結果イラスト">
-
             <div id="iq-display" style="font-size: 44px; font-weight: bold; margin: 10px 0; background: white; padding: 20px; border-radius: 20px; border: 5px solid #ffb6c1;"></div>
             <p id="iq-comment" style="font-size: 20px; color: #555; line-height: 1.6; white-space: pre-wrap;"></p>
-            
             <div id="result-ad-area"></div>
-
             <br>
             <div style="display: flex; flex-direction: column; gap: 10px; align-items: center;">
                 <a href="javascript:location.reload();" style="color:#ff69b4; text-decoration:none; font-weight:bold; font-size:16px;">🔄 もう一度診断する</a>
@@ -69,15 +65,13 @@
         let startTime; 
         const totalQuestions = 6; 
 
-        // 🌟 ここで問題と選択肢を定義
         const questions = {
             1: { img: "question1.png", choices: [{img:"choice-a.png", ok:false}, {img:"choice-b.png", ok:true}, {img:"choice-c.png", ok:false}] },
             2: { img: "question2.png", choices: [{img:"choice-d.png", ok:false}, {img:"choice-f.png", ok:true}, {img:"choice-e.png", ok:false}] },
             3: { img: "question3.png", choices: [{img:"choice-g.png", ok:true}, {img:"choice-h.png", ok:false}, {img:"choice-i.png", ok:false}] },
             4: { img: "question4.png", choices: [{img: "choice-k.png", ok: false }, { img: "choice-l.png", ok: false }, { img: "choice-j.png", ok: true }] },
             5: { img: "question5.png", choices: [{ img: "choice-m.png", ok: true }, { img: "choice-n.png", ok: false }, { img: "choice-o.png", ok: false }] },
-            6: { img: "question6.png", choices: [{ img: "choice-p.png", ok: false }, { img: "choice-q.png", ok: false }, { img: "choice-r.png", ok: true }] } 
-            // ↑ 第6問の画像に合わせて正解ボタン(choice-r.pngが15の場合)を調整してね
+            6: { img: "question6.png", choices: [{ img: "choice-p.png", ok: false }, { img: "choice-q.png", ok: false }, { img: "choice-r.png", ok: true }] }
         };
 
         function shuffle(array) {
@@ -95,9 +89,9 @@
             const shuffledChoices = shuffle([...q.choices]);
             let html = `<img src="${q.img}" style="width: 100%; max-width: 400px; border-radius: 15px; margin-bottom: 25px; border: 3px solid #eee;">`;
             
-            // 💡 第6問のヒントを新しい画像に合わせて変更
-            if (currentStep === 6) { 
-                html += `<div class="hint-text">💡ヒント：数字のふえ方に注目して考えてね！</div>`; 
+            // 💡 ここ！第4問にヒントを表示するように設定したよ
+            if (currentStep === 4) { 
+                html += `<div class="hint-text">💡ヒント：3文字のことばを連想して考えてね！</div>`; 
             }
             
             html += `<div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">`;
@@ -167,7 +161,6 @@
 
             showRandomAd(adCategory, 'result-ad-area');
         }
-
         showQuestion();
     </script>
 </body>
