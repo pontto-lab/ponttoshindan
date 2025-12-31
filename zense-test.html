@@ -3,168 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>👼 前世のあなたは何だった？ | ぽんっとラボ</title>
+    <title>🔮 あなたの前世診断 | ぽんっとラボ</title>
     <script src="ads-list.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        /* 既存のスタイルを継承 */
-        body { font-family: 'ヒラギノ丸ゴ Pro','Arial Rounded MT Bold',sans-serif; background: #fffacd; text-align: center; margin: 0; padding: 10px; color: #333; }
-        .container { max-width: 450px; margin: 0 auto; background: white; padding: 20px; border-radius: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); overflow: hidden; }
-        
-        h1 { font-size: 20px; color: #ff69b4; margin: 10px 0; }
-        .progress { font-size: 13px; color: #999; margin-bottom: 10px; }
-        .question { font-size: 18px; font-weight: bold; margin-bottom: 20px; display: none; line-height: 1.5; }
+        body { font-family: 'ヒラギノ丸ゴ Pro','Arial Rounded MT Bold',sans-serif; background: #fdfaf5; text-align: center; margin: 0; padding: 20px; color: #5d4037; }
+        .container { max-width: 480px; margin: 0 auto; }
+        h1 { color: #8e44ad; font-size: 24px; margin-bottom: 20px; }
+        .quiz-card { background: white; padding: 25px; border-radius: 25px; box-shadow: 0 8px 20px rgba(0,0,0,0.05); border: 2px solid #eee8f3; }
+        .button { display: block; width: 100%; margin: 12px 0; padding: 16px; border-radius: 30px; background: #f3e5f5; color: #6a1b9a; text-decoration: none; font-size: 16px; border: none; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .button:hover { background: #e1bee7; }
+        #loading-screen, #result-screen { display: none; }
+        .progress-container { width: 100%; background: #eee; height: 12px; border-radius: 10px; margin: 20px 0; overflow: hidden; }
+        #progress-bar { width: 0%; background: #9b59b6; height: 100%; transition: width 3s linear; }
+        .ad-box { background: #fff; padding: 10px; border: 2px dashed #d1c4e9; margin: 20px 0; border-radius: 15px; min-height: 140px; }
+        .result-img { width: 100%; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .result-title { font-size: 24px; font-weight: bold; color: #8e44ad; margin-bottom: 10px; }
+        .result-text { font-size: 16px; line-height: 1.7; margin-bottom: 25px; text-align: left; background: white; padding: 15px; border-radius: 15px; }
 
-        .btn-container { display: flex; flex-direction: column; gap: 10px; }
-        .btn { 
-            display: block; width: 100%; padding: 15px 10px; border-radius: 50px; border: none; 
-            background: #d8bfe6; font-size: 15px; font-weight: bold; cursor: pointer; color: #333; 
-            box-shadow: 0 4px 0 #c2a6d1; -webkit-tap-highlight-color: transparent;
-        }
-
-        /* 🌟 ロード画面とプログレスバー */
-        #loading-screen { display: none; padding: 20px; }
-        .loading-title { font-size: 18px; color: #ff69b4; font-weight: bold; margin-bottom: 15px; }
-        .progress-container { width: 100%; background: #eee; height: 12px; border-radius: 10px; margin: 15px 0; overflow: hidden; }
-        #progress-bar { width: 0%; background: #ff69b4; height: 100%; transition: width 3s linear; }
-
-        /* 広告枠（スピリチュアル・神秘的デザイン） */
-        .ad-box { margin: 15px 0; padding: 12px; border: 2px dashed #d8bfe6; border-radius: 15px; background: #fffafb; min-height: 140px; }
-        .ad-box img { width: 100px !important; height: 100px !important; border-radius: 10px; margin-bottom: 8px; }
-        .ad-box a { text-decoration: none; color: #ff69b4; font-size: 11px; font-weight: bold; display: block; }
-
-        #result-view-btn { 
-            display: none; width: 100%; padding: 15px; background: #ff69b4; color: white; border: none; border-radius: 30px;
-            font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 0 #d44d8c; margin-top: 10px;
-        }
-
-        /* 結果画面 */
-        @keyframes driftDown { 0% { transform: translateY(-50px) rotate(-5deg); opacity: 0; } 100% { transform: translateY(0) rotate(0deg); opacity: 1; } }
-        .card-animation { display: block; margin: 0 auto 10px; width: auto; max-width: 85%; max-height: 52vh; height: auto; border-radius: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); animation: driftDown 1.5s ease-out forwards; }
-
-        .share-label { font-size: 12px; color: #888; margin: 15px 0 8px; font-weight: bold; }
-        .share-container { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; }
-        .share-btn { display: flex; align-items: center; justify-content: center; width: 50px; height: 50px; border-radius: 50%; color: white; text-decoration: none; font-size: 24px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
-        .btn-x { background-color: #000; }
-        .btn-line { background-color: #06C755; }
-        .btn-insta { background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); }
-
-        #result { display: none; padding-top: 5px; }
-        .result-title { font-size: 18px; color: #ff69b4; margin: 10px 0 5px; font-weight: bold; }
-        .result-desc { font-size: 14px; line-height: 1.4; margin: 0 auto 15px; max-width: 90%; color: #555; }
-        .home-btn { background: #ffb6c1; text-decoration: none; color: white; display: inline-block; padding: 12px 25px; border-radius: 50px; font-weight: bold; font-size: 14px; }
+        /* ✨ 追加：ほかの診断ボタン用スタイル */
+        .other-test-btn { display: inline-block; margin-top: 15px; padding: 12px 25px; background: #fff; color: #8e44ad; border: 2px solid #8e44ad; border-radius: 25px; text-decoration: none; font-weight: bold; font-size: 16px; transition: 0.3s; }
+        .other-test-btn:hover { background: #8e44ad; color: #fff; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1 id="main-title">👼 前世診断</h1>
-
-        <div id="quiz-area">
-            <div id="q1" class="question" style="display: block;"><p class="progress">1 / 10</p><p>朝起きて一番に食べたいものは？</p><div class="btn-container" id="ans1"><button class="btn" onclick="next(1, 'A')">豪華なフルーツ盛り合わせ</button><button class="btn" onclick="next(1, 'B')">温かいスープとパン</button><button class="btn" onclick="next(1, 'C')">珍しい外国のお菓子</button><button class="btn" onclick="next(1, 'D')">甘いハチミツたっぷりのトースト</button></div></div>
-            <div id="q2" class="question"><p class="progress">2 / 10</p><p>ふと空を見上げると、そこには何が見える？</p><div class="btn-container" id="ans2"><button class="btn" onclick="next(2, 'A')">眩しいほどの太陽</button><button class="btn" onclick="next(2, 'B')">静かに光る満月</button><button class="btn" onclick="next(2, 'C')">流れ星の群れ</button><button class="btn" onclick="next(2, 'D')">七色の大きな虹</button></div></div>
-            <div id="q3" class="question"><p class="progress">3 / 10</p><p>道端にキラキラ光る石が。どうする？</p><div class="btn-container" id="ans3"><button class="btn" onclick="next(3, 'A')">宝物として大切に持ち帰る</button><button class="btn" onclick="next(3, 'B')">じっくり観察して理由を考える</button><button class="btn" onclick="next(3, 'C')">遠くまで投げて飛ばしてみる</button><button class="btn" onclick="next(3, 'D')">誰かにプレゼントしようと思う</button></div></div>
-            <div id="q4" class="question"><p class="progress">4 / 10</p><p>あなたの性格をひとことで言うと？</p><div class="btn-container" id="ans4"><button class="btn" onclick="next(4, 'A')">自分に自信がある</button><button class="btn" onclick="next(4, 'B')">一人の時間が好き</button><button class="btn" onclick="next(4, 'C')">好奇心が止まらない</button><button class="btn" onclick="next(4, 'D')">みんなを笑顔にしたい</button></div></div>
-            <div id="q5" class="question"><p class="progress">5 / 10</p><p>夢の中で、あなたは広い庭にいます。何が咲いてる？</p><div class="btn-container" id="ans5"><button class="btn" onclick="next(5, 'A')">真っ赤なバラ</button><button class="btn" onclick="next(5, 'B')">知的な白いユリ</button><button class="btn" onclick="next(5, 'C')">自由な野草や多肉植物</button><button class="btn" onclick="next(5, 'D')">可愛いパステルカラーの小花</button></div></div>
-            <div id="q6" class="question"><p class="progress">6 / 10</p><p>もし魔法が使えるなら、どんな魔法がいい？</p><div class="btn-container" id="ans6"><button class="btn" onclick="next(6, 'A')">人を動かすカリスマ魔法</button><button class="btn" onclick="next(6, 'B')">過去や未来が見える魔法</button><button class="btn" onclick="next(6, 'C')">鳥のように空を飛ぶ魔法</button><button class="btn" onclick="next(6, 'D')">一瞬で場を明るくする魔法</button></div></div>
-            <div id="q7" class="question"><p class="progress">7 / 10</p><p>古いお城の図書室。どの本を手に取る？</p><div class="btn-container" id="ans7"><button class="btn" onclick="next(7, 'A')">王家の歴史書</button><button class="btn" onclick="next(7, 'B')">難しい星占いの本</button><button class="btn" onclick="next(7, 'C')">未知の島への航海日誌</button><button class="btn" onclick="next(7, 'D')">美しい舞台の脚本</button></div></div>
-            <div id="q8" class="question"><p class="progress">8 / 10</p><p>あなたが好きな季節はどれ？</p><div class="btn-container" id="ans8"><button class="btn" onclick="next(8, 'A')">生命力あふれる「夏」</button><button class="btn" onclick="next(8, 'B')">静かで落ち着く「冬」</button><button class="btn" onclick="next(8, 'C')">変化を感じる「秋」</button><button class="btn" onclick="next(8, 'D')">ウキウキする「春」</button></div></div>
-            <div id="q9" class="question"><p class="progress">9 / 10</p><p>ピンチの時、あなたはどう行動する？</p><div class="btn-container" id="ans9"><button class="btn" onclick="next(9, 'A')">真っ先に立ち向かう</button><button class="btn" onclick="next(9, 'B')">冷静に作戦を練る</button><button class="btn" onclick="next(9, 'C')">とりあえず逃げて別の道を探す</button><button class="btn" onclick="next(9, 'D')">周りに助けを求めて乗り越える</button></div></div>
-            <div id="q10" class="question"><p class="progress">10 / 10</p><p>最後に、前世の自分に声をかけるなら？</p><div class="btn-container" id="ans10"><button class="btn" onclick="next(10, 'A')">お疲れ様、立派だったよ</button><button class="btn" onclick="next(10, 'B')">その答え、見つかった？</button><button class="btn" onclick="next(10, 'C')">もっと自由に遊んでいいよ</button><button class="btn" onclick="next(10, 'D')">たくさんの人を幸せにしたね</button></div></div>
+        <h1>🔮 あなたの前世診断</h1>
+        <div id="quiz-screen" class="quiz-card">
+            <p id="q-number" style="color:#9b59b6; font-size:14px; font-weight:bold;"></p>
+            <h2 id="question" style="font-size:18px; margin: 20px 0;"></h2>
+            <div id="options"></div>
         </div>
-
         <div id="loading-screen">
-            <div class="loading-title">🔮 前世の記憶を呼び出し中...</div>
+            <h2 style="color: #8e44ad;">前世の記憶を呼び戻しています...</h2>
             <div class="progress-container"><div id="progress-bar"></div></div>
             <div id="loading-ad-area" class="ad-box"></div>
-            <button id="result-view-btn" onclick="showResult()">結果を受け取る✨</button>
+            <button id="result-view-btn" class="button" style="display:none; background:#8e44ad; color:white;" onclick="showResult()">✨ 記憶をのぞく ✨</button>
         </div>
-
-        <div id="result">
-            <p style="margin-bottom: 5px; font-size: 14px;">あなたの前世は...</p>
-            <div id="result-text" class="result-title"></div>
-            <div id="result-desc" class="result-desc"></div>
-            
+        <div id="result-screen">
+            <h2 style="color: #8e44ad;">あなたの前世は...</h2>
+            <img id="result-image" class="result-img" src="" alt="前世の結果">
+            <div id="result-title" class="result-title"></div>
+            <div id="result-text" class="result-text"></div>
             <div id="result-ad-area"></div>
-
-            <p class="share-label">結果をシェアしてね✨</p>
-            <div class="share-container">
-                <a id="share-x" class="share-btn btn-x" target="_blank"><i class="fa-brands fa-x-twitter"></i></a>
-                <a id="share-line" class="share-btn btn-line" target="_blank"><i class="fa-brands fa-line"></i></a>
-                <button onclick="copyUrl()" class="share-btn btn-insta"><i class="fa-brands fa-instagram"></i></button>
+            <div style="display: flex; flex-direction: column; gap: 10px; align-items: center; margin-top: 20px;">
+                <button class="button" style="background: #9b59b6; color: white;" onclick="location.reload()">🔄 もう一度診断する</button>
+                <a href="index.html" class="other-test-btn">🌈 ほかの診断もあそぶ？</a>
             </div>
-
-            <a href="javascript:location.reload();" class="home-btn">もう一度診断する</a>
         </div>
     </div>
-
     <script>
-        let resultCounts = { A: 0, B: 0, C: 0, D: 0 };
-        // 4. 前世タイプとカテゴリの紐付け
-        const resultTypes = {
-            A: { title: "伝説の王国の「若き王・女王」", desc: "強い信念で運命を切り拓いた、誇り高いリーダーです！", img: "kingqueen.png", cat: "money" },
-            B: { title: "星を読んだ「天才天文学者」", desc: "宇宙の真理を探求し、星々から知恵を授かった研究者です。", img: "tenmon.png", cat: "health" },
-            C: { title: "風を味方にした「伝説の航海士」", desc: "自由を求め世界を駆け巡った、勇敢な冒険家でした！", img: "koukaishi.png", cat: "love" },
-            D: { title: "花に愛された「宮廷の踊り子」", desc: "周りを幸せにする魅力で、宮廷を彩った表現者でした！", img: "odoriko.png", cat: "love" }
+        const questions = [
+            { q: "直感で惹かれる色は？", a: { purple:"高貴な紫", green:"癒やしの緑", blue:"自由な青", gold:"輝く金" } },
+            { q: "一番落ち着く場所はどこ？", a: { green:"深い森の中", blue:"波音のする海辺", gold:"豪華な宮殿", purple:"静かな寺院" } },
+            { q: "無意識にやってしまうことは？", a: { gold:"リーダーシップを取る", green:"植物を育てる", purple:"星や宇宙を眺める", blue:"旅の計画を立てる" } },
+            { q: "人から何と言われることが多い？", a: { green:"聞き上手だね", gold:"華があるね", blue:"個性的だね", purple:"ミステリアスだね" } }
+        ];
+        const results = {
+            purple: { title: "高貴な巫女・賢者", img: "zense-miko.png", txt: "あなたの前世は、人々に進むべき道を指し示した賢者や巫女。高い直感力と精神性は、その頃から引き継がれているようです。" },
+            green: { title: "森を守る癒やし手", img: "zense-iyashi.png", txt: "あなたの前世は、薬草や自然の力で人々を救った癒やし手。今世で植物や動物に心惹かれるのは、その記憶があるからかもしれません。" },
+            blue: { title: "自由を愛する旅人", img: "zense-tabibito.png", txt: "あなたの前世は、世界中を旅した自由奔放な冒険家。新しい場所や未知の体験に対する好奇心は、前世から譲り受けた宝物です。" },
+            gold: { title: "誇り高き王族・貴族", img: "zense-ou.png", txt: "あなたの前世は、多くの人を導いた指導者や王族。華やかなオーラと決断力は、かつて国を動かしていた頃の名名残でしょう。" }
         };
-
-        function next(qNum, choice) {
-            resultCounts[choice]++;
-            document.getElementById('q' + qNum).style.display = 'none';
-            let nextQ = document.getElementById('q' + (qNum + 1));
-            if (nextQ) {
-                nextQ.style.display = 'block';
-            } else {
-                startLoading();
-            }
+        let current = 0; let scores = { purple:0, green:0, blue:0, gold:0 };
+        function showQuestion(){
+            const q = questions[current]; document.getElementById('q-number').innerText = `STEP ${current + 1} / ${questions.length}`;
+            document.getElementById('question').innerText = q.q; const o = document.getElementById('options'); o.innerHTML = "";
+            for (let k in q.a) { const b = document.createElement("button"); b.className = "button"; b.innerText = q.a[k]; b.onclick = () => { scores[k]++; current++; if (current < questions.length) showQuestion(); else startLoading(); }; o.appendChild(b); }
         }
-
-        function startLoading() {
-            document.getElementById('quiz-area').style.display = 'none';
-            document.getElementById('loading-screen').style.display = 'block';
-            
-            // 🎯 ランダム広告を表示
-            showRandomAd('random', 'loading-ad-area');
-
-            setTimeout(() => { document.getElementById('progress-bar').style.width = '100%'; }, 100);
-            setTimeout(() => { document.getElementById('result-view-btn').style.display = 'block'; }, 3000);
-        }
-
-        function showResult() {
-            document.getElementById('loading-screen').style.display = 'none';
-            document.getElementById('result').style.display = 'block';
-            document.getElementById('main-title').style.display = 'none';
-
-            let maxChoice = Object.keys(resultCounts).reduce((a, b) => resultCounts[a] > resultCounts[b] ? a : b);
-            const final = resultTypes[maxChoice];
-
-            const resTitle = document.getElementById('result-text');
-            const resDesc = document.getElementById('result-desc');
-            resTitle.innerText = final.title;
-            resDesc.innerText = final.desc;
-
-            // 結果画像を表示
-            let resImg = document.getElementById('result-image') || document.createElement('img');
-            resImg.id = 'result-image';
-            resImg.className = 'card-animation';
-            resImg.src = final.img;
-            resTitle.parentNode.insertBefore(resImg, resTitle);
-
-            // 🎯 結果に合わせた広告を表示！
-            showRandomAd(final.cat, 'result-ad-area');
-
-            // シェア設定
-            const siteUrl = encodeURIComponent(window.location.href);
-            const shareText = encodeURIComponent(`👼前世診断の結果、私の前世は【${final.title}】でした！\nあなたも診断してみてね✨\n`);
-            document.getElementById('share-x').href = `https://twitter.com/intent/tweet?text=${shareText}&url=${siteUrl}`;
-            document.getElementById('share-line').href = `https://social-plugins.line.me/lineit/share?url=${siteUrl}&text=${shareText}`;
-        }
-
-        function copyUrl() {
-            const url = window.location.href;
-            navigator.clipboard.writeText(url).then(() => {
-                alert("URLをコピーしたよ！\nインスタの『リンクスタンプ』に貼り付けてシェアしてね✨");
-            });
-        }
+        function startLoading(){ document.getElementById('quiz-screen').style.display = "none"; document.getElementById('loading-screen').style.display = "block"; showRandomAd('random', 'loading-ad-area'); setTimeout(() => { document.getElementById("progress-bar").style.width = "100%"; }, 100); setTimeout(() => { document.getElementById("result-view-btn").style.display = "block"; }, 3000); }
+        function showResult(){ document.getElementById('loading-screen').style.display = "none"; document.getElementById('result-screen').style.display = "block"; const m = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b); const d = results[m]; document.getElementById('result-image').src = d.img; document.getElementById('result-title').innerText = d.title; document.getElementById('result-text').innerText = d.txt; showRandomAd('love', 'result-ad-area'); }
+        showQuestion();
     </script>
 </body>
 </html>
