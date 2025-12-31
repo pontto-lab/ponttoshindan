@@ -1,59 +1,59 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>👁️ あなたの【裏の顔】診断 | ぽんっとラボ</title>
-<script src="ads-list.js"></script>
-<style>
-/* 既存のスタイルを継承 */
-body { font-family:'ヒラギノ丸ゴ Pro','Arial Rounded MT Bold',sans-serif; background:#f5f0ff; margin:0; padding:0; text-align:center; color: #4a4a4a; }
-.wrapper { max-width:420px; margin:0 auto; padding:15px 10px; }
-h1 { font-size:18px; color:#7e57c2; margin-bottom:10px; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>👁️ あなたの【裏の顔】診断 | ぽんっとラボ</title>
+    <script src="ads-list.js"></script>
+    <style>
+        body { font-family:'ヒラギノ丸ゴ Pro','Arial Rounded MT Bold',sans-serif; background:#f5f0ff; margin:0; padding:0; text-align:center; color: #4a4a4a; }
+        .wrapper { max-width:420px; margin:0 auto; padding:15px 10px; }
+        h1 { font-size:18px; color:#7e57c2; margin-bottom:10px; }
 
-#quiz, #loading-screen, #result-area { background: #fff; padding: 15px; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        #quiz, #loading-screen, #result-area { background: #fff; padding: 15px; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
 
-.question { font-size:16px; font-weight:bold; min-height:3em; display:flex; align-items:center; justify-content:center; color: #5e35b1; }
-.options { display:flex; flex-direction:column; gap:8px; margin-top: 10px; }
-.options button { padding:12px; border-radius:12px; border:2px solid #e1bee7; background:#fff; cursor:pointer; font-weight: bold; font-size: 14px; color: #5e35b1; transition: 0.2s; }
+        .question { font-size:16px; font-weight:bold; min-height:3em; display:flex; align-items:center; justify-content:center; color: #5e35b1; }
+        .options { display:flex; flex-direction:column; gap:8px; margin-top: 10px; }
+        .options button { padding:12px; border-radius:12px; border:2px solid #e1bee7; background:#fff; cursor:pointer; font-weight: bold; font-size: 14px; color: #5e35b1; transition: 0.2s; }
+        .options button:active { transform: scale(0.98); background: #f3e5f5; }
 
-/* 🌟 ロード画面 */
-#loading-screen { display:none; }
-.progress-container { width: 100%; background: #eee; height: 10px; border-radius: 10px; margin: 10px 0; overflow: hidden; }
-#progress-bar { width: 0%; background: #ba68c8; height: 100%; transition: width 3s linear; }
+        /* ロード画面 */
+        #loading-screen { display:none; }
+        .progress-container { width: 100%; background: #eee; height: 10px; border-radius: 10px; margin: 10px 0; overflow: hidden; }
+        #progress-bar { width: 0%; background: #ba68c8; height: 100%; transition: width 3s linear; }
 
-/* 広告枠のデザイン調整（闇かわ風） */
-.ad-box { margin: 10px 0; padding: 10px; border: 1px dashed #ba68c8; border-radius: 10px; background: #fdfbff; min-height: 140px; }
-.ad-box img { width: 100px !important; height: 100px !important; border-radius: 8px; margin-bottom: 5px; }
-.ad-box a { text-decoration: none; color: #7e57c2; font-size: 11px; font-weight: bold; display: block; }
+        .ad-box { margin: 10px 0; padding: 10px; border: 1px dashed #ba68c8; border-radius: 10px; background: #fdfbff; min-height: 140px; }
+        .ad-box img { width: 100px !important; height: 100px !important; border-radius: 8px; margin-bottom: 5px; }
 
-#result-view-btn { display: none; width: 100%; padding: 12px; background: #ba68c8; color: white; border: none; border-radius: 25px; font-weight: bold; cursor: pointer; }
+        #result-view-btn { display: none; width: 100%; padding: 12px; background: #ba68c8; color: white; border: none; border-radius: 25px; font-weight: bold; cursor: pointer; }
 
-/* 結果表示 */
-#result-area { display:none; border: 3px double #d1c4e9; padding: 12px; }
-.result-header { font-size: 12px; color: #9575cd; margin-bottom: 5px; }
-.result-img-container { position: relative; width: 100%; max-width: 250px; margin: 0 auto 8px; }
-#result-img { width: 100%; height: auto; border-radius: 15px; animation: shineEffect 2s infinite alternate; }
-@keyframes shineEffect {
-  0% { filter: drop-shadow(0 0 5px #fff) brightness(1); transform: scale(1); }
-  100% { filter: drop-shadow(0 0 15px #ffd700) brightness(1.05); transform: scale(1.01); }
-}
-.result-type { font-size: 17px; font-weight: bold; color: #ff1493; margin: 5px 0; }
-.result-comment { font-size: 13px; line-height: 1.5; color: #444; background: #faf5ff; padding: 10px; border-radius: 12px; text-align: left; }
+        /* 結果表示 */
+        #result-area { display:none; border: 3px double #d1c4e9; padding: 12px; }
+        .result-img-container { position: relative; width: 100%; max-width: 250px; margin: 0 auto 8px; }
+        #result-img { width: 100%; height: auto; border-radius: 15px; animation: shineEffect 2s infinite alternate; }
+        @keyframes shineEffect {
+          0% { filter: drop-shadow(0 0 5px #fff) brightness(1); transform: scale(1); }
+          100% { filter: drop-shadow(0 0 15px #ffd700) brightness(1.05); transform: scale(1.01); }
+        }
+        .result-type { font-size: 17px; font-weight: bold; color: #ff1493; margin: 5px 0; }
+        .result-comment { font-size: 13px; line-height: 1.5; color: #444; background: #faf5ff; padding: 10px; border-radius: 12px; text-align: left; }
 
-/* シェア・下部ボタン */
-.share-container { margin: 15px 0; }
-.share-title { font-size: 11px; color: #7e57c2; margin-bottom: 8px; font-weight: bold; }
-.share-buttons { display: flex; justify-content: center; gap: 5px; }
-.btn-share { flex: 1; padding: 10px 2px; border-radius: 10px; font-weight: bold; text-decoration: none; color: white; font-size: 11px; display: flex; align-items: center; justify-content: center; gap: 3px; }
-.btn-x { background-color: #000; }
-.btn-line { background-color: #06C755; }
-.btn-insta { background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); }
-.btn-container { margin-top: 15px; display: flex; flex-direction: column; gap: 8px; align-items: center; }
-.btn-common { padding: 10px 0; border-radius: 20px; font-weight: bold; text-decoration: none; font-size: 14px; width: 80%; }
-.btn-retry { color: #ff69b4; cursor: pointer; border: none; background: none; font-size: 12px; text-decoration: underline; }
-.btn-home { background-color: #fce4ec; color: #ba68c8; border: 1px solid #ffc1e3; }
-</style>
+        /* シェア・下部ボタン */
+        .share-container { margin: 15px 0; }
+        .share-title { font-size: 11px; color: #7e57c2; margin-bottom: 8px; font-weight: bold; }
+        .share-buttons { display: flex; justify-content: center; gap: 5px; }
+        .btn-share { flex: 1; padding: 10px 2px; border-radius: 10px; font-weight: bold; text-decoration: none; color: white; font-size: 11px; display: flex; align-items: center; justify-content: center; gap: 3px; }
+        .btn-x { background-color: #000; }
+        .btn-line { background-color: #06C755; }
+        .btn-insta { background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); }
+
+        .btn-container { margin-top: 15px; display: flex; flex-direction: column; gap: 8px; align-items: center; }
+        .btn-retry { color: #7e57c2; cursor: pointer; border: none; background: none; font-size: 13px; text-decoration: underline; font-weight: bold; }
+        
+        /* ✨ ほかの診断もあそぶ？ボタン（統一デザイン） */
+        .other-test-btn { display: inline-block; padding: 10px 25px; background: #fff; color: #7e57c2; border: 2px solid #7e57c2; border-radius: 25px; text-decoration: none; font-weight: bold; font-size: 14px; transition: 0.3s; width: 80%; }
+        .other-test-btn:hover { background: #7e57c2; color: #fff; }
+    </style>
 </head>
 <body>
 <div class="wrapper">
@@ -68,15 +68,12 @@ h1 { font-size:18px; color:#7e57c2; margin-bottom:10px; }
     <div id="loading-screen">
         <h2 style="color: #ba68c8; font-size: 16px;">🕸️ 本性を暴いています…👁️</h2>
         <div class="progress-container"><div id="progress-bar"></div></div>
-        
-        <div id="loading-ad-area" class="ad-box">
-            </div>
-
+        <div id="loading-ad-area" class="ad-box"></div>
         <button id="result-view-btn" onclick="showResult()">本当の姿を見る👁️</button>
     </div>
 
     <div id="result-area">
-        <div class="result-header">診断結果：あなたの正体</div>
+        <div style="font-size: 12px; color: #9575cd; margin-bottom: 5px;">診断結果：あなたの正体</div>
         <div class="result-img-container">
             <img id="result-img" src="" alt="結果画像">
         </div>
@@ -95,14 +92,13 @@ h1 { font-size:18px; color:#7e57c2; margin-bottom:10px; }
         </div>
 
         <div class="btn-container">
-            <button onclick="location.reload();" class="btn-retry">🔄 もう一度スキャン</button>
-            <a href="index.html" class="btn-home btn-common">🏠 ぽんっとTOP</a>
+            <a href="javascript:location.reload();" class="btn-retry">🔄 もう一度スキャン</a>
+            <a href="index.html" class="other-test-btn">🌈 ほかの診断もあそぶ？</a>
         </div>
     </div>
 </div>
 
 <script>
-// 4. 裏の顔のタイプに広告カテゴリを紐付け
 const resultData = {
     panda: { name: "実は「計算高い策士」", img: "sakushi.png", cat: "money", msg: "のんびり屋に見えて実は超冷静。すべてを損得で計算して立ち回る、最強の戦略家タイプです。" },
     kuma: { name: "実は「燃え盛る情熱家」", img: "jonetsu.png", cat: "money", msg: "一度火がつくと誰よりも熱い！好きなものへの独占欲は誰にも負けないエネルギーを秘めています。" },
@@ -110,17 +106,16 @@ const resultData = {
     usagi: { name: "実は「かまってちゃん」", img: "kamatte.png", cat: "health", msg: "表向きは明るいけれど、実は深い孤独を抱える寂しがり屋。24時間気にかけてほしい究極の甘えん坊。" }
 };
 
-// ...クイズデータはそのまま...
 const quizData = [
     { q: "親友が自分より豪華な結婚式を挙げた。本音は？", a: [{ t: "usagi", text: "「いいな…」" },{ t: "panda", text: "「いくらかかったかな」" },{ t: "kuma", text: "「私の方が熱い式に！」" },{ t: "neko", text: "「…ふん、勝手にすれば」" }]},
     { q: "誰もいない道で、大金の入った財布を拾った。", a: [{ t: "panda", text: "リスクとリターンを計算" },{ t: "kuma", text: "これを元手に野望を抱く" },{ t: "usagi", text: "不安でキョロキョロ" },{ t: "neko", text: "「自分へのご褒美かな」" }]},
     { q: "嫌いな奴がSNSで大炎上！あなたはどうする？", a: [{ t: "panda", text: "裏でさらに燃料を投下" },{ t: "neko", text: "「ざまあみろ」" },{ t: "kuma", text: "徹底的に叩かれるのを期待" },{ t: "usagi", text: "「私ならあんな事しない」" }]},
     { q: "「あなたのため」と説教してくる相手への本音。", a: [{ t: "panda", text: "「はいはい（無能だな）」" },{ t: "neko", text: "「うるさい、わかってない」" },{ t: "kuma", text: "「あんたに何がわかる！」" },{ t: "usagi", text: "「もっと優しくしてよ」" }]},
-    { q: "恋人が別の異性と楽しそうに話している。", a: [{ t: "kuma", text: "嫉嫉の炎がメラメラ" },{ t: "neko", text: "ツンとして無視する" },{ t: "panda", text: "浮気率をプロファイリング" },{ t: "usagi", text: "「私だけを見て！」" }]},
+    { q: "恋人が別の異性と楽しそうに話している。", a: [{ t: "kuma", text: "嫉妬の炎がメラメラ" },{ t: "neko", text: "ツンとして無視する" },{ t: "panda", text: "浮気率をプロファイリング" },{ t: "usagi", text: "「私だけを見て！」" }]},
     { q: "目の前の人が、派手に転んで荷物をぶちまけた。", a: [{ t: "panda", text: "メリットがあるか考える" },{ t: "neko", text: "「あらら」と心で思い通過" },{ t: "usagi", text: "助けて「良い人」に見せる" },{ t: "kuma", text: "情熱的に駆け寄り助ける" }]},
     { q: "自分より格下の相手が、大成功したと聞いた。", a: [{ t: "panda", text: "分析して利用してやる" },{ t: "kuma", text: "「負けてたまるか！」" },{ t: "neko", text: "「運がいいだけ」と嫉妬" },{ t: "usagi", text: "「私だって頑張ってるのに」" }]},
     { q: "人からもらったプレゼントが、超絶ダサかった。", a: [{ t: "panda", text: "メルカリの相場を調べる" },{ t: "neko", text: "笑顔で受け取り、放置" },{ t: "usagi", text: "「好み、分かってない」" },{ t: "kuma", text: "「私をバカにしてる？」" }]},
-    { q: "もし自分に絶対バレない魔法の力が宿ったら？", a: [{ t: "panda", text: "世界を裏から操る黒幕" },{ t: "kuma", text: "欲しいものを全て奪う" },{ t: "usagi", text: "全員を自分に夢中にさせる" },{ t: "neko", text: "大好きな人と二人きり" }]},
+    { q: "もし自分に絶対バレない魔法の力が宿ったら？", a: [{ t: "panda", text: "世界を裏から操る黒幕" },{ t: "kuma", text: "欲しいものを全て奪う" },{ t: "usagi", text: "全員を自分に夢中にさせる" },{ t: "neko", text: "大大好き人と二人きり" }]},
     { q: "最後に。この世で本当に「信じられる」のは？", a: [{ t: "panda", text: "自分の「知略」と「損得」" },{ t: "kuma", text: "自分の内なる「情熱」" },{ t: "usagi", text: "誰かがくれる「愛情」" },{ t: "neko", text: "秘めた「乙女心」" }]}
 ];
 
@@ -144,10 +139,7 @@ function showQuestion() {
 function startLoading() {
     document.getElementById("quiz").style.display = "none";
     document.getElementById("loading-screen").style.display = "block";
-    
-    // 🎯 スキャン中は「ランダム」を表示
     showRandomAd('random', 'loading-ad-area');
-
     setTimeout(() => { document.getElementById("progress-bar").style.width = "100%"; }, 100);
     setTimeout(() => { document.getElementById("result-view-btn").style.display = "block"; }, 3000);
 }
@@ -162,7 +154,6 @@ function showResult() {
     document.getElementById("result-type").innerText = final.name;
     document.getElementById("result-comment").innerHTML = final.msg;
 
-    // 🎯 裏の顔に合わせた広告を表示！
     showRandomAd(final.cat, 'result-ad-area');
 
     const shareText = `私の裏の顔は…【${final.name}】でした！\nみんなも暴かれてみる？👁️\n#裏の顔診断 #ぽんっとラボ\n`;
