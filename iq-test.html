@@ -12,13 +12,13 @@
         .button:active { transform: scale(0.9); }
         .progress-container { width: 100%; background: #eee; height: 15px; border-radius: 10px; margin: 15px 0; overflow: hidden; }
         #progress-bar { width: 0%; background: #ff69b4; height: 100%; transition: width 3s linear; }
-        #result-view-btn { display: none; width: 100%; background: #ff69b4; color: white; animation: pulse 1.5s infinite; }
+        #result-view-btn { display: none; width: 100%; background: #ff69b4; color: white; border-radius: 20px; padding: 15px; font-weight: bold; border:none; cursor:pointer; width:100%; }
         .quiz-img { width: 100%; max-width: 100%; height: auto; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        #question-number { font-weight: bold; color: #ff69b2; font-size: 1.2rem; margin-bottom: 10px; }
-        .step-indicator { font-size: 14px; color: #ff69b4; font-weight: bold; margin-bottom: 10px; background: #fff0f5; display: inline-block; padding: 5px 15px; border-radius: 20px; }
+        #question-number { font-weight: bold; color: #ff69b2; font-size: 1.2rem; margin-bottom: 5px; }
+        .step-indicator { font-size: 14px; color: #ff69b4; font-weight: bold; margin-bottom: 15px; background: #fff0f5; display: inline-block; padding: 5px 15px; border-radius: 20px; border: 1px solid #ffb6c1; }
         #result-image { max-width: 100%; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); margin-bottom: 15px; }
         .choice-btn { background: white !important; border: 3px solid #f9ebff !important; padding: 5px !important; }
-        .choice-btn img { width: 80px; display: block; }
+        .choice-btn img { width: 80px; height: 80px; object-fit: contain; display: block; }
     </style>
 </head>
 <body>
@@ -41,17 +41,16 @@
             <h2 style="color: #ff1493;">診断結果発表！</h2>
             <img id="result-image" src="" alt="診断結果">
             <div id="iq-display" style="font-size: 44px; font-weight: bold; margin: 10px 0; background: white; padding: 20px; border-radius: 20px; border: 5px solid #ffb6c1;"></div>
-            <p id="iq-comment" style="white-space: pre-wrap;"></p>
-            <br>
+            <p id="iq-comment" style="white-space: pre-wrap; margin-bottom: 20px;"></p>
             <a href="javascript:location.reload();" style="color:#ff69b4; text-decoration:none; font-weight:bold;">🔄 もう一度診断する</a>
         </div>
     </div>
 
     <script>
         let currentStepIndex = 0;
-        let subStepIndex = 0; // 2回回答用
+        let subStepIndex = 0; 
         let score = 0;
-        let isCorrectSoFar = true; // 2ステップ問題で両方合ってるか
+        let isCorrectSoFar = true; 
 
         const quizList = [
             { type: "single", img: "question1.png", choices: [{img:"choice-a.png", ok:false}, {img:"choice-b.png", ok:true}, {img:"choice-c.png", ok:false}] },
@@ -99,6 +98,7 @@
                 });
             } else {
                 q.choices.forEach(op => {
+                    // opには 'plus' や 'kakeru' が入る
                     html += `<button onclick="handleDoubleAnswer('${op}')" class="button choice-btn"><img src="${op}.png"></button>`;
                 });
             }
@@ -113,22 +113,16 @@
 
         function handleDoubleAnswer(selectedOp) {
             const q = quizList[currentStepIndex];
-            // 今のステップの正解と比較
             if (selectedOp !== q.answers[subStepIndex]) {
                 isCorrectSoFar = false;
             }
-            
             subStepIndex++;
-            
             if (subStepIndex >= 2) {
-                // 2回押し終わった
                 if (isCorrectSoFar) score++;
-                // リセットして次へ
                 subStepIndex = 0;
                 isCorrectSoFar = true;
                 nextQuestion();
             } else {
-                // 2回目があるなら表示だけ更新
                 showQuestion();
             }
         }
@@ -152,18 +146,18 @@
             const iqDisp = document.getElementById('iq-display');
             const iqComm = document.getElementById('iq-comment');
             
-            let finalIQ;
-            if (score === 8) finalIQ = 140;
-            else if (score >= 6) finalIQ = 115;
-            else if (score >= 4) finalIQ = 100;
-            else finalIQ = 80;
+            let finalValue;
+            if (score === 8) finalValue = 140;
+            else if (score >= 6) finalValue = 115;
+            else if (score >= 4) finalValue = 100;
+            else finalValue = 80;
 
-            iqDisp.innerText = "IQ " + finalIQ;
-            iqImg.src = `iq${finalIQ}.jpg`;
+            iqDisp.innerText = "IQ " + finalValue;
+            iqImg.src = "iq" + finalValue + ".jpg"; // iq140.jpg など
             
-            if (finalIQ >= 130) iqComm.innerText = "超天才！✨\n難しい計算パズルも完璧だったね！💓";
-            else if (finalIQ >= 100) iqComm.innerText = "すごい！💪\n最後の方の問題もよく頑張ったね！✨";
-            else iqComm.innerText = "お疲れ様！🌱\n計算パズル、次はもっと早く解けるかも！";
+            if (finalValue >= 130) iqComm.innerText = "超天才！✨\n全問正解おめでとう！\nあなたの脳はフル回転してるね💓";
+            else if (finalValue >= 100) iqComm.innerText = "標準以上！💪\n安定した思考力の持ち主だよ✨";
+            else iqComm.innerText = "伸びしろたっぷり！🌱\n自分のペースで大丈夫。\nまた脳トレしにきてね！";
         }
         showQuestion();
     </script>
