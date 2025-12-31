@@ -6,7 +6,6 @@
 <title>🧪 ぽんっと性格診断 | ぽんっとラボ</title>
 <script src="ads-list.js"></script>
 <style>
-/* 既存のスタイルを継承 */
 body { font-family:'ヒラギノ丸ゴ Pro','Arial Rounded MT Bold',sans-serif; background:#f9f5ff; margin:0; padding:0; text-align:center; color: #444; }
 .wrapper { max-width:480px; margin:0 auto; padding:24px 16px; }
 h1 { font-size:26px; margin-bottom:12px; color:#8e44ad; text-shadow: 1px 1px 0 #fff; }
@@ -15,16 +14,16 @@ h1 { font-size:26px; margin-bottom:12px; color:#8e44ad; text-shadow: 1px 1px 0 #
 .question { font-size:18px; margin-bottom:20px; font-weight: bold; min-height: 3.5em; display: flex; align-items: center; justify-content: center; color: #6d2192; }
 .options { display:flex; flex-direction:column; gap:12px; }
 .options button { padding:16px; border-radius:20px; border:2px solid #e3d0f2; background:#fff; font-size:15px; cursor:pointer; transition:0.2s; color: #555; font-weight: bold; }
+.options button:active { transform: scale(0.98); background: #f3e5f5; }
 
-/* 🌟 ロード画面 */
+/* ロード画面 */
 #loading-screen { display:none; padding: 20px; background: #fff; border-radius: 30px; box-shadow: 0 8px 20px rgba(0,0,0,0.05); }
 .progress-container { width: 100%; background: #eee; height: 15px; border-radius: 10px; margin: 15px 0; overflow: hidden; }
 #progress-bar { width: 0%; background: #8e44ad; height: 100%; transition: width 3s linear; }
 
-/* 広告枠のデザイン調整 */
+/* 広告枠 */
 .ad-box { margin: 20px 0; padding: 10px; background: #fdfbff; border: 1px dashed #d8bfe6; border-radius: 10px; min-height: 140px; }
 .ad-box img { width: 100px !important; height: 100px !important; border-radius: 8px; margin-bottom: 5px; }
-.ad-box a { text-decoration: none; color: #8e44ad; font-size: 11px; font-weight: bold; display: block; }
 
 #result-view-btn {
     display: none; width: 100%; padding: 16px; background: #8e44ad; color: white; border: none; border-radius: 30px;
@@ -32,13 +31,17 @@ h1 { font-size:26px; margin-bottom:12px; color:#8e44ad; text-shadow: 1px 1px 0 #
 }
 @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
 
+/* 結果エリア */
 #result-area { display:none; background: #fff; padding: 30px 20px; border-radius: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-.result-name { font-size: 26px; color: #8e44ad; margin: 15px 0; font-weight: bold; }
-.result-desc { line-height: 1.8; color: #666; font-size: 16px; margin-bottom: 20px; text-align: left; }
+.result-img { width: 100%; max-width: 300px; border-radius: 20px; margin-bottom: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+.result-name { font-size: 26px; color: #8e44ad; margin: 10px 0; font-weight: bold; }
+.result-desc { line-height: 1.8; color: #666; font-size: 16px; margin-bottom: 20px; text-align: left; background: #f9f5ff; padding: 15px; border-radius: 15px; }
 
-.btn-container { display: flex; flex-direction: column; gap: 15px; align-items: center; margin-top: 20px; }
-.btn-home { display:inline-block; padding:12px 40px; border-radius:25px; background:#ffe6ef; text-decoration:none; color:#333; font-weight: bold; border: 1px solid #ffb6c1; }
-.btn-retry { color: #8e44ad; font-size: 14px; text-decoration: underline; cursor: pointer; border: none; background: none; font-weight: bold; }
+/* ✨ ボタンコンテナ */
+.btn-container { display: flex; flex-direction: column; gap: 12px; align-items: center; margin-top: 20px; }
+.btn-retry { color: #8e44ad; font-size: 16px; text-decoration: none; font-weight: bold; cursor: pointer; }
+.other-test-btn { display: inline-block; padding: 12px 30px; background: #fff; color: #8e44ad; border: 2px solid #8e44ad; border-radius: 25px; text-decoration: none; font-weight: bold; font-size: 16px; transition: 0.3s; }
+.other-test-btn:hover { background: #8e44ad; color: #fff; }
 </style>
 </head>
 <body>
@@ -54,35 +57,34 @@ h1 { font-size:26px; margin-bottom:12px; color:#8e44ad; text-shadow: 1px 1px 0 #
     <div id="loading-screen">
         <h2 style="color: #8e44ad; font-size: 20px;">🧪 成分を抽出中…✨</h2>
         <div class="progress-container"><div id="progress-bar"></div></div>
-        
-        <div id="loading-ad-area" class="ad-box">
-            </div>
-
+        <div id="loading-ad-area" class="ad-box"></div>
         <button id="result-view-btn" onclick="showResult()">診断結果を受け取る✨</button>
     </div>
 
     <div id="result-area">
-        <p style="font-size: 18px; color: #888;">あなたの成分が判明しました！</p>
+        <p style="font-size: 16px; color: #888; margin-bottom:10px;">あなたの成分が判明しました！</p>
+        
+        <img id="result-image" src="" alt="性格診断結果" class="result-img" style="display:none;">
+
         <div id="result-name" class="result-name"></div>
         <div id="result-desc" class="result-desc"></div>
         
         <div id="result-ad-area"></div>
 
         <div class="btn-container">
-            <button onclick="location.reload();" class="btn-retry">🔄 もう一度診断する</button>
-            <a href="index.html" class="btn-home">🏠 ぽんっとTOPにもどる</a>
+            <a href="javascript:location.reload();" class="btn-retry">🔄 もう一度診断する</a>
+            <a href="index.html" class="other-test-btn">🌈 ほかの診断もあそぶ？</a>
         </div>
     </div>
 </div>
 
 <script>
-// 4. 性格タイプに広告カテゴリを紐付け
 const results = {
-    heal:  { name: "のんびり癒やし系💛", cat: "health", desc: "おっとりしていて、そばにいるだけで周りがポカポカ温かくなるような存在。あなたの優しい空気感に、救われている人がたくさんいます。たまには自分も甘やかしてね！" },
-    active:{ name: "元気で冒険好き🔥", cat: "money",  desc: "考えるより先に体が動く、パワフルな行動派！あなたの「とりあえずやってみよう！」という明るさは、みんなを引っ張る太陽のような魅力があります。" },
-    cool:  { name: "爽やか軽やか🌿", cat: "love",   desc: "しがみつかない潔さと、風のような軽やかさを持つあなた。物事を客観的に見れるスマートさがあり、あなたのひと言はみんなをハッとさせる説得力があります。" },
-    trust: { name: "穏やか安心タイプ🍀", cat: "health", desc: "誠実で落ち着きがあり、グループのまとめ役や聞き役に回ることが多いはず。あなたがいるだけで場が安定する、心のインフラのような信頼度バツグンの人です。" },
-    logic: { name: "思慮深いタイプ🧠", cat: "money",  desc: "物事の裏側までしっかり考える、慎重でミステリアスな魅力の持ち主。一見クールですが、内側には誰よりも熱いこだわりと、鋭い観察眼を秘めています。" }
+    heal:  { name: "のんびり癒やし系💛", cat: "health", img: "seikaku-heal.png", desc: "おっとりしていて、そばにいるだけで周りがポカポカ温かくなるような存在。あなたの優しい空気感に、救われている人がたくさんいます。たまには自分も甘やかしてね！" },
+    active:{ name: "元気で冒険好き🔥", cat: "money",  img: "seikaku-active.png", desc: "考えるより先に体が動く、パワフルな行動派！あなたの「とりあえずやってみよう！」という明るさは、みんなを引っ張る太陽のような魅力があります。" },
+    cool:  { name: "爽やか軽やか🌿", cat: "love",   img: "seikaku-cool.png", desc: "しがみつかない潔さと、風のような軽やかさを持つあなた。物事を客観的に見れるスマートさがあり、あなたのひと言はみんなをハッとさせる説得力があります。" },
+    trust: { name: "穏やか安心タイプ🍀", cat: "health", img: "seikaku-trust.png", desc: "誠実で落ち着きがあり、グループのまとめ役や聞き役に回ることが多いはず。あなたがいるだけで場が安定する、心のインフラのような信頼度バツグンの人です。" },
+    logic: { name: "思慮深いタイプ🧠", cat: "money",  img: "seikaku-logic.png", desc: "物事の裏側までしっかり考える、慎重でミステリアスな魅力の持ち主。一見クールですが、内側には誰よりも熱いこだわりと、鋭い観察眼を秘めています。" }
 };
 
 const questions = [
@@ -95,7 +97,7 @@ const questions = [
     { q: "映画を観るなら、どんなジャンル？", a: [ { t: "active", text: "ハラハラするアクション映画" }, { t: "heal", text: "心が温まるヒューマンドラマ" }, { t: "logic", text: "伏線だらけのミステリー映画" }, { t: "cool", text: "映像がきれいなドキュメンタリー" } ]},
     { q: "SNSの使い方、あなたはどっち派？", a: [ { t: "cool", text: "情報は見る専門。たまにいい写真を投稿" }, { t: "active", text: "今の出来事をどんどんアップする" }, { t: "trust", text: "仲の良い友達と密にやり取りする" }, { t: "logic", text: "自分の趣味を深く発信する" } ]},
     { q: "もし1つだけ才能が手に入るなら？", a: [ { t: "active", text: "世界を驚かせるカリスマ性" }, { t: "logic", text: "一度見たものは忘れない記憶力" }, { t: "heal", text: "みんなを癒やす最高の笑顔" }, { t: "cool", text: "どんな場でも物怖じしない度胸" } ]},
-    { q: "あなたの考える「幸せな時間」とは？", a: [ { t: "heal", text: "大大好き場所でのんびりすること" }, { t: "active", text: "新しいことに挑戦してるとき" }, { t: "trust", text: "大切な人と穏やかに過ごすとき" }, { t: "logic", text: "ひとりで何かに没頭してるとき" } ]}
+    { q: "あなたの考える「幸せな時間」とは？", a: [ { t: "heal", text: "大好きな場所でのんびりすること" }, { t: "active", text: "新しいことに挑戦してるとき" }, { t: "trust", text: "大切な人と穏やかに過ごすとき" }, { t: "logic", text: "ひとりで何かに没頭してるとき" } ]}
 ];
 
 let current = 0;
@@ -119,10 +121,7 @@ function showQuestion() {
 function startLoading() {
     document.getElementById("quiz").style.display = "none";
     document.getElementById("loading-screen").style.display = "block";
-    
-    // 🎯 抽出中は「ランダム」に表示
     showRandomAd('random', 'loading-ad-area');
-
     setTimeout(() => { document.getElementById("progress-bar").style.width = "100%"; }, 100);
     setTimeout(() => { document.getElementById("result-view-btn").style.display = "block"; }, 3000);
 }
@@ -132,10 +131,15 @@ function showResult() {
     document.getElementById("result-area").style.display = "block";
     const maxType = Object.keys(scores).sort((a,b) => scores[b] - scores[a])[0];
     const final = results[maxType];
+    
     document.getElementById("result-name").innerText = final.name;
     document.getElementById("result-desc").innerText = final.desc;
+    
+    // 画像がある場合は表示（ファイル名が正しければ表示されます）
+    const resImg = document.getElementById("result-image");
+    resImg.src = final.img;
+    resImg.style.display = "inline-block";
 
-    // 🎯 性格タイプに合わせた広告を表示！
     showRandomAd(final.cat, 'result-ad-area');
 }
 showQuestion();
