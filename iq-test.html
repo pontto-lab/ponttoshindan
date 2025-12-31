@@ -8,7 +8,7 @@
     <style>
         body { font-family: 'ヒラギノ丸ゴ Pro','Arial Rounded MT Bold',sans-serif; background: #fff; text-align: center; margin: 0; padding: 20px; }
         .container { max-width: 480px; margin: 0 auto; }
-        .button { display: inline-block; margin: 10px; padding: 15px; border-radius: 20px; background: #d8bfe6; color: #333; text-decoration: none; font-size: 18px; border: none; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: 0.2s; }
+        .button { display: inline-block; margin: 8px; padding: 12px; border-radius: 20px; background: #d8bfe6; color: #333; text-decoration: none; font-size: 18px; border: none; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: 0.2s; }
         .button:active { transform: scale(0.9); }
         
         .ad-box { background: #fffafb; padding: 10px; border: 3px dashed #ffb6c1; margin: 20px 0; border-radius: 20px; min-height: 150px; }
@@ -21,14 +21,12 @@
         #result-view-btn { display: none; width: 100%; background: #ff69b4; color: white; animation: pulse 1.5s infinite; }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
-        img { max-width: 100%; height: auto; }
+        .quiz-img { width: 100%; max-width: 100%; height: auto; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         #question-number { font-weight: bold; color: #ff69b2; font-size: 1.2rem; margin-bottom: 10px; }
-        .hint-text { color: #ff69b4; font-size: 14px; font-weight: bold; background: #fff0f5; padding: 10px; border-radius: 15px; margin: 10px 20px; border: 1px solid #ffb6c1; }
+        .hint-text { color: #ff69b4; font-size: 14px; font-weight: bold; background: #fff0f5; padding: 10px; border-radius: 15px; margin-bottom: 20px; border: 1px solid #ffb6c1; }
 
         #result-image { max-width: 100%; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); margin-bottom: 15px; }
-        
-        .formula-container { display: flex; justify-content: center; align-items: center; gap: 5px; margin-bottom: 20px; flex-wrap: wrap; }
-        .formula-container img { width: 45px; } /* 8問用に見やすく少しサイズ調整 */
+        .choice-btn { background: white !important; border: 3px solid #f9ebff !important; }
     </style>
 </head>
 <body>
@@ -55,7 +53,7 @@
             <div id="result-ad-area"></div>
             <br>
             <div style="display: flex; flex-direction: column; gap: 10px; align-items: center;">
-                <a href="javascript:location.reload();" style="color:#ff69b4; text-decoration:none; font-weight:bold; font-size:16px;">🔄 もう一度診断する</a>
+                <a href="javascript:location.reload();" style="color:#ff69b4; text-decoration:none; font-weight:bold;">🔄 もう一度診断する</a>
                 <a href="index.html" class="button">🏠 ホームへ戻る</a>
             </div>
         </div>
@@ -67,22 +65,28 @@
         let fastAnswerCount = 0; 
         let startTime; 
 
-        const opChoices = [
-            { img: "plus.png", val: "+" },
-            { img: "minus.png", val: "-" },
-            { img: "kakeru.png", val: "x" },
-            { img: "waru.png", val: "/" }
-        ];
-
+        // 全8問のリスト
         const quizList = [
-            { type: "normal", img: "question1.png", choices: [{img:"choice-a.png", ok:false}, {img:"choice-b.png", ok:true}, {img:"choice-c.png", ok:false}] },
-            { type: "normal", img: "question2.png", choices: [{img:"choice-d.png", ok:false}, {img:"choice-f.png", ok:true}, {img:"choice-e.png", ok:false}] },
-            { type: "normal", img: "question3.png", choices: [{img:"choice-g.png", ok:true}, {img:"choice-h.png", ok:false}, {img:"choice-i.png", ok:false}] },
-            { type: "normal", img: "question4.png", choices: [{img: "choice-k.png", ok: false }, { img: "choice-l.png", ok: false }, { img: "choice-j.png", ok: true }], hint: "💡ヒント：3文字のことばを連想してね！" },
-            { type: "normal", img: "question5.png", choices: [{ img: "choice-m.png", ok: true }, { img: "choice-n.png", ok: false }, { img: "choice-o.png", ok: false }] },
-            { type: "normal", img: "question6.png", choices: [{ img: "choice-p.png", ok: false }, { img: "choice-q.png", ok: false }, { img: "choice-r.png", ok: true }] },
-            { type: "calc", formula: ["10.png", "sikaku.png", "2.png", "minus.png", "5.png", "equal.png", "0.png"], correctOp: "/" },
-            { type: "calc", formula: ["10.png", "waru.png", "2.png", "sikaku.png", "5.png", "equal.png", "0.png"], correctOp: "-" }
+            { img: "question1.png", choices: [{img:"choice-a.png", ok:false}, {img:"choice-b.png", ok:true}, {img:"choice-c.png", ok:false}] },
+            { img: "question2.png", choices: [{img:"choice-d.png", ok:false}, {img:"choice-f.png", ok:true}, {img:"choice-e.png", ok:false}] },
+            { img: "question3.png", choices: [{img:"choice-g.png", ok:true}, {img:"choice-h.png", ok:false}, {img:"choice-i.png", ok:false}] },
+            { img: "question4.png", choices: [{img: "choice-k.png", ok: false }, { img: "choice-l.png", ok: false }, { img: "choice-j.png", ok: true }], hint: "💡ヒント：3文字のことばを連想してね！" },
+            { img: "question5.png", choices: [{ img: "choice-m.png", ok: true }, { img: "choice-n.png", ok: false }, { img: "choice-o.png", ok: false }] },
+            { img: "question6.png", choices: [{ img: "choice-p.png", ok: false }, { img: "choice-q.png", ok: false }, { img: "choice-r.png", ok: true }] },
+            // Q7
+            { 
+                img: "question7.png", 
+                choices: [
+                    {img:"plus.png", ok:false}, {img:"minus.png", ok:false}, {img:"kakeru.png", ok:false}, {img:"waru.png", ok:true}
+                ] 
+            },
+            // Q8
+            { 
+                img: "question8.png", 
+                choices: [
+                    {img:"plus.png", ok:false}, {img:"minus.png", ok:true}, {img:"kakeru.png", ok:false}, {img:"waru.png", ok:false}
+                ] 
+            }
         ];
 
         function shuffle(array) {
@@ -98,28 +102,16 @@
             const q = quizList[currentStepIndex];
             document.getElementById('question-number').innerText = `第 ${currentStepIndex + 1} 問 / ${quizList.length}`;
             
-            let html = "";
-            if (q.type === "calc") {
-                html += `<div class="formula-container">`;
-                q.formula.forEach(item => { html += `<img src="${item}">`; });
-                html += `</div>`;
-                const shuffledOps = shuffle([...opChoices]);
-                html += `<div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">`;
-                shuffledOps.forEach(op => {
-                    const isCorrect = (op.val === q.correctOp);
-                    html += `<button onclick="handleAnswer(${isCorrect})" class="button" style="padding: 10px; background: white; border: 2px solid #ffb6c1;"><img src="${op.img}" width="70"></button>`;
-                });
-                html += `</div>`;
-            } else {
-                const shuffledChoices = shuffle([...q.choices]);
-                html += `<img src="${q.img}" style="width: 100%; max-width: 400px; border-radius: 15px; margin-bottom: 25px; border: 3px solid #eee;">`;
-                if (q.hint) { html += `<div class="hint-text">${q.hint}</div>`; }
-                html += `<div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">`;
-                shuffledChoices.forEach(c => {
-                    html += `<button onclick="handleAnswer(${c.ok})" class="button" style="padding: 10px; background: white; border: 2px solid #ffb6c1;"><img src="${c.img}" width="90" style="display: block;"></button>`;
-                });
-                html += `</div>`;
-            }
+            let html = `<img src="${q.img}" class="quiz-img">`;
+            if (q.hint) { html += `<div class="hint-text">${q.hint}</div>`; }
+            
+            const shuffledChoices = shuffle([...q.choices]);
+            html += `<div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">`;
+            shuffledChoices.forEach(c => {
+                html += `<button onclick="handleAnswer(${c.ok})" class="button choice-btn"><img src="${c.img}" width="80" style="display: block;"></button>`;
+            });
+            html += `</div>`;
+            
             document.getElementById('quiz-area').innerHTML = html;
             startTime = Date.now();
         }
@@ -150,36 +142,23 @@
             const iqImg = document.getElementById('result-image');
             
             let finalIQ;
-            let resultImgFile = "";
-
-            // 8問中の正解数で判定
-            // スピードボーナス：3問以上で5秒以内
             const hasSpeedBonus = (fastAnswerCount >= 3);
 
-            if (score === 8) { 
-                finalIQ = hasSpeedBonus ? 140 : 130;
-                resultImgFile = finalIQ === 140 ? "iq140.jpg" : "iq130.jpg";
-            } else if (score >= 6) { 
-                finalIQ = 115; resultImgFile = "iq115.jpg";
-            } else if (score >= 4) { 
-                finalIQ = 100; resultImgFile = "iq100.jpg";
-            } else {
-                finalIQ = 80; resultImgFile = "iq80.jpg";
-            }
+            if (score === 8) { finalIQ = hasSpeedBonus ? 140 : 130; }
+            else if (score >= 6) { finalIQ = 115; }
+            else if (score >= 4) { finalIQ = 100; }
+            else { finalIQ = 80; }
 
-            iqImg.src = resultImgFile;
             iqDisp.innerText = "IQ " + finalIQ;
+            iqImg.src = `iq${finalIQ >= 130 ? (finalIQ === 140 ? '140' : '130') : (finalIQ >= 100 ? '100' : '80')}.jpg`;
             
-            if (finalIQ >= 130) { 
-                iqComm.innerText = `超天才！✨\n全問正解おめでとう！\nあなたの脳はフル回転してるね💓`; 
-            } else if (finalIQ >= 100) { 
-                iqComm.innerText = `標準以上！💪\nナイスチャレンジ！\n安定した思考力の持ち主だよ✨`; 
-            } else { 
-                iqComm.innerText = `伸びしろたっぷり！🌱\n自分のペースで大丈夫。\nまた脳トレしにきてね！`; 
-            }
+            if (finalIQ >= 130) iqComm.innerText = "超天才！✨\n全問正解おめでとう！\nあなたの脳はフル回転してるね💓"; 
+            else if (finalIQ >= 100) iqComm.innerText = "標準以上！💪\n安定した思考力の持ち主だよ✨"; 
+            else iqComm.innerText = "伸びしろたっぷり！🌱\n自分のペースで大丈夫。\nまた脳トレしにきてね！";
 
             showRandomAd('health', 'result-ad-area');
         }
+
         showQuestion();
     </script>
 </body>
